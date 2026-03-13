@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
 }
 
 model User {
@@ -48,6 +47,7 @@ model Attraction {
   intensity     Intensity @default(MEDIUM)
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
+  categories    AttractionCategory[]
 }
 
 model AttractionCategory {
