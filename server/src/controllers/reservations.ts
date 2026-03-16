@@ -16,3 +16,24 @@ export const getReservations = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Internal server error' })
     }
 }
+
+// Create a new reservation
+export const createReservations = async (req: Request, res: Response) => {
+    try {
+        const { nb_tickets, date, id_USER, id_TICKET } = req.body
+        const reservation = await prisma.reservation.create({
+            data: {
+                nb_tickets,
+                date: new Date(date),
+                id_USER,
+                id_TICKET,
+                total_amount: 0,
+            }
+        })
+        // Return reservation create whit 201 status
+        res.status(201).json(reservation)
+
+        } catch {
+            res.status(500).json({ message: 'Internal server error'})
+        }
+    }
