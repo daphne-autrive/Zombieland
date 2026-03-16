@@ -35,7 +35,7 @@ export const getAttraction = async (req: Request, res: Response, next: NextFunct
 export const getFindAttraction = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Get the id from the URL parameters and convert it to a number
-        const attractionParam = parseInt(req.params.id);
+        const attractionParam = parseInt(req.params.id as string);
 
         // Check if the id is not a valid number
         if (isNaN(attractionParam)) {
@@ -48,9 +48,10 @@ export const getFindAttraction = async (req: Request, res: Response, next: NextF
         // Search the database for the attraction with this id
         const findAttraction = await prisma.attraction.findUnique({
             where: {
-                id_ATTRACTION: attractionParam
-            }
-        })
+                id_ATTRACTION: attractionParam,
+            },
+            include: {categories: { include : {category: true}
+    }}})
 
         // Check if the attraction was not found in the database
         if (findAttraction === null) {
