@@ -10,8 +10,7 @@ const App = () => {
             try {
                 const res = await fetch("http://localhost:3000/api/attractions");
                 if (!res.ok) throw new Error("Erreur récupération attractions");
-
-                const data: Attractions[] = await res.json();
+                const data: Attraction[] = await res.json();
                 setAttractions(data);
             } catch (err) {
                 console.error(err);
@@ -20,7 +19,7 @@ const App = () => {
 
         fetchAttractions();
     }, []);
-
+console.log("Attractions:", attractions);
     return (
         <Routes>
             <Route
