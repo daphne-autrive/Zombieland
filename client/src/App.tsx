@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import type { Attraction } from "@types";
 // Entry point for application routes
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 // Import the register page
@@ -14,22 +12,6 @@ import MyReservations from './pages/MyReservations'
 import AttractionsPage from "./pages/Attractions"
 
 const App = () => {
-  const [attractions, setAttractions] = useState<Attraction[]>([]);
-  
-  useEffect(() => {
-    const fetchAttractions = async () => {
-      try {
-        const res = await fetch("http://localhost:3000/api/attractions");
-        if (!res.ok) throw new Error("Erreur récupération attractions");
-        const data: Attraction[] = await res.json();
-        setAttractions(data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchAttractions();
-  }, []);
-
   return (
     <BrowserRouter>
       <Routes>
@@ -37,7 +19,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/reservation" element={<Reservation />} />
         <Route path="/my-account/reservations" element={<MyReservations />} />
-        <Route path="/attractions" element={attractions.length > 0 ? <AttractionsPage attractions={attractions} /> : <p>Loading...</p>} />
+        <Route path="/attractions" element={<AttractionsPage />} />
       </Routes>
     </BrowserRouter>
   )
