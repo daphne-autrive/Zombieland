@@ -1,5 +1,7 @@
 // Entry point for application routes
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+// Import the register page
+import Register from './pages/Register'
 // Import the login page
 import Login from './pages/Login'
 // Import the reservation page
@@ -11,6 +13,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/reservation" element={<Reservation />} />
         <Route path="/my-account/reservations" element={<MyReservations />} />
