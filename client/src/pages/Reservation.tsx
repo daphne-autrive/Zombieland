@@ -1,7 +1,7 @@
 // Reservation page - booking page
 
 // Import useState to manage from data
-import { useState } from 'react'
+import { use, useState } from 'react'
 // Import Chakra UI components for styling
 import { Box, Button, Heading, Input, Text } from '@chakra-ui/react'
 
@@ -9,12 +9,22 @@ function Reservation() {
     // nbTickets store the number of tickets chosen by the user (1 by default)
     const [nbTickets, setNbTickets] = useState(1)
     // date stores the chosen visit date (empty by default)
-    const [date, setDate] = useState('')
-    // message stores the text to display after form submission
+    const today = new Date().toISOString().split('T')[0] // get today's date in YYYY-MM-DD format as default value
+
+    // date stores the chosen visit date (default => today)
+    const [date, setDate] = useState(today)
+
+    // message stores the text to display after from submission
     const [message, setMessage] = useState('')
 
     //  handleSubmit is the function that runs when we click to "Confirm"
     const handleSubmit = async () => {
+        // Check if date is empty before sending
+        if (!date) {
+            setMessage('Veuillez choisir une date.')
+            return
+        }
+
         // Send the form data to the back via fetch
         const response = await fetch('http://localhost:3000/api/reservations', {
             method: 'POST', // Create a new reservation
@@ -24,7 +34,7 @@ function Reservation() {
             body: JSON.stringify({
                 nb_tickets: nbTickets, // The number of the tickets
                 date: date, // The chosen date
-                id_TICKET: 1 // A remplacer par le vrai id du billet
+                id_TICKET: 1
             })
         })
 
@@ -55,7 +65,8 @@ function Reservation() {
             <Input // Input date to choose the visit date
                 type="date"
                 value={date}
-                onChange={(e) => setDate(e.target.value)} // updates dates when the user changes the value
+                min={today} // updates dates when the user changes the value
+                onChange={(e) => setDate(e.target.value)}
                 mb={6}
             />
 
