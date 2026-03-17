@@ -4,31 +4,47 @@ import { prisma } from '../lib/prisma.js'
 // const prisma = new PrismaClient()
 export const getAttraction = async (req, res) => {
     try {
-        // Extract the "category" query parameter from the request
+        // Extract the "category" query parameter
         const categoryParam = req.query.category
+
         // Ensure the category is a string (req.query can return string | string[] | undefined)
-        // If it's not a string, we ignore it and treat it as undefined
         const category =
             typeof categoryParam === "string" ? categoryParam : undefined
-        // Fetch attractions from the database
-        // If a category is provided, we filter by it
-        // If not, Prisma receives "undefined" and returns all attractions
+
+        // Fetch attractions filtered by category (N-N relation)
         const attractions = await prisma.attraction.findMany({
             where: category
-                ? { category: { equals: category } }
-                : undefined
+                ? {
+                    // Filter attractions that have at least one matching category
+                    categories: {
+                        some: {
+                            category: {
+                                name: category
+                            }
+                        }
+                    }
+                }
+                : undefined,
+            include: {
+                // Include related categories for frontend usage
+                categories: {
+                    include: {
+                        category: true
+                    }
+                }
+            }
         })
-        // Send the result back to the client as JSON
+
+        // Send the result back to the client
         res.json(attractions)
     } catch (error) {
-        // Log the error for debugging
         console.error(error)
-        // Send a generic error response to the client
         res.status(500).json({
             error: "Erreur lors de la récupération des attractions"
         })
     }
 }
+
 
 
 
