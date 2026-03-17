@@ -16,7 +16,7 @@ function Reservation() {
     //  handleSubmit is the function that runs when we click to "Confirm"
     const handleSubmit = async () => {
         // Send the form data to the back via fetch
-        const response = await fetch('http://localhost:3000/api/reservations', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations`, {
             method: 'POST', // Create a new reservation
             headers: {
                 'Content-Type': 'application/json' // Send JSON
