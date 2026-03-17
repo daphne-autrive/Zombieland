@@ -2,6 +2,7 @@
 import { Router } from "express";
 import { getAttraction, getFindAttraction } from "../controllers/attraction.controller.js"
 
+
 const router = Router()
 
 // Get all attractions
