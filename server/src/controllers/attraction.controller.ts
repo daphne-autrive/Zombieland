@@ -21,7 +21,7 @@ export const getAttraction = async (req: Request, res: Response, next: NextFunct
             include: {
                 categories: { include: { category: true } }
             }
-        })
+})
         // Send the result back to the client as JSON
         res.json(attractions)
     } catch (error) {
@@ -53,12 +53,8 @@ export const getFindAttraction = async (req: Request, res: Response, next: NextF
             where: {
                 id_ATTRACTION: attractionParam,
             },
-            include: {
-                categories: {
-                    include: { category: true }
-                }
-            }
-        })
+            include: {categories: { include : {category: true}
+    }}})
 
         // Check if the attraction was not found in the database
         if (findAttraction === null) {
