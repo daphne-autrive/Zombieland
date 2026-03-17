@@ -3,6 +3,7 @@
 import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
+import authRoutes from './routes/auth.routes.js'
 import attractionRoutes from './routes/attraction.routes.js'
 
 // import the reservations router
@@ -14,6 +15,9 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 app.use(helmet())
+
+// Authtication
+app.use('/api/auth', authRoutes)
 
 app.use("/api/attractions", attractionRoutes)
 // Plug the router on /api/reservations

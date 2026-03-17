@@ -1,7 +1,13 @@
-import { Route, Routes } from "react-router-dom";
+
 import { useEffect, useState } from "react";
 import type { Attraction } from "@types";
 import AttractionsPage from "./pages/Attractions";
+// Entry point for application routes
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+// Import the reservation page
+import Reservation from './pages/Reservation'
+// Import the my reservations page
+import MyReservations from './pages/MyReservations'
 
 const App = () => {
     const [attractions, setAttractions] = useState<Attraction[]>([]);
@@ -30,8 +36,11 @@ console.log("Attractions:", attractions);
                         : <p>Loading...</p>
                 }
             />
+            <Route path="/reservation" element={<Reservation />} />
+            <Route path="/my-account/reservations" element={<MyReservations />} />
         </Routes>
     );
 };
 
 export default App;
+
