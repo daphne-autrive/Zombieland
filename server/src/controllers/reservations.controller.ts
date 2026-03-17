@@ -78,7 +78,7 @@ export const deleteReservation = async (req: Request, res: Response) => {
         }
 
         // Get the connected member's id from the JWT token
-        const memberId = req.user.id_USER;
+        const memberId = req.user.id;
 
         // Search the database for the reservation with this id
         const findReservation = await prisma.reservation.findUnique({
