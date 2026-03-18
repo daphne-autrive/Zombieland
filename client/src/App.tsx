@@ -14,16 +14,18 @@ import { BrowserRouter, Route, Routes } from 'react-router'
 
 
 const App = () => {
+
+
     return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/reservation" element={<Reservation />} />
-        <Route path="/my-account/reservations" element={<MyReservations />} />
-        <Route path="/attractions" element={<AttractionsPage />} />
-      </Routes>
-    </BrowserRouter>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/reservation" element={<Reservation />} />
+                <Route path="/my-account/reservations" element={<MyReservations />} />
+                <Route path="/attractions" element={<AttractionsPage />} />
+            </Routes>
+        </BrowserRouter>
     );
 };
 
