@@ -3,6 +3,8 @@ import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/AppError.js';
 
 export function errorHandler(err: Error, _req: Request, res: Response, _next: NextFunction) {
+  //log for debuging every controllers
+  console.error(err)
   if (err instanceof AppError) {
     // error is anticipated → using the statusCode in AppError utils to identify it
     return res.status(err.statusCode).json({ message: err.message });
