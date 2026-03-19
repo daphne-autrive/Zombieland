@@ -1,6 +1,8 @@
 import { Box, Image, Heading, Text, Badge, Button } from "@chakra-ui/react";
 import type { Attraction } from "@/types";
 import Card from '../assets/Card.png';
+import { useNavigate, useParams } from "react-router";
+import AttractionDetailPage from "@/pages/AttractionDetailPage";
 
 interface AttractionCardProps extends Attraction {
     image: string;
@@ -12,9 +14,10 @@ const categoryColors: Record<string, string> = {
     "Peur Mortelle": "red",
 };
 
-const AttractionCard = ({ name, description, intensity, image }: AttractionCardProps) => {
+const AttractionCard = ({ id_ATTRACTION, name, description, intensity, image }: AttractionCardProps) => {
     const cat = intensity ?? "Peur Acceptable";
-
+    const navigate = useNavigate()
+    
 
     return (
         <Box
@@ -92,6 +95,7 @@ const AttractionCard = ({ name, description, intensity, image }: AttractionCardP
                     _hover={{ bg: "zombieland.cta2orange" }}
                     mt="auto"                 // pousse le bouton en bas
                     alignSelf="flex-end" // aligne le bouton à droite
+                    onClick={() => navigate(`/attractions/${id_ATTRACTION}`)}
                 >
                     VOIR PLUS
                 </Button>
