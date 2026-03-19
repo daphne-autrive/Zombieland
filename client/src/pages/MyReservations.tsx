@@ -32,11 +32,14 @@ function MyReservations() {
         const fetchReservations = async () => {
             // Call the backend API to retrieve the reservations
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/me`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
+                credentials: 'include' // Send the cookie to authenticate the user
             })
             const data = await response.json()
+            if (!response.ok) {
+                setLoading(false)
+                return
+
+            }
             setReservations(data)
             setLoading(false)
         }
