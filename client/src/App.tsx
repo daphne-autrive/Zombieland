@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Register from './pages/Register'
 //Import the login page
 import Login from './pages/Login'
+//Import the account page
+import MyAccount from './pages/MyAccount'
 // Import the reservation page
 import Reservation from './pages/Reservation'
 // Import the my reservations page
@@ -13,6 +15,8 @@ import AttractionsPage from "./pages/Attractions"
 
 import AttractionDetailPage from './pages/AttractionDetailPage'
 
+import Faq from './pages/Faq'
+
 
 const App = () => {
     return (
@@ -20,10 +24,12 @@ const App = () => {
             <Routes>
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/my-account" element={<MyAccount />} />
                 <Route path="/reservation" element={<Reservation />} />
                 <Route path="/my-account/reservations" element={<MyReservations />} />
                 <Route path="/attractions" element={<AttractionsPage />} />
                 <Route path="/attractions/:id" element={<AttractionDetailPage/>}/>
+                <Route path='/faq' element={<Faq />}/>
             </Routes>
         </BrowserRouter>
     );
