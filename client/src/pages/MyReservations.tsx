@@ -14,8 +14,11 @@ function MyReservations() {
     useEffect(() => {
         const fetchReservations = async () => {
             // Call the backend API to retrieve the reservations
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations`)
-            // Convert the response to JSON
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/me`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            })
             const data = await response.json()
             setReservations(data)
         }
@@ -24,7 +27,7 @@ function MyReservations() {
 
     // Cancel a reservation by sending a delete request to the api
     const handleCancel = async (id: number) => {
-        const response = await fetch(`http://localhost:3000/api/reservations/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/${id}`, {
             method: 'DELETE',
             headers: {
                 // send the token jwt in the request header to authentificate the user
@@ -115,7 +118,7 @@ function MyReservations() {
                                 <Button
                                     // trigger the cancel function when the button is clicked
                                     onClick={() => handleCancel(reservation.id_RESERVATION)}
-                                    bgImage="url('/src/assets/deleteBouton.png')"
+                                    bgImage="url('../assets/deleteBouton.png')"
                                     bgSize="cover"
                                     bgPosition="center"
                                     color="zombieland.white"
