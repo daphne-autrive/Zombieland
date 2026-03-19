@@ -2,25 +2,40 @@ import { Box, Image, Heading, Text, Badge, Button } from "@chakra-ui/react";
 import type { Attraction } from "@/types";
 import Card from '../assets/Card.png';
 import bgBouton from '../assets/bg-bouton.png'
+import { useNavigate, useParams } from "react-router";
+import AttractionDetailPage from "@/pages/AttractionDetailPage";
 
 interface AttractionCardProps extends Attraction {
     image: string;
 }
 
-const categoryColors: Record<string, string> = {
-    "Peur Acceptable": "green",
-    "Peur Survivable": "orange",
-    "Peur Mortelle": "red",
+// Mapping API → labels internes
+const intensityMap: Record<string, string> = {
+    LOW: "Peur Acceptable",
+    MEDIUM: "Peur Survivable",
+    HIGH: "Peur Mortelle",
+
 };
 
-const AttractionCard = ({ name, description, intensity, image }: AttractionCardProps) => {
+// Couleurs Chakra (ou custom si tu veux)
+const categoryColors: Record<string, string> = {
+    "Peur Acceptable": "#556739",
+    "Peur Survivable": "#AA9430",
+    "Peur Mortelle": "#F4902B",
+};
+
+
+
+const AttractionCard = ({ id_ATTRACTION, name, description, intensity, image }: AttractionCardProps) => {
     const cat = intensity ?? "Peur Acceptable";
+    const navigate = useNavigate()
+    
 
 
     return (
         <Box
             width="300px"
-            height="400px"                 // hauteur FIXE pour toutes les cartes
+            height="400px"
             borderRadius="lg"
             overflow="visible"
             boxShadow="0 0 15px rgba(0,0,0,0.5)"
@@ -51,14 +66,13 @@ const AttractionCard = ({ name, description, intensity, image }: AttractionCardP
                     position="absolute"
                     top="-12px"
                     left="8px"
-                    color="zombieland.white"
-                    colorScheme={categoryColors[cat] || "gray"}
+                    color="white"
+                    bg={categoryColors[cat] || "gray"}   // couleur dynamique
                     px={3}
                     py={1}
                     borderRadius="md"
                     fontSize="0.8rem"
-                    zIndex={2}                // au-dessus de l’image
-                    bg="zombieland.successsecondary"
+                    zIndex={2}
                 >
                     {cat.toUpperCase()}
                 </Badge>
@@ -74,13 +88,7 @@ const AttractionCard = ({ name, description, intensity, image }: AttractionCardP
             </Box>
 
             {/* Contenu */}
-            <Box
-                p={4}
-                display="flex"
-                flexDirection="column"
-                flex="1"                     // occupe tout l’espace restant
-            >
-
+            <Box p={4} display="flex" flexDirection="column" flex="1">
                 <Heading size="md" mb={2}>
                     {name.toUpperCase()}
                 </Heading>
@@ -107,6 +115,11 @@ const AttractionCard = ({ name, description, intensity, image }: AttractionCardP
                     textTransform="uppercase"
                     mt="auto"
                     alignSelf="flex-end"
+                    mt="auto"                 // pousse le bouton en bas
+                    alignSelf="flex-end" // aligne le bouton à droite
+                    onClick={() => navigate(`/attractions/${id_ATTRACTION}`)}
+
+
                 >
                     → VOIR PLUS
                 </Button>
