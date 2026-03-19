@@ -15,6 +15,8 @@ import AttractionsPage from "./pages/Attractions"
 
 import AttractionDetailPage from './pages/AttractionDetailPage'
 
+import Faq from './pages/Faq'
+
 
 const App = () => {
     return (
@@ -27,6 +29,7 @@ const App = () => {
                 <Route path="/my-account/reservations" element={<MyReservations />} />
                 <Route path="/attractions" element={<AttractionsPage />} />
                 <Route path="/attractions/:id" element={<AttractionDetailPage/>}/>
+                <Route path='/faq' element={<Faq />}/>
             </Routes>
         </BrowserRouter>
     );
