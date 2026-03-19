@@ -47,10 +47,7 @@ function MyReservations() {
     const handleCancel = async (id: number) => {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/${id}`, {
             method: 'DELETE',
-            headers: {
-                // send the token jwt in the request header to authentificate the user
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+            credentials: 'include' //to get the cookie sent from the back, the browser is automatically dealing with
         })
 
         if (response.ok) {
