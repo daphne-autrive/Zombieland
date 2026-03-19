@@ -1,6 +1,9 @@
 import { Box, Image, Heading, Text, Badge, Button } from "@chakra-ui/react";
 import type { Attraction } from "@/types";
-import Card from "../assets/Card.png";
+import Card from '../assets/Card.png';
+import bgBouton from '../assets/bg-bouton.png'
+import { useNavigate } from "react-router";
+
 
 interface AttractionCardProps extends Attraction {
     image: string;
@@ -21,16 +24,19 @@ const categoryColors: Record<string, string> = {
     "Peur Mortelle": "#F4902B",
 };
 
-const AttractionCard = ({ name, description, intensity, image }: AttractionCardProps) => {
-    // Convertit "low/medium/high" → label interne
+
+
+const AttractionCard = ({ id_ATTRACTION, name, description, intensity, image }: AttractionCardProps) => {
+    const navigate = useNavigate()
     const cat = intensityMap[intensity] ?? "Peur Acceptable";
+
 
     return (
         <Box
             width="300px"
             height="400px"
             borderRadius="lg"
-            overflow="hidden"
+            overflow="visible"
             boxShadow="0 0 15px rgba(0,0,0,0.5)"
             bgImage={`url(${Card})`}
             bgSize="cover"
@@ -38,22 +44,26 @@ const AttractionCard = ({ name, description, intensity, image }: AttractionCardP
             color="white"
             display="flex"
             flexDirection="column"
+            position="relative"      // structure en colonne
         >
-            {/* Image + badge */}
+
+
+            {/* Image + badge positionné dessus */}
             <Box
                 width="100%"
                 height="180px"
-                overflow="hidden"
+                overflow="visible"
                 display="flex"
                 justifyContent="center"
                 alignItems="center"
-                mt={8}
-                position="relative"
+                mt={10}
+                position="relative"          // nécessaire pour positionner le badge
             >
-                {/* Badge dynamique */}
+
+                {/* Badge sur l’image */}
                 <Badge
                     position="absolute"
-                    top="8px"
+                    top="-12px"
                     left="8px"
                     color="white"
                     bg={categoryColors[cat] || "gray"}   // couleur dynamique
@@ -87,15 +97,29 @@ const AttractionCard = ({ name, description, intensity, image }: AttractionCardP
                 </Text>
 
                 <Button
-                    borderRadius="15px"
-                    width="32%"
-                    bg="zombieland.cta1orange"
-                    color="white"
+                    borderRadius="full"
+                    bg="transparent"
+                    bgImage={`url(${bgBouton})`}
+                    bgSize="cover"
+                    bgPosition="center"
+                    color="zombieland.secondary"
+                    fontFamily="body"
+                    fontWeight="bold"
+                    letterSpacing="1px"
+                    fontSize="16px"
+                    px={4}
+                    py={4}
                     _hover={{ bg: "zombieland.cta2orange" }}
+                    boxShadow="inset 0 2px 8px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.5)"
+                    textTransform="uppercase"
                     mt="auto"
-                    alignSelf="flex-end"
+                    // pousse le bouton en bas
+                    alignSelf="flex-end" // aligne le bouton à droite
+                    onClick={() => navigate(`/attractions/${id_ATTRACTION}`)}
+
+
                 >
-                    VOIR PLUS
+                    → VOIR PLUS
                 </Button>
             </Box>
         </Box>
