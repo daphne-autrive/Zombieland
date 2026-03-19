@@ -127,6 +127,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 }
 
 export async function me(req: Request, res: Response, next: NextFunction) {
+  
   //1.fetch user informations and checking if user is undefined
   if (!req.user) {
     throw new UnauthorizedError('Accès refusé')
