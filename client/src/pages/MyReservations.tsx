@@ -58,7 +58,7 @@ function MyReservations() {
             setReservations(reservations.filter((r: Reservation) => r.id_RESERVATION !== id))
         } else {
             const data = await response.json()
-            alert(data.error)
+            alert(data.message)
         }
     }
 
