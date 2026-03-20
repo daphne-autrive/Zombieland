@@ -71,11 +71,11 @@ function MyReservations() {
             minH="100vh"
             bgImage={`url(${bgImage})`}
             bgSize="cover"
-            bgAttachment="fixed"
+            // bgAttachment="fixed"
             bgPosition="center"
             display="flex"
             flexDirection="column"
-            pt="80px" // Offset for the fixed header height to prevent content from hiding behind it
+            // pt="80px" // Offset for the fixed header height to prevent content from hiding behind it
         >
             <Header />
 

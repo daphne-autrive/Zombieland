@@ -27,8 +27,8 @@ function Register() {
       })
       //only if response is ok the connection is allowed
       if (response.ok) {
-        setMessage(' Bienvenu : compte créé !');
-        navigate('/reservation');
+        setMessage(' Bienvenue : compte créé !');
+        navigate('/');
       } else {
         //otherwise displaying an error message
         setMessage('Une erreur est survenue, veuillez réessayer.')
