@@ -7,6 +7,7 @@ import { Box, Button, Checkbox, Heading, Input, Text, Flex, FormControl, FormLab
 
 import bgImage from '../assets/bg-image.png'
 import bgBouton from '../assets/bg-bouton.png'
+import Card from '../assets/Card.png'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
@@ -109,7 +110,9 @@ function Reservation() {
                             flex={1}
                             p={{ base: 6, md: 8 }}
                             borderRadius="lg"
-                            bg="rgba(0,0,0,0.08)"
+                            bgImage={`url(${Card})`}
+                            bgSize="cover"
+                            bgPosition="center"
                             backdropFilter="blur(10px)"
                             border="1px solid"
                             borderColor="rgba(250, 235, 220, 0.1)"
@@ -186,7 +189,9 @@ function Reservation() {
                             flex={1}
                             p={{ base: 6, md: 8 }}
                             borderRadius="lg"
-                            bg="rgba(0,0,0,0.08)"
+                            bgImage={`url(${Card})`}
+                            bgSize="cover"
+                            bgPosition="center"
                             backdropFilter="blur(10px)"
                             border="1px solid"
                             borderColor="rgba(250, 235, 220, 0.15)"
@@ -285,6 +290,7 @@ function Reservation() {
 
                 <Button
                     onClick={handleSubmit}
+                    isDisabled={!confirmed}
                     bgImage={`url(${bgBouton})`}
                     bgSize="cover"
                     bgPosition="center"
@@ -305,6 +311,11 @@ function Reservation() {
                     }}
                     _active={{
                         transform: "translateY(0px)",
+                    }}
+                    _disabled={{
+                        opacity: 0.5,
+                        cursor: "not-allowed",
+                        pointerEvents: "none"
                     }}
                 >
                     → REJOINDRE L'HORREUR

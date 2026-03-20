@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react'
 import { Box, Button, Heading, Text, Flex, Spinner } from '@chakra-ui/react'
 import bgImage from '../assets/bg-image.png'
+import bgBouton from '../assets/bg-bouton.png'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { useNavigate } from 'react-router-dom'
 
 // defines the shape of a reservation object
 // use an interface instead of any allows ts to check that we are accessing valid fiels
@@ -26,7 +28,7 @@ function MyReservations() {
     const [reservations, setReservations] = useState<Reservation[]>([])
     // loading stores the loading state of the page
     const [loading, setLoading] = useState(true)
-    //Displaying message after deletion
+    const navigate = useNavigate()
     const [message, setMessage] = useState('')
 
     // Fetch reservations when the page loads
@@ -58,7 +60,11 @@ function MyReservations() {
         if (response.ok) {
             // remove the canceled reservation from the list without reloading the page
             setReservations(reservations.filter((r: Reservation) => r.id_RESERVATION !== id))
-            setMessage('Votre annulation a bien été prise en compte.')
+            if (response.ok) {
+                setReservations(reservations.filter((r: Reservation) => r.id_RESERVATION !== id))
+                setMessage('Votre annulation a bien été prise en compte.')
+                navigate('/my-account', { state: { refresh: Date.now() } })
+            }
         } else {
             const data = await response.json()
             alert(data.error)
@@ -75,7 +81,7 @@ function MyReservations() {
             bgPosition="center"
             display="flex"
             flexDirection="column"
-            // pt="80px" // Offset for the fixed header height to prevent content from hiding behind it
+        // pt="80px" // Offset for the fixed header height to prevent content from hiding behind it
         >
             <Header />
 
@@ -102,9 +108,30 @@ function MyReservations() {
                     <Spinner color="zombieland.white" size="xl" />
 
                 ) : activeReservations.length === 0 ? (
-                    <Text color="zombieland.white" fontFamily="body" fontWeight="300">
-                        Vous n'avez pas encore de réservations.
-                    </Text>
+                    <Box display="flex" flexDirection="column" alignItems="center" gap={4}>
+                        <Text color="zombieland.white" fontFamily="body" fontWeight="300">
+                            Vous n'avez pas encore de réservations.
+                        </Text>
+                        <Button
+                            onClick={() => navigate('/reservation')}
+                            bgImage={`url(${bgBouton})`}
+                            bgSize="cover"
+                            bgPosition="center"
+                            color="zombieland.secondary"
+                            fontFamily="body"
+                            fontWeight="bold"
+                            fontSize="16px"
+                            py={5}
+                            px={4}
+                            borderRadius="full"
+                            letterSpacing="1px"
+                            textTransform="uppercase"
+                            boxShadow="inset 0 2px 8px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.5)"
+                            _hover={{ bg: "zombieland.cta2orange" }}
+                        >
+                            → Réserver maintenant
+                        </Button>
+                    </Box>
                 ) : (
                     activeReservations.map((reservation: Reservation) => (
                         <Box
@@ -143,14 +170,17 @@ function MyReservations() {
                                 <Button
                                     // trigger the cancel function when the button is clicked
                                     onClick={() => handleCancel(reservation.id_RESERVATION)}
-                                    bgImage="url('/assets/deleteBouton.png')"
+                                    bgImage={`url(${bgBouton})`}
                                     bgSize="cover"
                                     bgPosition="center"
-                                    color="zombieland.white"
+                                    color="zombieland.secondary"
                                     fontFamily="body"
+                                    fontWeight="bold"
+                                    fontSize="14px"
+                                    py={3}
+                                    px={4}
                                     borderRadius="full"
-                                    size="sm"
-                                    border="none"
+                                    boxShadow="inset 0 2px 8px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.5)"
                                     _hover={{ opacity: 0.8 }}
                                 >
                                     Annuler
