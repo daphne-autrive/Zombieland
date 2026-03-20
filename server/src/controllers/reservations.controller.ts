@@ -27,6 +27,7 @@ export const getMyReservations = async (req: Request, res: Response, next: NextF
 
 // Create a new reservation
 export const createReservation = async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) throw new UnauthorizedError('Accès refusé')
     // Validate the received data with Zod
     const result = createReservationSchema.safeParse(req.body)
 
@@ -43,7 +44,7 @@ export const createReservation = async (req: Request, res: Response, next: NextF
             nb_tickets,
             date: new Date(date),
             id_TICKET,
-            id_USER: req.user?.id ?? 1,
+            id_USER: req.user.id,
             total_amount: 0,
         }
     })
