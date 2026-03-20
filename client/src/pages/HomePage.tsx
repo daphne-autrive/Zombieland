@@ -9,15 +9,16 @@ const HomePage = () => {
         <Box
             display="flex"
             flexDirection="column"
-            minHeight="100vh"
-            bgAttachment="fixed"
+            bgSize="cover"
             bgImage={`url(${bgImage})`}
+            overflow="visible"
+            
+            
         >
             <Header />
 
-            <Box pt="80px" pb="100px">
-                
-                <Image src={parkEntryLandscape} alt="Entrée du parc" width="100%" />
+            <Box pb="100px" >
+                <Image src={parkEntryLandscape} alt="Entrée du parc" width="100%"/>
             </Box>
 
             <Footer />

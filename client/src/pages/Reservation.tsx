@@ -60,7 +60,6 @@ function Reservation() {
             bgAttachment={'fixed'}
             display="flex"
             flexDirection="column"
-            pt="80px" // Add padding top for the fixed header height to prevent content from hiding behind it
         >
             <Header />
 
