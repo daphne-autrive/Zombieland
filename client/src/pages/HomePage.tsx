@@ -1,8 +1,8 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import bgImage from '../assets/bg-image.png';
-import { Box } from "@chakra-ui/react";
-
+import parkEntryLandscape from '../assets/park-entry-landscape.png';
+import { Box, Image } from "@chakra-ui/react";
 
 const HomePage = () => {
     return (
@@ -14,10 +14,15 @@ const HomePage = () => {
             bgImage={`url(${bgImage})`}
         >
             <Header />
-            <Box flex="1" p={3} pt="100px" pb="100px"></Box>
-            <Footer />
 
+            <Box pt="80px" pb="100px">
+                
+                <Image src={parkEntryLandscape} alt="Entrée du parc" width="100%" />
+            </Box>
+
+            <Footer />
         </Box>
-            )};
+    );
+};
 
 export default HomePage;
