@@ -46,15 +46,29 @@ export async function updateProfile(req: Request, res: Response, next: NextFunct
     throw new BadRequestError("Données invalides")
   }
 
+  //3.1 extracting currentPassword from req.body to check if the user is really the one who is updating the profile
+  const currentPassword = req.body.currentPassword
+  //3.2 checking user in DB
+  const user = await prisma.user.findUnique({
+    where: { id_USER: req.user.id }
+  })
+  //3.3 if user exist, checking if the password is correct with argon2.verify 
+  if (user) {
+    const rightPassword = await argon2.verify(user.password, currentPassword)
+    if (!rightPassword) {
+      throw new UnauthorizedError('Mot de passe incorrect')
+    }
+  } else {
+    throw new NotFoundError("Utilisateur introuvable")
+  }
+
   //4.if the password is given, using the hash
   if (!parsedBody) {
     throw new UnauthorizedError('Accès refusé')
   }
   //if the user gave a new password, hash is the new password (but clear), 
-  //if not, hash is undefined
-  // ⚠️ DETTE TECHNIQUE
-  // Ajouter vérification du mot de passe actuel avant modification
-  // Nécessite : nouveau champ "currentPassword" dans le body + argon2.verify()
+  //if not, hash is undefined and Prisma ignore it, 
+  //so the password stay the same in the DB
   let hash = parsedBody.password
   if (parsedBody.password) {
     //here wer hash the new one

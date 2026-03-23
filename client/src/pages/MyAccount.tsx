@@ -71,7 +71,7 @@ function MyAccount() {
   }, [])
 
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (currentPassword: string) => {
     //1.checking if the user wants to change his password
     //only if he's updating it, we compare the password and the confirmpassword inputs
     //and send an error IF it doesn't match
@@ -94,7 +94,8 @@ function MyAccount() {
         //so, if they're undefined, Prisma ignore them
         firstname: form.firstname || undefined,
         lastname: form.lastname || undefined,
-        password: form.password || undefined
+        password: form.password || undefined,
+        currentPassword: currentPassword //sending the current password to check if the user is really the one who is updating the profile
       }),
       credentials: 'include' //to get the cookie sent from the back, the browser is automatically dealing with
     })
@@ -377,7 +378,7 @@ function MyAccount() {
       <ConfirmModal
         isOpen={isUpdateModalOpen}
         onClose={() => setIsUpdateModalOpen(false)}
-        onConfirm={handleUpdate}
+        onConfirm={(password) => handleUpdate(password)}
         title="Modifier mon profil"
         message="Es-tu sûr de vouloir modifier tes informations ?"
       />

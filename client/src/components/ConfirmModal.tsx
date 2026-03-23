@@ -6,7 +6,18 @@ import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
 interface ConfirmModalProps { 
     isOpen: boolean
     onClose: () => void
-    onConfirm: () => void
+  //here giving the password to the parent component to check if the user is admin or not, 
+  // if so allowing him to access the admin page
+  //parents receiving this in : onConfirm={(password) => handleUpdate(password)}
+  //then handleUpdate send it to the body of the PATCH request to check 
+  // if the password is correct :
+  //body: JSON.stringify ({
+  //  firstname: ...,
+  //  lastname: ...,
+  //  password: ...,
+  //  currentPassword: password  ← NEW FIELD =)
+  //})
+    onConfirm: (password: string) => void
     title: string
     message: string
 }
@@ -21,7 +32,7 @@ function ConfirmModal({ isOpen, onClose, onConfirm, title, message }: ConfirmMod
     if (!isChecked || !password) {
       return 
     }
-    onConfirm()
+    onConfirm(password)
     setIsChecked(false)
     setPassword('')
     onClose()
