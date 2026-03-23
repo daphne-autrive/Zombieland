@@ -9,13 +9,12 @@ import LoginModal from '../components/LoginModal'
 // Import background images and card image
 import bgImage from '../assets/bg-image.png'
 import bgBouton from '../assets/bg-bouton.png'
-import Card from '../assets/Card.png'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
 function Reservation() {
     // nbTickets store the number of tickets chosen by the user (1 by default)
-    const [nbTickets, setNbTickets] = useState(1)
+const [nbTickets, setNbTickets] = useState<string>('1')
     // date stores the chosen visit date (empty by default)
     const today = new Date().toISOString().split('T')[0] // get today's date in YYYY-MM-DD format as default value
 
@@ -62,7 +61,7 @@ function Reservation() {
         // The response is ok (status 200-299), success message
         if (response.ok) {
             setMessage('Réservation confirmée !')
-            setNbTickets(1)
+            setNbTickets('1')
             setDate(today)
             setConfirmed(false)
         } else {
@@ -123,31 +122,31 @@ function Reservation() {
                             flex={1}
                             p={{ base: 6, md: 8 }}
                             borderRadius="lg"
-                            bgImage={`url(${Card})`}
-                            bgSize="cover"
-                            bgPosition="center"
-                            backdropFilter="blur(10px)"
-                            border="1px solid"
-                            borderColor="rgba(250, 235, 220, 0.1)"
-                            boxShadow="0 8px 32px rgba(0,0,0,0.3)"
+                            bg="rgba(0,0,0,0.3)"
+                            borderLeft="3px solid"
+                            borderColor="zombieland.primary"
+                            boxShadow="inset 0 2px 6px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.05)"
+                            transition="all 0.3s ease"
+                            _hover={{
+                                transform: "translateY(-4px)",
+                                boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+                                borderColor: "zombieland.cta1orange",
+                                bg: "rgba(0,0,0,0.5)"
+                            }}
                             display="flex"
-                            flexDirection="column"
-                            justifyContent="center"
                             alignItems="center"
+                            justifyContent="center"
                         >
-                            <Box w="100%" maxW="300px">
-                                <FormControl mb={6}>
+                            <Box w="100%" maxW="350px" mx="auto">
+                                <FormControl mb={8}>
                                     <FormLabel color="zombieland.white" fontWeight="600" mb={3} fontSize="16px">
-                                        Nombre de billets
+                                        Nombre de billets souhaités ?
                                     </FormLabel>
                                     <Input
                                         type="number"
                                         min={1}
                                         value={nbTickets}
-                                        onChange={(e) => {
-                                            const num = parseInt(e.target.value) || 1;
-                                            setNbTickets(Math.max(1, num));
-                                        }}
+                                        onChange={(e) => setNbTickets(e.target.value)}
                                         bg="rgba(0,0,0,0.3)"
                                         color="zombieland.white"
                                         borderColor="zombieland.primary"
@@ -169,7 +168,7 @@ function Reservation() {
 
                                 <FormControl>
                                     <FormLabel color="zombieland.white" fontWeight="600" mb={3} fontSize="16px">
-                                        Date de la visite
+                                        Quand souhaitez-vous venir ? 
                                     </FormLabel>
                                     <Input
                                         type="date"
@@ -202,16 +201,17 @@ function Reservation() {
                             flex={1}
                             p={{ base: 6, md: 8 }}
                             borderRadius="lg"
-                            bgImage={`url(${Card})`}
-                            bgSize="cover"
-                            bgPosition="center"
-                            backdropFilter="blur(10px)"
-                            border="1px solid"
-                            borderColor="rgba(250, 235, 220, 0.15)"
-                            boxShadow="0 8px 32px rgba(0,0,0,0.3)"
-                            display="flex"
-                            flexDirection="column"
-                            justifyContent="space-between"
+                            bg="rgba(0,0,0,0.3)"
+                            borderLeft="3px solid"
+                            borderColor="zombieland.primary"
+                            boxShadow="inset 0 2px 6px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.05)"
+                            transition="all 0.3s ease"
+                            _hover={{
+                                transform: "translateY(-4px)",
+                                boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+                                borderColor: "zombieland.cta1orange",
+                                bg: "rgba(0,0,0,0.5)"
+                            }}
                         >
                             <Box>
                                 <Text
@@ -240,7 +240,7 @@ function Reservation() {
                                             Nombre de billets
                                         </Text>
                                         <Text color="zombieland.white" fontFamily="body" fontWeight="300" fontSize="16px">
-                                            {nbTickets} {nbTickets > 1 ? 'billets' : 'billet'}
+                                            {nbTickets} {nbTickets > '1' ? 'billets' : 'billet'}
                                         </Text>
                                     </Box>
                                 </Flex>
@@ -268,7 +268,7 @@ function Reservation() {
                                         Total
                                     </Text>
                                     <Text color="zombieland.white" fontFamily="heading" fontWeight="bold" fontSize="28px">
-                                        {(nbTickets * TICKET_PRICE).toFixed(2)} €
+                                        {(parseInt(nbTickets) * TICKET_PRICE).toFixed(2)} €
                                     </Text>
                                 </Box>
                             </Box>
