@@ -4,7 +4,9 @@
 import { useState } from 'react'
 // Import Chakra UI components for styling
 import { Box, Button, Checkbox, Heading, Input, Text, Flex, FormControl, FormLabel } from '@chakra-ui/react'
-
+// Import modals for login before booking
+import LoginModal from '../components/LoginModal'
+// Import background images and card image
 import bgImage from '../assets/bg-image.png'
 import bgBouton from '../assets/bg-bouton.png'
 import Card from '../assets/Card.png'
@@ -29,6 +31,8 @@ function Reservation() {
     // confirmed stores whether the user has checked the confirmation checkbox
     const [confirmed, setConfirmed] = useState(false)
 
+    // adding a modal to confirm the user is connected before confirming the reservation
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
     //  handleSubmit is the function that runs when we click to "Confirm"
     const handleSubmit = async () => {
         // check if date is empty before sending
@@ -60,8 +64,15 @@ function Reservation() {
         if (response.ok) {
             setMessage('Réservation confirmée !')
         } else {
-            // Otherwise we display an error message
-            setMessage('Une erreur est survenue, veuillez réessayer.')
+            if (response.status === 401) {
+                // If the user is not authenticated, open the login modal
+                setIsLoginModalOpen(true)
+                setMessage('Veuillez vous connecter pour confirmer votre réservation.')
+                return
+            } else {
+                // Otherwise, display a generic error message
+                setMessage('Une erreur est survenue, veuillez réessayer.')
+            }
         }
     }
 
@@ -106,7 +117,7 @@ function Reservation() {
                         w="100%"
                     >
                         {/* Left - Form */}
-                        <Box 
+                        <Box
                             flex={1}
                             p={{ base: 6, md: 8 }}
                             borderRadius="lg"
@@ -185,7 +196,7 @@ function Reservation() {
                         </Box>
 
                         {/* Right - Summary */}
-                        <Box 
+                        <Box
                             flex={1}
                             p={{ base: 6, md: 8 }}
                             borderRadius="lg"
@@ -201,11 +212,11 @@ function Reservation() {
                             justifyContent="space-between"
                         >
                             <Box>
-                                <Text 
-                                    color="zombieland.white" 
+                                <Text
+                                    color="zombieland.white"
                                     fontFamily="heading"
-                                    fontWeight="bold" 
-                                    mb={6} 
+                                    fontWeight="bold"
+                                    mb={6}
                                     fontSize="20px"
                                     textTransform="uppercase"
                                     letterSpacing="1px"
@@ -233,7 +244,7 @@ function Reservation() {
                                 </Flex>
                             </Box>
 
-                            <Box 
+                            <Box
                                 pt={6}
                                 borderTop="1px solid"
                                 borderColor="rgba(250, 235, 220, 0.1)"
@@ -245,7 +256,7 @@ function Reservation() {
                                     {TICKET_PRICE.toFixed(2)} € / billet
                                 </Text>
 
-                                <Box 
+                                <Box
                                     p={4}
                                     borderRadius="md"
                                     bg="rgba(250, 235, 220, 0.06)"
@@ -341,7 +352,15 @@ function Reservation() {
                     </Box>
                 )}
             </Box>
-
+            <LoginModal
+                isOpen={isLoginModalOpen}
+                onClose={() => setIsLoginModalOpen(false)}
+                onConfirm={() => {
+                    setIsLoginModalOpen(false)
+                    handleSubmit()
+                }}
+                title="Connexion"
+            />
             <Footer />
         </Box >
     )
