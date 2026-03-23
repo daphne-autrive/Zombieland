@@ -18,6 +18,8 @@ import AttractionDetailPage from './pages/AttractionDetailPage'
 import Faq from './pages/Faq'
 import HomePage from './pages/HomePage'
 import Contact from './pages/Contact'
+import Plan from './pages/Plan'
+
 
 
 const App = () => {
@@ -34,6 +36,7 @@ const App = () => {
                 <Route path='/faq' element={<Faq />} />
                 <Route path='/' element={<HomePage />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/plan" element={<Plan />} />
             </Routes>
         </BrowserRouter>
     );
