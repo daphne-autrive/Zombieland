@@ -72,7 +72,14 @@ const AttractionsPage = () => {
                             color="zombieland.white"
                             px={4}
                             py={2}
-                            border="2px solid white"
+                            border="2px solid"
+                            borderColor="zombieland.primary"
+                            borderRadius="md"
+                            transition="all 0.3s ease"
+                            _hover={{
+                                borderColor: "zombieland.cta1orange",
+                                color: "zombieland.cta1orange"
+                            }}
                         >
                             Filtrer par catégorie
                         </MenuButton>
@@ -131,7 +138,7 @@ const AttractionsPage = () => {
             </Box>
 
             {error && <Text>{error}</Text>}
-                    
+
             <Footer />
         </Box>
     );
