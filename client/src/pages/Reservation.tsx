@@ -15,7 +15,7 @@ import Footer from '../components/Footer'
 
 function Reservation() {
     // nbTickets store the number of tickets chosen by the user (1 by default)
-    const [nbTickets, setNbTickets] = useState(0)
+    const [nbTickets, setNbTickets] = useState(1)
     // date stores the chosen visit date (empty by default)
     const today = new Date().toISOString().split('T')[0] // get today's date in YYYY-MM-DD format as default value
 
@@ -42,7 +42,6 @@ function Reservation() {
         }
 
         // Check if the user has confirmed their reservation details
-
         if (!confirmed) {
             setMessage("Veuillez confirmer vos informations avant de rejoindre l'horreur.")
             return
@@ -63,6 +62,9 @@ function Reservation() {
         // The response is ok (status 200-299), success message
         if (response.ok) {
             setMessage('Réservation confirmée !')
+            setNbTickets(1)
+            setDate(today)
+            setConfirmed(false)
         } else {
             if (response.status === 401) {
                 // If the user is not authenticated, open the login modal
