@@ -5,8 +5,6 @@ import type { Request, Response, NextFunction } from "express";
 import { prisma } from '../lib/prisma.js'
 // Import the validation schema
 import { BadRequestError, UnauthorizedError, NotFoundError, ForbiddenError } from "../utils/AppError.js";
-import { updateReservationSchema } from "../schemas/reservation.schema.js";
-import { parse } from "node:path";
 
 // Retrieves all reservations for admin
 export const getAllReservations = async (req: Request, res: Response, next: NextFunction) => {
@@ -145,16 +143,6 @@ export const updateReservation = async (req: Request, res: Response, next: NextF
         throw new NotFoundError("La réservation n'existe pas")
     }
 
-    // Validate the request body with Zod partial schema (all fields optional for PATCH)
-    const data = updateReservationSchema.safeParse(req.body)
-
-    // If the data is invalid, return a 400 error
-    if (!data.success) {
-        throw new BadRequestError("Données invalides")
-    }
-
-    // Extract the validated data from the Zod result
-    const parsedBody = data.data
 
     // Update the reservation in the database with validated fields
     const newReservation = await prisma.reservation.update({
@@ -162,10 +150,10 @@ export const updateReservation = async (req: Request, res: Response, next: NextF
         where: { id_RESERVATION: reservationParam },
         // Update only the fields provided in the request body
         data: {
-            nb_tickets: parsedBody.nb_tickets,
-            date: parsedBody.date,
-            id_TICKET: parsedBody.id_TICKET,
-            status: parsedBody.status
+            nb_tickets: req.body.nb_tickets,
+            date: req.body.date,
+            id_TICKET: req.body.id_TICKET,
+            status: req.body.status
         }
     })
 
