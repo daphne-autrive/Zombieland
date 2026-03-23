@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { Box, Button, Heading, Input, Text, Checkbox } from '@chakra-ui/react'
 
+import ConfirmModal from '@/components/ConfirmModal.tsx';
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -37,6 +38,9 @@ function MyAccount() {
   const [confirmedDeletion, setConfirmedDeletion] = useState(false)
   // confirmed deletion stores whether the user has checked the deletion confirmation checkbox
   const [deleteMessage, setDeleteMessage] = useState('')
+  // State to manage the open/close of the confirmation modal for deletion
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   //What we want only once "on mount" thanks to "[]" at the end of the useEffect
   //Can countain 2 fetches
   useEffect(() => {
@@ -128,7 +132,6 @@ function MyAccount() {
       bgAttachment="fixed"
       display="flex"
       flexDirection="column"
-      pt="80px"
     >
       <Header />
 
@@ -221,7 +224,7 @@ function MyAccount() {
           />
 
           <Button
-            onClick={handleUpdate}
+            onClick={() => setIsUpdateModalOpen(true)} //calling pop-up confirmation before updating
             bgImage={`url(${bgBouton})`}
             bgSize="cover"
             bgPosition="center"
@@ -343,7 +346,7 @@ function MyAccount() {
           </Checkbox>
 
           <Button
-            onClick={handleDelete}
+            onClick={() => setIsDeleteModalOpen(true)} //calling pop-up confirmation before deleting
             isDisabled={!confirmedDeletion}
             bgImage={`url(${bgBouton})`}
             bgSize="cover"
@@ -370,7 +373,22 @@ function MyAccount() {
           )}
         </Box>
       </Box>
+      {/*Pop-Up*/}
+      <ConfirmModal
+        isOpen={isUpdateModalOpen}
+        onClose={() => setIsUpdateModalOpen(false)}
+        onConfirm={handleUpdate}
+        title="Modifier mon profil"
+        message="Es-tu sûr de vouloir modifier tes informations ?"
+      />
 
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Supprimer mon compte"
+        message="Êtes-vous sûr de vouloir supprimer votre compte ?"
+      />
       <Footer />
     </Box>
   )
