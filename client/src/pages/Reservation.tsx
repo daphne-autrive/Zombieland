@@ -9,13 +9,12 @@ import LoginModal from '../components/LoginModal'
 // Import background images and card image
 import bgImage from '../assets/bg-image.png'
 import bgBouton from '../assets/bg-bouton.png'
-import Card from '../assets/Card.png'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
 function Reservation() {
     // nbTickets store the number of tickets chosen by the user (1 by default)
-    const [nbTickets, setNbTickets] = useState(1)
+const [nbTickets, setNbTickets] = useState<string>('1')
     // date stores the chosen visit date (empty by default)
     const today = new Date().toISOString().split('T')[0] // get today's date in YYYY-MM-DD format as default value
 
@@ -62,7 +61,7 @@ function Reservation() {
         // The response is ok (status 200-299), success message
         if (response.ok) {
             setMessage('Réservation confirmée !')
-            setNbTickets(1)
+            setNbTickets('1')
             setDate(today)
             setConfirmed(false)
         } else {
@@ -147,10 +146,7 @@ function Reservation() {
                                         type="number"
                                         min={1}
                                         value={nbTickets}
-                                        onChange={(e) => {
-                                            const num = parseInt(e.target.value) || 1;
-                                            setNbTickets(Math.max(1, num));
-                                        }}
+                                        onChange={(e) => setNbTickets(e.target.value)}
                                         bg="rgba(0,0,0,0.3)"
                                         color="zombieland.white"
                                         borderColor="zombieland.primary"
@@ -244,7 +240,7 @@ function Reservation() {
                                             Nombre de billets
                                         </Text>
                                         <Text color="zombieland.white" fontFamily="body" fontWeight="300" fontSize="16px">
-                                            {nbTickets} {nbTickets > 1 ? 'billets' : 'billet'}
+                                            {nbTickets} {nbTickets > '1' ? 'billets' : 'billet'}
                                         </Text>
                                     </Box>
                                 </Flex>
@@ -272,7 +268,7 @@ function Reservation() {
                                         Total
                                     </Text>
                                     <Text color="zombieland.white" fontFamily="heading" fontWeight="bold" fontSize="28px">
-                                        {(nbTickets * TICKET_PRICE).toFixed(2)} €
+                                        {(parseInt(nbTickets) * TICKET_PRICE).toFixed(2)} €
                                     </Text>
                                 </Box>
                             </Box>
