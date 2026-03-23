@@ -5,6 +5,8 @@ import type { Request, Response, NextFunction } from "express";
 import { prisma } from '../lib/prisma.js'
 // Import the validation schema
 import { BadRequestError, UnauthorizedError, NotFoundError, ForbiddenError } from "../utils/AppError.js";
+import { updateReservationSchema } from "../schemas/reservation.schema.js";
+import { parse } from "node:path";
 
 // Retrieves all reservations for admin
 export const getAllReservations = async (req: Request, res: Response, next: NextFunction) => {
@@ -113,7 +115,7 @@ export const deleteReservation = async (req: Request, res: Response, next: NextF
     })
 }
 
-// Update a reservation for admin role
+// Update a reservation (admin only)
 export const updateReservation = async (req: Request, res: Response, next: NextFunction) => {
     // Get the id from the URL parameters and convert it to a number
     const reservationParam = parseInt(req.params.id as string);
@@ -123,6 +125,7 @@ export const updateReservation = async (req: Request, res: Response, next: NextF
         // Return a 400 Bad Request error if the id is invalid
         throw new BadRequestError("Réservation non trouvée")
     };
+
     // Check if the user is authenticated
     if (!req.user) {
         // Return a 401 Unauthorized error if no user is found
@@ -141,4 +144,31 @@ export const updateReservation = async (req: Request, res: Response, next: NextF
         // Return a 404 Not Found error
         throw new NotFoundError("La réservation n'existe pas")
     }
+
+    // Validate the request body with Zod partial schema (all fields optional for PATCH)
+    const data = updateReservationSchema.safeParse(req.body)
+
+    // If the data is invalid, return a 400 error
+    if (!data.success) {
+        throw new BadRequestError("Données invalides")
+    }
+
+    // Extract the validated data from the Zod result
+    const parsedBody = data.data
+
+    // Update the reservation in the database with validated fields
+    const newReservation = await prisma.reservation.update({
+        // Target the reservation by its id from the URL
+        where: { id_RESERVATION: reservationParam },
+        // Update only the fields provided in the request body
+        data: {
+            nb_tickets: parsedBody.nb_tickets,
+            date: parsedBody.date,
+            id_TICKET: parsedBody.id_TICKET,
+            status: parsedBody.status
+        }
+    })
+
+    // Return the updated reservation with a 200 status
+    return res.status(200).json(newReservation)
 }
