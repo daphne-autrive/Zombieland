@@ -59,15 +59,13 @@ function MyReservations() {
 
         if (response.ok) {
             // remove the canceled reservation from the list without reloading the page
+
             setReservations(reservations.filter((r: Reservation) => r.id_RESERVATION !== id))
-            if (response.ok) {
-                setReservations(reservations.filter((r: Reservation) => r.id_RESERVATION !== id))
-                setMessage('Votre annulation a bien été prise en compte.')
-                navigate('/my-account', { state: { refresh: Date.now() } })
-            }
+            setMessage('Votre annulation a bien été prise en compte.')
+            navigate('/my-account', { state: { refresh: Date.now() } })
         } else {
             const data = await response.json()
-            alert(data.error)
+            alert(data.message)
         }
     }
 
