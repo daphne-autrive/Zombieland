@@ -112,3 +112,51 @@ export const deleteReservation = async (req: Request, res: Response, next: NextF
         message: "Votre annulation a bien été prise en compte"
     })
 }
+
+// Update a reservation (admin only)
+export const updateReservation = async (req: Request, res: Response, next: NextFunction) => {
+    // Get the id from the URL parameters and convert it to a number
+    const reservationParam = parseInt(req.params.id as string);
+
+    // Check if the id is not a valid number
+    if (isNaN(reservationParam)) {
+        // Return a 400 Bad Request error if the id is invalid
+        throw new BadRequestError("Réservation non trouvée")
+    };
+
+    // Check if the user is authenticated
+    if (!req.user) {
+        // Return a 401 Unauthorized error if no user is found
+        throw new UnauthorizedError("L'utilisateur n'existe pas")
+    }
+
+    // Search the database for the reservation with this id
+    const findReservation = await prisma.reservation.findUnique({
+        where: {
+            id_RESERVATION: reservationParam
+        }
+    })
+
+    // Check if the reservation was not found in the database
+    if (findReservation === null) {
+        // Return a 404 Not Found error
+        throw new NotFoundError("La réservation n'existe pas")
+    }
+
+
+    // Update the reservation in the database with validated fields
+    const newReservation = await prisma.reservation.update({
+        // Target the reservation by its id from the URL
+        where: { id_RESERVATION: reservationParam },
+        // Update only the fields provided in the request body
+        data: {
+            nb_tickets: req.body.nb_tickets,
+            date: req.body.date,
+            id_TICKET: req.body.id_TICKET,
+            status: req.body.status
+        }
+    })
+
+    // Return the updated reservation with a 200 status
+    return res.status(200).json(newReservation)
+}

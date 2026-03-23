@@ -3,12 +3,12 @@
 // Import Router from Express to create a router
 import { Router } from 'express'
 // Import function from the controller
-import { createReservation, deleteReservation, getAllReservations, getMyReservations } from '../controllers/reservations.controller.js'
+import { createReservation, deleteReservation, getAllReservations, getMyReservations, updateReservation } from '../controllers/reservations.controller.js'
 import { checkToken } from '../middlewares/auth.middleware.js'
 import { checkRole } from '../middlewares/role.middleware.js'
 
 import { validate } from '../middlewares/validate.middleware.js'
-import { createReservationSchema } from '../schemas/reservation.schema.js'
+import { createReservationSchema, UpdateReservationSchema } from '../schemas/reservation.schema.js'
 
 // Create an router Express
 const router = Router()
@@ -21,5 +21,7 @@ router.get('/', checkToken, checkRole("ADMIN"), getAllReservations)
 router.post('/', checkToken, validate(createReservationSchema), createReservation)
 //When someone calls DELETE /api/reservations/:id, execute deleteReservation
 router.delete('/:id', checkToken, deleteReservation)
+//When someone calls PATCH /api/reservations/:id, execute updateReservation
+router.patch('/:id', checkToken, checkRole("ADMIN"), validate(UpdateReservationSchema), updateReservation)
 
 export default router
