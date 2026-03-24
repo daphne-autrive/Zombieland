@@ -21,7 +21,7 @@ import Faq from './pages/Faq'
 import HomePage from './pages/HomePage'
 import Contact from './pages/Contact'
 import Plan from './pages/Plan'
-import AdminLayout from './components/AdminLayout'
+import AdminLayout from './components/AdminGuard'
 import AdminAttractions from "./pages/AdminAttractions"
 
 

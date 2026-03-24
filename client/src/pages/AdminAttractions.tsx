@@ -1,11 +1,13 @@
 // Admin page to manage attractions : list, filter, edit and delete
 import { useEffect, useState, useRef } from "react"
-import { Box, Text, Button, Flex, Menu, MenuButton, MenuList, MenuItem, Spinner, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, Table, Thead, Tbody, Tr, Th, Td, TableContainer } from "@chakra-ui/react"
+import { Box, Text, Button, Flex, Menu, MenuButton, MenuList, MenuItem, Spinner, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay } from "@chakra-ui/react"
 import { useNavigate } from "react-router-dom"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
 import bgImage from '../assets/bg-image.png'
 import type { Attraction } from "@types"
+import AdminTable from "../components/AdminTable"
+
 
 const categoryToEnum: Record<string, string> = {
     "Peur Acceptable": "LOW",
@@ -48,12 +50,10 @@ const AdminAttractions = () => {
             return
         }
         // Refresh the list after deletion
-        // Rafraîchit la liste après suppression
         fetchAttractions()
     }
 
     // Filter attractions by category
-    // Filtre les attractions par catégorie
     const filteredAttractions = selectedCategory
         ? attractions.filter(a => a.intensity === categoryToEnum[selectedCategory])
         : attractions
@@ -76,7 +76,6 @@ const AdminAttractions = () => {
                 </Text>
 
                 {/* Filter button */}
-                {/* Bouton de filtre */}
                 <Flex justifyContent={{ base: "center", lg: "flex-end" }} mb={6}>
                     <Menu>
                         <MenuButton
@@ -104,7 +103,6 @@ const AdminAttractions = () => {
                 </Flex>
 
                 {/* Loading spinner */}
-                {/* Spinner de chargement */}
                 {loading && (
                     <Flex justify="center" mt={10}>
                         <Spinner color="zombieland.primary" size="xl" />
@@ -114,87 +112,73 @@ const AdminAttractions = () => {
                 {error && <Text color="red.400">{error}</Text>}
 
                 {/* Attractions table */}
-                {/* Tableau des attractions */}
                 {!loading && (
-                    <TableContainer bg="rgba(255,255,255,0.06)" borderRadius="md" border="2px solid" borderColor="zombieland.primary">
-                        <Table variant="unstyled">
-                            <Thead>
-                                <Tr borderBottom="1px solid #333">
-                                    <Th color="zombieland.cta1orange">Nom</Th>
-                                    <Th color="zombieland.cta1orange">Intensité</Th>
-                                    <Th color="zombieland.cta1orange">Durée</Th>
-                                    <Th color="zombieland.cta1orange">Capacité</Th>
-                                    <Th color="zombieland.cta1orange">Taille min.</Th>
-                                    <Th color="zombieland.cta1orange">Actions</Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-                                {filteredAttractions.map((attraction) => (
-                                    <Tr
-                                        key={attraction.id_ATTRACTION}
-                                        borderBottom="1px solid #222"
-                                        transition="all 0.3s ease"
-                                        cursor="pointer"
-                                        _hover={{
-                                            bg: "rgba(255,255,255,0.05)",
-                                            borderColor: "zombieland.cta1orange",
-                                        }}
-                                        // Navigate to attraction detail page on row click
-                                        // Navigue vers la page de détail de l'attraction au clic sur la ligne
-                                        onClick={() => navigate(`/attractions/${attraction.id_ATTRACTION}`)}
-                                    >
-                                        <Td color="zombieland.white" fontWeight="bold">{attraction.name}</Td>
-                                        <Td color="gray.400">{attraction.intensity}</Td>
-                                        <Td color="gray.400">{attraction.duration ?? "—"}</Td>
-                                        <Td color="gray.400">{attraction.capacity ?? "—"}</Td>
-                                        <Td color="gray.400">{attraction.min_height ? `${attraction.min_height} cm` : "—"}</Td>
-                                        <Td>
-                                            <Flex gap={3}>
-                                                <Button
-                                                    size="sm"
-                                                    border="2px solid"
-                                                    borderColor="zombieland.primary"
-                                                    color="zombieland.white"
-                                                    bg="transparent"
-                                                    _hover={{ borderColor: "zombieland.cta1orange", color: "zombieland.cta1orange" }}
-                                                    // Prevent row click from triggering
-                                                    // Empêche le clic de se propager à la ligne
-                                                    onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        navigate(`/admin/attractions/${attraction.id_ATTRACTION}/edit`)
-                                                    }}
-                                                >
-                                                    Modifier
-                                                </Button>
-                                                <Button
-                                                    size="sm"
-                                                    border="2px solid"
-                                                    borderColor="red.500"
-                                                    color="red.400"
-                                                    bg="transparent"
-                                                    _hover={{ bg: "red.500", color: "white" }}
-                                                    // Prevent row click from triggering
-                                                    // Empêche le clic de se propager à la ligne
-                                                    onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        setAttractionToDelete(attraction.id_ATTRACTION)
-                                                    }}
-                                                >
-                                                    Supprimer
-                                                </Button>
-                                            </Flex>
-                                        </Td>
-                                    </Tr>
-                                ))}
-                            </Tbody>
-                        </Table>
-                    </TableContainer>
+                    <AdminTable
+                        data={filteredAttractions}
+                        onRowClick={(attraction) => navigate(`/attractions/${attraction.id_ATTRACTION}`)}
+                        columns={[
+                            {
+                                header: "Nom",
+                                render: (a) => <Text color="zombieland.white" fontWeight="bold">{a.name}</Text>
+                            },
+                            {
+                                header: "Intensité",
+                                render: (a) => a.intensity
+                            },
+                            {
+                                header: "Durée",
+                                render: (a) => a.duration ?? "—"
+                            },
+                            {
+                                header: "Capacité",
+                                render: (a) => a.capacity ?? "—"
+                            },
+                            {
+                                header: "Taille min.",
+                                render: (a) => a.min_height ? `${a.min_height} cm` : "—"
+                            },
+                            {
+                                header: "Actions",
+                                render: (a) => (
+                                    <Flex gap={3}>
+                                        <Button
+                                            size="sm"
+                                            border="2px solid"
+                                            borderColor="zombieland.primary"
+                                            color="zombieland.white"
+                                            bg="transparent"
+                                            _hover={{ borderColor: "zombieland.cta1orange", color: "zombieland.cta1orange" }}
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                navigate(`/admin/attractions/${a.id_ATTRACTION}/edit`)
+                                            }}
+                                        >
+                                            Modifier
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            border="2px solid"
+                                            borderColor="red.500"
+                                            color="red.400"
+                                            bg="transparent"
+                                            _hover={{ bg: "red.500", color: "white" }}
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                setAttractionToDelete(a.id_ATTRACTION)
+                                            }}
+                                        >
+                                            Supprimer
+                                        </Button>
+                                    </Flex>
+                                )
+                            }
+                        ]}
+                    />
                 )}
 
             </Box>
 
             {/* Confirmation popup before deletion */}
-            {/* Pop-up de confirmation avant suppression */}
             <AlertDialog
                 isOpen={attractionToDelete !== null}
                 leastDestructiveRef={cancelRef}
