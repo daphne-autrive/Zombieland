@@ -81,3 +81,23 @@ export const getAttractionById = async (req: Request, res: Response, next: NextF
         })
         return res.status(201).json(attraction)
     }
+
+    // delete an attraction by admin only
+    export const deleteAttraction = async (req: Request, res: Response, next: NextFunction) => {
+        const attractionParam = parseInt(req.params.id as string)
+
+        if (isNaN(attractionParam)) {
+            throw new BadRequestError("ID invalide")
+        }
+        const findAttraction = await prisma.attraction.findUnique({
+            where: { id_ATTRACTION: attractionParam}
+        })
+        if (findAttraction === null) {
+            throw new NotFoundError("L'attraction n'existe pas")
+        }
+
+        await prisma.attraction.delete({
+            where: { id_ATTRACTION: attractionParam}
+        })
+        return res.status(204).send()
+    }
