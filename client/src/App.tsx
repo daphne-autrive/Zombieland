@@ -21,6 +21,8 @@ import Faq from './pages/Faq'
 import HomePage from './pages/HomePage'
 import Contact from './pages/Contact'
 import Plan from './pages/Plan'
+import AdminLayout from './components/AdminLayout'
+import AdminAttractions from "./pages/AdminAttractions"
 
 
 
@@ -28,7 +30,7 @@ const App = () => {
     return (
         <BrowserRouter>
             <ScrollToTop />
-            
+
             <Routes>
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
@@ -41,6 +43,7 @@ const App = () => {
                 <Route path='/' element={<HomePage />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/plan" element={<Plan />} />
+                <Route path="/admin/attractions" element={<AdminLayout><AdminAttractions /></AdminLayout>} />
             </Routes>
         </BrowserRouter>
     );
