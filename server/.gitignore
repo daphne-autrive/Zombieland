@@ -4,5 +4,4 @@ node_modules
 
 /generated/prisma
 
-cookies.txt
-cookies-member.txt
+cookies*.txt
