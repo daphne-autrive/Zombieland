@@ -3,7 +3,7 @@
 // Import useState to manage from data
 import { useState, useEffect } from 'react'
 // Import Chakra UI components for styling
-import { Box, Button, Checkbox, Heading, Input, Text, Flex, FormControl, FormLabel } from '@chakra-ui/react'
+import { Box, Button, Checkbox, Heading, Text, Input, Flex, FormControl, FormLabel } from '@chakra-ui/react'
 // Import modals for login before booking
 import LoginModal from '../components/LoginModal'
 // Import background images and card image
@@ -11,6 +11,12 @@ import bgImage from '../assets/bg-image.png'
 import bgBouton from '../assets/bg-bouton.png'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+
+// Import the calendar component from react-day-picker
+import { DayPicker } from 'react-day-picker'
+import 'react-day-picker/style.css'
+import '../styles/calendar.css'
+import { fr } from 'react-day-picker/locale'
 
 function Reservation() {
     // Price per ticket in euros
@@ -34,10 +40,18 @@ function Reservation() {
     // checking the availability of the chosen date before creating the reservation
     const [availabilities, setAvailabilities] = useState<{ date: string, available: boolean }[]>([])
 
+    // For react-day-picker, we need to convert the date string to a Date object
+    // and disableDays will be an array of Date objects corresponding to unavailable dates
+    const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined)
+    const disabledDays = availabilities
+        .filter(a => !a.available)
+        .map(a => new Date(a.date))
+    const pastDays = { before: new Date() }
+
     // useEffect to fetch availabilities when the component mounts
     useEffect(() => {
         const fetchAvailabilities = async () => {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/availabilities`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/availabilities`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
             })
@@ -47,6 +61,14 @@ function Reservation() {
 
         fetchAvailabilities()
     }, [])
+
+    // handleSelectDay is the function that runs when we select a date in the calendar
+    const handleDaySelect = (day: Date | undefined) => {
+        setSelectedDay(day)
+        if (day) {
+            setDate(day.toISOString().split('T')[0])
+        }
+    }
 
     //  handleSubmit is the function that runs when we click to "Confirm"
     const handleSubmit = async () => {
@@ -192,27 +214,22 @@ function Reservation() {
                                     <FormLabel color="zombieland.white" fontWeight="600" mb={3} fontSize="16px">
                                         Quand souhaitez-vous venir ?
                                     </FormLabel>
-                                    <Input
-                                        type="date"
-                                        value={date}
-                                        min={today}
-                                        onChange={(e) => setDate(e.target.value)}
-                                        bg="rgba(0,0,0,0.3)"
-                                        color="zombieland.white"
-                                        borderColor="zombieland.primary"
-                                        borderWidth="2px"
-                                        transition="all 0.3s ease"
-                                        _focus={{
-                                            borderColor: "zombieland.primary",
-                                            boxShadow: "0 0 0 3px rgba(250, 235, 220, 0.1)",
-                                            bg: "rgba(0,0,0,0.4)"
+                                    <DayPicker
+                                        mode="single"
+                                        selected={selectedDay}
+                                        onSelect={handleDaySelect}
+                                        disabled={[{ before: new Date() }, ...disabledDays]}
+                                        // modifiers let us add a class to the disabled days 
+                                        // to make them look different in the calendar
+                                        modifiers={{
+                                            past: pastDays,
+                                            full: disabledDays
                                         }}
-                                        _hover={{
-                                            borderColor: "zombieland.primary"
+                                        modifiersClassNames={{
+                                            past: 'rdp-day-past',
+                                            full: 'rdp-day-full'
                                         }}
-                                        fontSize="16px"
-                                        py={3}
-                                        pl={4}
+                                        locale={fr}
                                     />
                                 </FormControl>
                             </Box>
@@ -254,7 +271,10 @@ function Reservation() {
                                             Date de visite
                                         </Text>
                                         <Text color="zombieland.white" fontFamily="body" fontWeight="300" fontSize="16px">
-                                            {new Date(date).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                                            {selectedDay
+                                                ? selectedDay.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+                                                : new Date(today).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+                                            }
                                         </Text>
                                     </Box>
                                     <Box>
