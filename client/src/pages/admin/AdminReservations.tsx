@@ -28,30 +28,30 @@ const AdminReservations = () => {
                 {
                 withCredentials: true,
                 });
-            setReservations(response)
+            setReservations(response.data)
             setLoading(false)
         } catch (error) {
-            setError
+            setError("Erreur lors du chargement")
         }
     };
         axiosReservation()
     }, []);
-    const handleStatusChange = async () => {
-        await axios.patch(`${API_URL}/api/reservations/:id}`, 
-            {
-                Body: { status : "CANCELLED"
-                }
-            },
-            {
-                withCredentials: true
-            }
-        )
 
-    }
-    const filteredReservations = reservations.filter(r => filterStatus === "ALL" || r.status === filterStatus)
+    const handleStatusChange = async (id: number, status: string) => {
+    await axios.patch(`${API_URL}/api/reservations/${id}`,
+        { status },
+        { withCredentials: true }
+    )
+    // Met à jour le state local pour refléter le changement
+    setReservations(reservations.map(r =>
+        r.id_RESERVATION === id ? { ...r, status } : r
+    ))
+}
+    
+    const filteredReservations = reservations.filter(r => filterStatus === "All" || r.status === filterStatus)
     return(
         <></>
     );
-};
 
+};
 export default AdminReservations
