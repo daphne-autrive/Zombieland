@@ -14,7 +14,6 @@ function Header() {
     const [firstname, setFirstname] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const navigate = useNavigate()
-    const controller = new AbortController();
 
 
     useEffect(() => {
@@ -39,9 +38,7 @@ function Header() {
                 {},
                 {
                 withCredentials: true,
-                signal: controller.signal
   });
-            controller.abort()
             setFirstname(null);
             navigate('/')
         } catch (error) {

@@ -9,7 +9,9 @@ async function main() {
 
     const adminPassword = await argon2.hash('monMotDePasse')
     const memberPassword = await argon2.hash('monMotDePasse')
-
+    // Create users if they don't exist yet
+    // skipDuplicates: ignores entries that already exist in the database
+    // without throwing an error (based on unique constraints
     await prisma.user.createMany({
         data: [
             {
@@ -27,6 +29,7 @@ async function main() {
                 role: Role.MEMBER,
             },
         ],
+        skipDuplicates: true
     });
 
     const user1 = await prisma.user.findUnique({ where: { email: 'john.doe@example.com' } });
@@ -133,6 +136,7 @@ async function main() {
             { id_ATTRACTION: fosse.id_ATTRACTION, id_CATEGORY: catImmersive.id_CATEGORY },
             { id_ATTRACTION: labo.id_ATTRACTION, id_CATEGORY: catImmersive.id_CATEGORY },
         ],
+        skipDuplicates: true
     });
 
     await prisma.reservation.createMany({
@@ -154,6 +158,7 @@ async function main() {
                 id_TICKET: ticket2.id_TICKET,
             },
         ],
+        skipDuplicates: true
     });
 
     console.log('✅ Seed terminé avec succès !');
