@@ -147,7 +147,11 @@ export async function me(req: Request, res: Response, next: NextFunction) {
 export async function logout(req: Request, res: Response, next: NextFunction) {
 
   //1.Logout
-  res.clearCookie('token')
+  res.cookie('token', {
+    httpOnly: true,                 // JavaScript can't read it → protection XSS
+    secure: true,                  // false for dev (HTTP, localhost), true for prod (HTTPS uniquement)
+    sameSite: 'none',                // cookie is send only from the same website → CSRF protection
+  })
   //2.returning the informations to the user
   return res.status(200).json('Déconnexion')
 }
