@@ -2,11 +2,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-interface AdminLayoutProps {
+interface AdminGuardProps {
     children: React.ReactNode
 }
 
-function AdminLayout({ children }: AdminLayoutProps) {
+function AdminGuard({ children }: AdminGuardProps) {
     const [isAuthorized, setIsAuthorized] = useState(false)
     const navigate = useNavigate()
 
@@ -42,4 +42,4 @@ function AdminLayout({ children }: AdminLayoutProps) {
     return <>{children}</>
 }
 
-export default AdminLayout
+export default AdminGuard
