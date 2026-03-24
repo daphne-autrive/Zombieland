@@ -66,3 +66,4 @@ pgdata/
 coverage/
 .nyc_output/
 /generated/prisma
+cookies*.txt
