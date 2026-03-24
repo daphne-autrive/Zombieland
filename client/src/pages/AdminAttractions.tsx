@@ -4,9 +4,10 @@ import { Box, Text, Button, Flex, Menu, MenuButton, MenuList, MenuItem, Spinner,
 import { useNavigate } from "react-router-dom"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
-import bgImage from '../assets/bg-image.png'
+import bgImage from '../assets/bgadminpage.png'
 import type { Attraction } from "@types"
 import AdminTable from "../components/AdminTable"
+import { FaTrash } from 'react-icons/fa'
 
 
 const categoryToEnum: Record<string, string> = {
@@ -115,11 +116,19 @@ const AdminAttractions = () => {
                 {!loading && (
                     <AdminTable
                         data={filteredAttractions}
-                        onRowClick={(attraction) => navigate(`/attractions/${attraction.id_ATTRACTION}`)}
                         columns={[
                             {
                                 header: "Nom",
-                                render: (a) => <Text color="zombieland.white" fontWeight="bold">{a.name}</Text>
+                                render: (a) => (
+                                    <Text
+                                        fontWeight="bold"
+                                        cursor="pointer"
+                                        _hover={{ color: "zombieland.cta1orange", textDecoration: "underline" }}
+                                        onClick={() => navigate(`/attractions/${a.id_ATTRACTION}`)}
+                                    >
+                                        {a.name}
+                                    </Text>
+                                )
                             },
                             {
                                 header: "Intensité",
@@ -143,11 +152,9 @@ const AdminAttractions = () => {
                                     <Flex gap={3}>
                                         <Button
                                             size="sm"
-                                            border="2px solid"
-                                            borderColor="zombieland.primary"
-                                            color="zombieland.white"
-                                            bg="transparent"
-                                            _hover={{ borderColor: "zombieland.cta1orange", color: "zombieland.cta1orange" }}
+                                            bg="#3E4D28"
+                                            color="white"
+                                            _hover={{ opacity: 0.8 }}
                                             onClick={(e) => {
                                                 e.stopPropagation()
                                                 navigate(`/admin/attractions/${a.id_ATTRACTION}/edit`)
@@ -157,17 +164,15 @@ const AdminAttractions = () => {
                                         </Button>
                                         <Button
                                             size="sm"
-                                            border="2px solid"
-                                            borderColor="red.500"
-                                            color="red.400"
-                                            bg="transparent"
-                                            _hover={{ bg: "red.500", color: "white" }}
+                                            bg="#8C6E21"
+                                            color="white"
+                                            _hover={{ bg: "#6e5519" }}
                                             onClick={(e) => {
                                                 e.stopPropagation()
                                                 setAttractionToDelete(a.id_ATTRACTION)
                                             }}
                                         >
-                                            Supprimer
+                                            <FaTrash />
                                         </Button>
                                     </Flex>
                                 )
