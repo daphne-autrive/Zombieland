@@ -66,125 +66,132 @@ const AdminReservations = () => {
     };
 
     return (
-        <Box
-            display="flex"
-            flexDirection="column"
-            minHeight="100vh"
-            bgAttachment="fixed"
-            bgImage={`url(${bgImage})`}
-            bgSize="cover"
-        >
-            <Header />
-            <Box>
-            <Flex height="100dvh">
-                <AdminMenu/>
-            </Flex >
-            <Flex  justify="right">
-                <Box >
-                    <Text
-                        fontWeight="bold"
-                        color="zombieland.white"
-                    
-                        textAlign="center"
-                        fontFamily="heading"
-                        fontSize="54px"
-                    >
-                        Gestion des réservations
-                    </Text>
+    <Box
+        display="flex"
+        flexDirection="column"
+        minHeight="100vh"
+        bgAttachment="fixed"
+        bgImage={`url(${bgImage})`}
+        bgSize="cover"
+    >
+        <Header />
 
-                    {/* Loading spinner */}
-                    {loading && (
-                        <Flex justify="center" mt={10}>
-                            <Spinner color="zombieland.primary" size="xl" />
-                        </Flex>
-                    )}
+        {/* MAIN LAYOUT : sidebar + content */}
+        <Flex flex="1" pt="80px" pb="80px">
 
-                    {error && <Text color="red.400">{error}</Text>}
+            {/* LEFT SIDEBAR — 30% */}
+            <Box
+                width={30}
+                minWidth="250px"
+                maxWidth="350px"
+                borderRight="1px solid rgba(255,255,255,0.1)"
+                
+               
+            >
+                <AdminMenu />
+            </Box>
 
-                    {/* Reservations table */}
-                    {!loading && (
-                        <AdminTable
-                            data={reservations}
-                            onRowClick={(reservation) =>
-                                navigate(`/reservations/${reservation.id_RESERVATION}`)
+            {/* RIGHT CONTENT — 70% */}
+            <Box width={70} flex="1" px={10}>
+                <Text
+                    fontWeight="bold"
+                    color="zombieland.white"
+                    textAlign="center"
+                    fontFamily="heading"
+                    fontSize="54px"
+                    mb={10}
+                >
+                    Gestion des réservations
+                </Text>
+
+                {/* Loading spinner */}
+                {loading && (
+                    <Flex justify="center" mt={10}>
+                        <Spinner color="zombieland.primary" size="xl" />
+                    </Flex>
+                )}
+
+                {error && <Text color="red.400">{error}</Text>}
+
+                {/* Reservations table */}
+                {!loading && (
+                    <AdminTable
+                        data={reservations}
+                        onRowClick={(reservation) =>
+                            navigate(`/reservations/${reservation.id_RESERVATION}`)
+                        }
+                        columns={[
+                            {
+                                header: "Numéro",
+                                render: (r) => r.id_RESERVATION
+                            },
+                            {
+                                header: "Utilisateur",
+                                render: (r) => r.id_USER
+                            },
+                            {
+                                header: "Billet",
+                                render: (r) => r.id_TICKET
+                            },
+                            {
+                                header: "Nb Tickets",
+                                render: (r) => r.nb_tickets ?? "—"
+                            },
+                            {
+                                header: "Date",
+                                render: (r) =>
+                                    new Date(r.date).toLocaleDateString("fr-FR")
+                            },
+                            {
+                                header: "Montant",
+                                render: (r) => `${r.total_amount} €`
+                            },
+                            {
+                                header: "Statut",
+                                render: (r) => r.status
+                            },
+                            {
+                                header: "Actions",
+                                render: (r) => (
+                                    <Flex gap={3}>
+                                        <Button
+                                            size="sm"
+                                            border="2px solid"
+                                            borderColor="zombieland.primary"
+                                            color="zombieland.white"
+                                            bg="transparent"
+                                            _hover={{
+                                                borderColor: "zombieland.cta1orange",
+                                                color: "zombieland.cta1orange"
+                                            }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/admin/reservations/${r.id_RESERVATION}/edit`);
+                                            }}
+                                        >
+                                            Modifier
+                                        </Button>
+
+                                        <Button
+                                            size="sm"
+                                            border="2px solid"
+                                            borderColor="red.500"
+                                            color="red.400"
+                                            bg="transparent"
+                                            _hover={{ bg: "red.500", color: "white" }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setReservationToDelete(r.id_RESERVATION);
+                                            }}
+                                        >
+                                            Supprimer
+                                        </Button>
+                                    </Flex>
+                                )
                             }
-                            columns={[
-                                {
-                                    header: "Numéro",
-                                    render: (r) => r.id_RESERVATION
-                                },
-                                {
-                                    header: "Utilisateur",
-                                    render: (r) => r.id_USER
-                                },
-                                {
-                                    header: "Billet",
-                                    render: (r) => r.id_TICKET
-                                },
-                                {
-                                    header: "Nb Tickets",
-
-                                    render: (r) => r.nb_tickets ?? "—"
-                                },
-                                {
-                                    header: "Date",
-
-                                    render: (r) =>
-                                        new Date(r.date).toLocaleDateString("fr-FR")
-                                },
-                                {
-                                    header: "Montant",
-
-                                    render: (r) => `${r.total_amount} €`
-                                },
-                                {
-                                    header: "Statut",
-                                    render: (r) => r.status
-                                },
-                                {
-                                    header: "Actions",
-
-                                    render: (r) => (
-                                        <Flex gap={3}>
-                                            <Button
-                                                size="sm"
-                                                border="2px solid"
-                                                borderColor="zombieland.primary"
-                                                color="zombieland.white"
-                                                bg="transparent"
-                                                _hover={{
-                                                    borderColor: "zombieland.cta1orange",
-                                                    color: "zombieland.cta1orange"
-                                                }}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    navigate(`/admin/reservations/${r.id_RESERVATION}/edit`);
-                                                }}
-                                            >
-                                                Modifier
-                                            </Button>
-
-                                            <Button
-                                                size="sm"
-                                                border="2px solid"
-                                                borderColor="red.500"
-                                                color="red.400"
-                                                bg="transparent"
-                                                _hover={{ bg: "red.500", color: "white" }}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setReservationToDelete(r.id_RESERVATION);
-                                                }}
-                                            >
-                                                Supprimer
-                                            </Button>
-                                        </Flex>
-                                    )
-                                }
-                            ]}
-                        />
-                    )}
-                </Box>
+                        ]}
+                    />
+                )}
 
                 {/* Delete confirmation popup */}
                 <AlertDialog
@@ -223,12 +230,12 @@ const AdminReservations = () => {
                         </AlertDialogContent>
                     </AlertDialogOverlay>
                 </AlertDialog>
-            </Flex>
             </Box>
-            <Footer />
-        </Box>
-        
-    );
-};
+        </Flex>
+
+        <Footer />
+    </Box>
+);
+}
 
 export default AdminReservations;
