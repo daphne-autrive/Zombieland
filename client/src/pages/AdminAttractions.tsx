@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
 import bgImage from '../assets/bgadminpage.png'
+import bgBouton from '../assets/bg-bouton.png'
 import type { Attraction } from "@types"
 import AdminTable from "../components/AdminTable"
 import { FaTrash } from 'react-icons/fa'
@@ -176,12 +177,34 @@ const AdminAttractions = () => {
                                         >
                                             <FaTrash />
                                         </Button>
+
                                     </Flex>
                                 )
                             }
                         ]}
                     />
                 )}
+
+                {/* Create new attraction button */}
+                <Flex justifyContent="center" mt={8}>
+                    <Button
+                        bgImage={`url(${bgBouton})`}
+                        color="zombieland.secondary"
+                        _hover={{ opacity: 0.8 }}
+                        fontFamily="body"
+                        fontSize="18px"
+                        py={6}
+                        px={10}
+                        borderRadius="full"
+                        letterSpacing="1px"
+                        fontWeight="bold"
+                        boxShadow="inset 0 2px 8px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.5)"
+                        textTransform="uppercase"
+                        onClick={() => navigate('/admin/attractions/create')}
+                    >
+                        + Créer une nouvelle attraction
+                    </Button>
+                </Flex>
 
             </Box>
 

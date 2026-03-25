@@ -156,3 +156,34 @@ export const updateAttraction = async (req: Request, res: Response, next: NextFu
     })
     return res.json(updateAttraction)
 }
+
+    // Update the image of an attraction by ID, admin onlu
+export const updateAttractionImage = async (req: Request, res: Response, next: NextFunction) => {
+    const attractionParam = parseInt(req.params.id as string)
+
+    if (isNaN(attractionParam)) {
+        throw new BadRequestError("ID invalide")
+    }
+
+    const findAttraction = await prisma.attraction.findUnique({
+        where: { id_ATTRACTION: attractionParam }
+    })
+
+    if (findAttraction === null) {
+        throw new NotFoundError("L'attraction n'existe pas")
+    }
+
+    // Get the uploaded file path from multer
+    if (!req.file) {
+        throw new BadRequestError("Aucun fichier fourni")
+    }
+
+    const imagePath = `/uploads/${req.file.filename}`
+
+    const updatedAttraction = await prisma.attraction.update({
+        where: { id_ATTRACTION: attractionParam },
+        data: { image: imagePath }
+    })
+
+    return res.json(updatedAttraction)
+}

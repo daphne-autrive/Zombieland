@@ -35,6 +35,8 @@ const AdminAttractionEdit = () => {
     const [error, setError] = useState<string | null>(null)
     const [isConfirmOpen, setIsConfirmOpen] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const [dbImage, setDbImage] = useState<string | null>(null)
+
 
     // Form fields state
     const [name, setName] = useState("")
@@ -62,6 +64,7 @@ const AdminAttractionEdit = () => {
             setDuration(data.duration ?? "")
             setCapacity(data.capacity ?? "")
             setIntensity(data.intensity)
+            setDbImage(data.image ?? null)
             setAttractionId(data.id_ATTRACTION)
             setLoading(false)
         }
@@ -77,6 +80,24 @@ const AdminAttractionEdit = () => {
     }
 
     const handleSubmit = async (password: string) => {
+        // If a new image was selected, upload it first
+        if (fileInputRef.current?.files?.[0]) {
+            const formData = new FormData()
+            formData.append('image', fileInputRef.current.files[0])
+
+            const imageRes = await fetch(`${import.meta.env.VITE_API_URL}/api/attractions/${id}/image`, {
+                method: 'PATCH',
+                credentials: 'include',
+                body: formData
+            })
+
+            if (!imageRes.ok) {
+                setError("Erreur lors de l'upload de l'image")
+                return
+            }
+        }
+
+        // Then update the other fields
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/attractions/${id}`, {
             method: 'PATCH',
             credentials: 'include',
@@ -91,11 +112,12 @@ const AdminAttractionEdit = () => {
                 password
             })
         })
+
         if (!res.ok) {
             setError("Erreur lors de la modification de l'attraction")
             return
         }
-        // Redirect to admin attractions page after success
+
         setTimeout(() => navigate('/admin/attractions'), 1500)
     }
 
@@ -166,7 +188,7 @@ const AdminAttractionEdit = () => {
                             color="white"
                             display="flex"
                             flexDirection="column"
-                         
+
                         >
                             {/* Image zone - clickable to upload */}
                             <Box
@@ -207,9 +229,9 @@ const AdminAttractionEdit = () => {
                                     _focus={{ boxShadow: "none" }}
                                     onClick={(e) => e.stopPropagation()}
                                 >
-                                    <option value="LOW" style={{ background: "#1a1a1a" }}>LOW</option>
-                                    <option value="MEDIUM" style={{ background: "#1a1a1a" }}>MEDIUM</option>
-                                    <option value="HIGH" style={{ background: "#1a1a1a" }}>HIGH</option>
+                                    <option value="LOW" style={{ background: "#1a1a1a" }}>PEUR ACCEPTABLE</option>
+                                    <option value="MEDIUM" style={{ background: "#1a1a1a" }}>PEUR SURVIVABLE</option>
+                                    <option value="HIGH" style={{ background: "#1a1a1a" }}>PEUR MORTELLE</option>
                                 </Select>
 
                                 {/* Camera icon overlay in the center */}
@@ -233,60 +255,39 @@ const AdminAttractionEdit = () => {
                                     height="100%"
                                     objectFit="cover"
                                     borderRadius="md"
-                                    src={previewImage || attractionImages[attractionId] || img1}
+                                    src={previewImage || (dbImage ? `${import.meta.env.VITE_API_URL}${dbImage}` : attractionImages[attractionId]) || img1}
                                 />
                             </Box>
 
-                            <Box p={6} display="flex" flexDirection="column" flex="1" gap={3}>
+                            <Box p={6} display="flex" flexDirection="column" flex="1" gap={3} alignItems="center" w="100%">
 
-                                {/* Editable description */}
                                 <Input
                                     {...inputStyle}
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
                                     placeholder="Description"
+                                    w="80%"
+                                    textAlign="center"
                                 />
 
-                                {/* Editable duration */}
-                                <Flex alignItems="center" gap={2}>
+                                <Flex alignItems="center" justifyContent="center" gap={2} w="80%">
                                     <Text fontSize="sm" whiteSpace="nowrap">Durée :</Text>
-                                    <Input
-                                        {...inputStyle}
-                                        type="number"
-                                        value={duration}
-                                        onChange={(e) => setDuration(e.target.value === "" ? "" : parseInt(e.target.value))}
-                                        placeholder="Durée (min)"
-                                    />
+                                    <Input {...inputStyle} type="number" value={duration} onChange={(e) => setDuration(e.target.value === "" ? "" : parseInt(e.target.value))} placeholder="Durée (min)" />
                                     <Text fontSize="sm" color="whiteAlpha.700">min</Text>
                                 </Flex>
 
-                                {/* Editable capacity */}
-                                <Flex alignItems="center" gap={2}>
+                                <Flex alignItems="center" justifyContent="center" gap={2} w="80%">
                                     <Text fontSize="sm" whiteSpace="nowrap">Capacité :</Text>
-                                    <Input
-                                        {...inputStyle}
-                                        type="number"
-                                        value={capacity}
-                                        onChange={(e) => setCapacity(e.target.value === "" ? "" : parseInt(e.target.value))}
-                                        placeholder="Capacité"
-                                    />
+                                    <Input {...inputStyle} type="number" value={capacity} onChange={(e) => setCapacity(e.target.value === "" ? "" : parseInt(e.target.value))} placeholder="Capacité" />
                                     <Text fontSize="sm" color="whiteAlpha.700">personnes</Text>
                                 </Flex>
 
-                                {/* Editable min height */}
-                                <Flex alignItems="center" gap={2}>
+                                <Flex alignItems="center" justifyContent="center" gap={2} w="80%">
                                     <Text fontSize="sm" whiteSpace="nowrap">Taille requise :</Text>
-                                    <Input
-                                        {...inputStyle}
-                                        type="number"
-                                        value={minHeight}
-                                        onChange={(e) => setMinHeight(e.target.value === "" ? "" : parseInt(e.target.value))}
-                                        placeholder="Taille min. (cm)"
-                                    />
+                                    <Input {...inputStyle} type="number" value={minHeight} onChange={(e) => setMinHeight(e.target.value === "" ? "" : parseInt(e.target.value))} placeholder="Taille min. (cm)" />
                                     <Text fontSize="sm" color="whiteAlpha.700">cm</Text>
                                 </Flex>
 
-                                {/* Save button */}
                                 <Button
                                     bgImage={`url(${bgBouton})`}
                                     color="zombieland.secondary"
@@ -301,6 +302,7 @@ const AdminAttractionEdit = () => {
                                     boxShadow="inset 0 2px 8px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.5)"
                                     textTransform="uppercase"
                                     mt={2}
+                                    w="80%"
                                     onClick={() => setIsConfirmOpen(true)}
                                 >
                                     Enregistrer
@@ -322,6 +324,7 @@ const AdminAttractionEdit = () => {
                         </Button>
                     </Box>
                 )}
+                
             </Box>
 
             {/* Confirm modal with password before saving */}
