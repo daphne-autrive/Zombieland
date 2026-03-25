@@ -18,14 +18,14 @@ import 'react-day-picker/style.css'
 import '../styles/calendar.css'
 import { fr } from 'react-day-picker/locale'
 
+//Import utility functions to handle date formats
+import { toLocalDateString, isoToLocalDate } from '../utils/date'
+
 function Reservation() {
     // Price per ticket in euros
     const TICKET_PRICE = 66.66
-    // date stores the chosen visit date (empty by default)
-    // get today's date in YYYY-MM-DD format as default value
-    // 'T' cut the string where a 'T' is found "2025-04-15T00:00:00.000Z" 
-    // and [0] keep only the date part "2025-04-15" (first index of the array)
-    const today = new Date().toISOString().split('T')[0]
+
+    const today = toLocalDateString(new Date())
 
     // nbTickets store the number of tickets chosen by the user (1 by default)
     const [nbTickets, setNbTickets] = useState<string>('1')
@@ -45,30 +45,30 @@ function Reservation() {
     const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined)
     const disabledDays = availabilities
         .filter(a => !a.available)
-        .map(a => new Date(a.date))
+        .map(a => (isoToLocalDate(a.date)))
     const pastDays = { before: new Date() }
 
-    // useEffect to fetch availabilities when the component mounts
-    useEffect(() => {
-        const fetchAvailabilities = async () => {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/availabilities`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-            })
-            const data = await response.json()
-            setAvailabilities(data)
-        }
-
-        fetchAvailabilities()
-    }, [])
-
     // handleSelectDay is the function that runs when we select a date in the calendar
+    // using import utility function to convert the date to the format expected by the back (YYYY-MM-DD)
     const handleDaySelect = (day: Date | undefined) => {
         setSelectedDay(day)
         if (day) {
-            setDate(day.toISOString().split('T')[0])
+            setDate(toLocalDateString(day))
         }
     }
+
+    // useEffect to fetch availabilities when the component mounts
+    const fetchAvailabilities = async () => {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/availabilities`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        })
+        const data = await response.json()
+        setAvailabilities(data)
+    }
+    useEffect(() => {
+        fetchAvailabilities()
+    }, [])
 
     //  handleSubmit is the function that runs when we click to "Confirm"
     const handleSubmit = async () => {
@@ -84,7 +84,7 @@ function Reservation() {
             return
         }
 
-        const chosenDate = availabilities.find(a => new Date(a.date).toISOString().split('T')[0] === date)
+        const chosenDate = availabilities.find(a => toLocalDateString(isoToLocalDate(a.date)) === date)
         if (chosenDate && !chosenDate.available) {
             setMessage('Nous sommes navrés, l\'armée des zombies a pris possession du parc !')
             return
@@ -108,6 +108,7 @@ function Reservation() {
             setNbTickets('1')
             setDate(today)
             setConfirmed(false)
+            fetchAvailabilities()
         } else {
             if (response.status === 401) {
                 // If the user is not authenticated, open the login modal
@@ -273,7 +274,7 @@ function Reservation() {
                                         <Text color="zombieland.white" fontFamily="body" fontWeight="300" fontSize="16px">
                                             {selectedDay
                                                 ? selectedDay.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-                                                : new Date(today).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+                                                : isoToLocalDate(today).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
                                             }
                                         </Text>
                                     </Box>
