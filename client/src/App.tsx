@@ -28,9 +28,11 @@ import Faq from './pages/Faq'
 import HomePage from './pages/HomePage'
 import Contact from './pages/Contact'
 import Plan from './pages/Plan'
+import AdminHomePage from './pages/AdminHome'
 import AdminGuard from './components/AdminGuard'
 import AdminAttractions from "./pages/AdminAttractions"
 import AdminAttractionEdit from './pages/AdminAttractionEdit'
+
 
 
 
@@ -41,7 +43,7 @@ const App = () => {
             <ScrollToTop />
 
             <Routes>
-                <Route path="/admin" element={<AdminNavlinkMenu />}>
+                <Route path="/admin" element={<AdminHomePage />}>
                     {/* <Route index element={<AdminDashboard />} />
                     <Route path="members" element={<AdminMembers />} />
                     <Route path="attractions" element={<AdminAttractions />} />
