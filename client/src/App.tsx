@@ -31,6 +31,8 @@ import Plan from './pages/Plan'
 import AdminHomePage from './pages/AdminHome'
 import AdminGuard from './components/AdminGuard'
 import AdminAttractions from "./pages/AdminAttractions"
+import AdminAttractionEdit from './pages/AdminAttractionEdit'
+
 
 
 
@@ -61,7 +63,9 @@ const App = () => {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/plan" element={<Plan />} />
                 <Route path="/admin/attractions" element={<AdminGuard><AdminAttractions /></AdminGuard>} />
+                <Route path="/admin/attractions/:id/edit" element={<AdminGuard><AdminAttractionEdit /></AdminGuard> } />
                 <Route path="/admin/reservations" element={<AdminReservations />}/>
+
             </Routes>
         </BrowserRouter>
     );
