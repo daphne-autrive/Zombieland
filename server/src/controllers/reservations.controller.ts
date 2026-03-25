@@ -49,7 +49,7 @@ export const createReservation = async (req: Request, res: Response, next: NextF
     // If the total number of tickets for this date plus the number of tickets 
     // in the new reservation exceeds 10,000, return an error
     const totalTickets = reservationsByDay[0]?._sum.nb_tickets ?? 0 
-    if (totalTickets + nb_tickets > 10000) {
+    if (totalTickets + nb_tickets > 9999) {
         throw new BadRequestError("Capacité maximale atteinte pour cette date")
     }
 
@@ -100,7 +100,7 @@ export const getAvailabilities = async (req: Request, res: Response, next: NextF
     // Map the results to return the date and the number of available tickets (10,000 - reserved)
     const availabilities = allDates.map(date => ({
         date: date.date,
-        available: (date._sum.nb_tickets ?? 0) < 10000 ? true : false
+        available: (date._sum.nb_tickets ?? 0) < 9999 ? true : false
     }))
 
     // Return the availabilities with a 200 status

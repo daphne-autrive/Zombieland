@@ -3,23 +3,36 @@
 // Import useState to manage from data
 import { useState, useEffect } from 'react'
 // Import Chakra UI components for styling
-import { Box, Button, Checkbox, Heading, Input, Text, Flex, FormControl, FormLabel } from '@chakra-ui/react'
-// Import modals for login before booking
+import { Box, Button, Checkbox, Heading, Text, Input, Flex, FormControl, FormLabel } from '@chakra-ui/react'
+// Import components for login before booking
+import Header from '../components/Header'
+import Footer from '../components/Footer'
 import LoginModal from '../components/LoginModal'
+// Import the calendar component from react-day-picker
+import { DayPicker } from 'react-day-picker'
+import 'react-day-picker/style.css'
+import '../styles/calendar.css'
+import { fr } from 'react-day-picker/locale'
 // Import background images and card image
 import bgImage from '../assets/bg-image.png'
 import bgBouton from '../assets/bg-bouton.png'
-import Header from '../components/Header'
-import Footer from '../components/Footer'
+//Import utility functions to handle date formats
+import { toLocalDateString, isoToLocalDate, getTodayMidnight } from '../utils/date'
 
 function Reservation() {
+
+    //CONSTANTS
+    //=========
+
     // Price per ticket in euros
     const TICKET_PRICE = 66.66
-    // date stores the chosen visit date (empty by default)
-    // get today's date in YYYY-MM-DD format as default value
-    // 'T' cut the string where a 'T' is found "2025-04-15T00:00:00.000Z" 
-    // and [0] keep only the date part "2025-04-15" (first index of the array)
-    const today = new Date().toISOString().split('T')[0]
+    // Today's date as "YYYY-MM-DD" string in local time — used as default date and reset value
+    const today = toLocalDateString(new Date())
+    // Past days config for DayPicker — disables all days strictly before today at midnight
+    const pastDays = { before: getTodayMidnight() }
+
+    // STATE
+    //======
 
     // nbTickets store the number of tickets chosen by the user (1 by default)
     const [nbTickets, setNbTickets] = useState<string>('1')
@@ -33,36 +46,61 @@ function Reservation() {
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
     // checking the availability of the chosen date before creating the reservation
     const [availabilities, setAvailabilities] = useState<{ date: string, available: boolean }[]>([])
+    // selectedDay is the Date object used by react-day-picker to highlight the selected day in the calendar
+    const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined)
 
-    // useEffect to fetch availabilities when the component mounts
-    useEffect(() => {
-        const fetchAvailabilities = async () => {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/availabilities`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-            })
-            const data = await response.json()
-            setAvailabilities(data)
+    // OTHER DATA
+    //===========
+
+    // For react-day-picker, we need to convert the date string to a Date object
+    // and disableDays will be an array of Date objects corresponding to unavailable dates
+    const disabledDays = availabilities
+        .filter(a => !a.available)
+        .map(a => (isoToLocalDate(a.date)))
+
+    // HANDLERS
+    //=========
+
+    // Called when user clicks a day in DayPicker
+    // Updates both selectedDay (Date for DayPicker) and date (string for the back)
+    // toLocalDateString() avoids UTC conversion when building the "YYYY-MM-DD" string
+    const handleDaySelect = (day: Date | undefined) => {
+        setSelectedDay(day)
+        if (day) {
+            setDate(toLocalDateString(day))
         }
+    }
 
+    // useEffect to fetch availability data from the back 
+    // called on mount and after each successful reservation
+    const fetchAvailabilities = async () => {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/availabilities`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        })
+        const data = await response.json()
+        setAvailabilities(data)
+    }
+
+    // Fetch availabilities on component mount
+    useEffect(() => {
         fetchAvailabilities()
     }, [])
 
-    //  handleSubmit is the function that runs when we click to "Confirm"
+    // Called when user clicks "Rejoindre l'horreur"
     const handleSubmit = async () => {
-        // check if date is empty before sending
+        // Guard: date must be selected
         if (!date) {
             setMessage('Veuillez choisir une date.')
             return
         }
-
-        // Check if the user has confirmed their reservation details
+        // Guard: user must confirm their booking details
         if (!confirmed) {
             setMessage("Veuillez confirmer vos informations avant de rejoindre l'horreur.")
             return
         }
-
-        const chosenDate = availabilities.find(a => new Date(a.date).toISOString().split('T')[0] === date)
+        // Guard: front-end availability check before sending to the back
+        const chosenDate = availabilities.find(a => toLocalDateString(isoToLocalDate(a.date)) === date)
         if (chosenDate && !chosenDate.available) {
             setMessage('Nous sommes navrés, l\'armée des zombies a pris possession du parc !')
             return
@@ -73,7 +111,7 @@ function Reservation() {
             method: 'POST', // Create a new reservation
             headers: { 'Content-Type': 'application/json' }, // Send JSON},
             body: JSON.stringify({
-                nb_tickets: parseInt(nbTickets) || 1, // The number of the tickets
+                nb_tickets: parseInt(nbTickets) || 1, // The number of the tickets on by default
                 date: date, // The date of the visit choosen by the client
                 id_TICKET: 1
             }),
@@ -86,6 +124,7 @@ function Reservation() {
             setNbTickets('1')
             setDate(today)
             setConfirmed(false)
+            fetchAvailabilities()
         } else {
             if (response.status === 401) {
                 // If the user is not authenticated, open the login modal
@@ -94,7 +133,8 @@ function Reservation() {
                 return
             } else {
                 // Otherwise, display a generic error message
-                setMessage('Une erreur est survenue, veuillez réessayer.')
+                const errorData = await response.json()
+                setMessage(errorData.message || 'Une erreur est survenue, veuillez réessayer.')
             }
         }
     }
@@ -192,27 +232,22 @@ function Reservation() {
                                     <FormLabel color="zombieland.white" fontWeight="600" mb={3} fontSize="16px">
                                         Quand souhaitez-vous venir ?
                                     </FormLabel>
-                                    <Input
-                                        type="date"
-                                        value={date}
-                                        min={today}
-                                        onChange={(e) => setDate(e.target.value)}
-                                        bg="rgba(0,0,0,0.3)"
-                                        color="zombieland.white"
-                                        borderColor="zombieland.primary"
-                                        borderWidth="2px"
-                                        transition="all 0.3s ease"
-                                        _focus={{
-                                            borderColor: "zombieland.primary",
-                                            boxShadow: "0 0 0 3px rgba(250, 235, 220, 0.1)",
-                                            bg: "rgba(0,0,0,0.4)"
+                                    <DayPicker
+                                        mode="single"
+                                        selected={selectedDay}
+                                        onSelect={handleDaySelect}
+                                        disabled={[pastDays, ...disabledDays]}
+                                        // modifiers let us add a class to the disabled days 
+                                        // to make them look different in the calendar
+                                        modifiers={{
+                                            past: pastDays,
+                                            full: disabledDays
                                         }}
-                                        _hover={{
-                                            borderColor: "zombieland.primary"
+                                        modifiersClassNames={{
+                                            past: 'rdp-day-past',
+                                            full: 'rdp-day-full'
                                         }}
-                                        fontSize="16px"
-                                        py={3}
-                                        pl={4}
+                                        locale={fr}
                                     />
                                 </FormControl>
                             </Box>
@@ -254,7 +289,10 @@ function Reservation() {
                                             Date de visite
                                         </Text>
                                         <Text color="zombieland.white" fontFamily="body" fontWeight="300" fontSize="16px">
-                                            {new Date(date).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                                            {selectedDay
+                                                ? selectedDay.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+                                                : isoToLocalDate(today).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+                                            }
                                         </Text>
                                     </Box>
                                     <Box>
