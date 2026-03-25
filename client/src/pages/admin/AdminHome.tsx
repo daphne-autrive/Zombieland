@@ -3,7 +3,8 @@ import { useEffect, useState, useRef } from "react";
 import {
     Box, Text, Button, Flex, Spinner,
     AlertDialog, AlertDialogBody, AlertDialogFooter,
-    AlertDialogHeader, AlertDialogContent, AlertDialogOverlay
+    AlertDialogHeader, AlertDialogContent, AlertDialogOverlay,
+    Heading
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
@@ -12,6 +13,7 @@ import Footer from "@/components/Footer";
 import AdminTable from "@/components/AdminTable";
 import AdminMenu from "@/components/AdminNavlinkMenu";
 import bgImage from "../../assets/centrerecherche.png";
+import marche from "../../assets/marche.png"
 import type {  } from "@types";
 import type { Reservation } from "@/types/Reservations";
 
@@ -90,10 +92,9 @@ const AdminReservations = () => {
             >
                 <AdminMenu />
             </Box>
-
             {/* RIGHT CONTENT — 70% */}
             <Box width={70} flex="1" px={10}>
-                <Text
+                <Heading
                     fontWeight="bold"
                     color="zombieland.white"
                     textAlign="center"
@@ -101,8 +102,51 @@ const AdminReservations = () => {
                     fontSize="54px"
                     mb={10}
                 >
+                    Zombieland Admin 
+                </Heading>
+                <Flex
+                    wrap="wrap"
+                    gap="6"
+                    justifyContent="center"
+                    mb={10}>
+                        <Box
+                        w="450px"
+                        h="450px"
+                        bgImage={`url(${marche})`}
+                        opacity={0.5}>
+
+                        </Box>
+                        <Box
+                        w="450px"
+                        h="450px"
+                        bgImage={`url(${marche})`}>
+
+                        </Box>
+                        <Box
+                        w="450px"
+                        h="450px"
+                        bgImage={`url(${marche})`}>
+
+                        </Box>
+                        <Box
+                        w="450px"
+                        h="450px"
+                        bgImage={`url(${marche})`}>
+
+                        </Box>
+
+                </Flex>
+            
+                <Heading
+                    fontWeight="bold"
+                    color="zombieland.white"
+                    textAlign="center"
+                    fontFamily="heading"
+                    fontSize="30px"
+                    mb={10}
+                >
                     Gestion des réservations
-                </Text>
+                </Heading>
 
                 {/* Loading spinner */}
                 {loading && (
