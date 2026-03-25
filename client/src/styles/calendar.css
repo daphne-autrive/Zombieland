@@ -1,0 +1,115 @@
+/* ============================================
+   ZombieLand — react-day-picker custom theme
+   ============================================ */
+
+/* Root variables + base */
+.rdp-root {
+    --rdp-accent-color: #FAEBDC;
+    --rdp-accent-background-color: #FAEBDC;
+    color: #FAEBDC;
+    font-family: 'Creepster', sans-serif;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 16px;
+    border-radius: 8px;
+}
+
+/* Navigation layout */
+.rdp-month {
+    position: relative;
+}
+
+.rdp-nav {
+    position: absolute;
+    top: 16px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 16px 30px 16px;
+    z-index: 10;
+    pointer-events: auto;
+}
+
+.rdp-chevron {
+    fill: #476182;
+}
+
+.rdp-button_previous:hover .rdp-chevron,
+.rdp-button_next:hover .rdp-chevron {
+    fill: #B85F00;
+}
+
+/* Month/year title */
+.rdp-month_caption {
+    font-family: 'Creepster', sans-serif;
+    font-size: 1.55rem;
+    color: #FAEBDC;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Weekday headers */
+.rdp-weekday {
+    font-family: 'Creepster', sans-serif;
+    font-size: 1.3rem;
+    color: #476182;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+
+/* All day numbers */
+.rdp-day_button {
+    font-family: 'Creepster', sans-serif;
+    font-size: 1.4rem;
+    color: #FAEBDC;
+    border-radius: 0;
+}
+
+/* Today highlight */
+.rdp-today:not(.rdp-selected) .rdp-day_button {
+    color: #C9A841;
+    font-weight: bold;
+}
+
+/* Selected day */
+.rdp-selected .rdp-day_button {
+    background-color: #FAEBDC;
+    color: #293036;
+    border-radius: 10px;
+    border: none;
+}
+
+/* Disabled days — fallback générique */
+.rdp-day_button:disabled {
+    color: #B85F00;
+    opacity: 0.5;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+/* Past days — blanc transparent */
+.rdp-day-past .rdp-day_button {
+    color: rgba(250, 235, 220, 0.2);
+    cursor: not-allowed;
+    text-decoration: none;
+}
+
+/* Full days — orange barré */
+.rdp-day-full .rdp-day_button {
+    color: #B85F00;
+    opacity: 0.5;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+/* Past + full — past prend TOUJOURS le dessus */
+.rdp-day-past.rdp-day-full .rdp-day_button,
+.rdp-day-past .rdp-day_button:disabled {
+    color: rgba(250, 235, 220, 0.2) !important;
+    text-decoration: none !important;
+    opacity: 0.3 !important;
+    cursor: not-allowed !important;
+}
