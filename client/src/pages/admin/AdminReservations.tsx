@@ -7,45 +7,72 @@ import type { Reservation } from "@/types/Reservations";
 import { Badge, Box, Button, Flex, Menu, MenuButton, MenuItem, MenuList, Spinner, Text } from "@chakra-ui/react";
 import AdminTable from "@/components/AdminTable";
 import bgImage from '../../assets/bgadminpage.png'
+import ConfirmModal from "@/components/ConfirmModal";
 
 
+
+// Admin page to manage reservations: list, filter by status, and cancel reservations
 
 const AdminReservations = () => {
+    // State to store the list of reservations from the API
     const [reservations, setReservations] = useState<Reservation[]>([]);
+    // State to track loading status while fetching data
     const [loading, setLoading] = useState(true);
+    // State to store error message if the API call fails
     const [error, setError] = useState<string | null>(null);
+    // State to filter reservations by status (All, CONFIRMED, CANCELLED)
     const [filterStatus, setFilterStatus] = useState<string>('All');
+    // State to store the id of the reservation to cancel (opens the confirmation modal)
+    const [reservationToCancel, setReservationToCancel] = useState<number | null>(null)
 
-
+    // Fetch all reservations from the API when the component mounts
     useEffect(() => {
         const axiosReservation = async () => {
             try {
-
+                // GET request to retrieve all reservations (admin only route)
+                // withCredentials: true sends the httpOnly cookie for authentication
                 const response = await axios.get(`${API_URL}/api/reservations`,
                     {
                         withCredentials: true,
                     });
+                // Store the reservations data in state
                 setReservations(response.data)
+                // Set loading to false once data is received
                 setLoading(false)
             } catch (error) {
+                // Display error message if the API call fails
                 setError("Erreur lors du chargement")
             }
         };
+        // Call the function
         axiosReservation()
-    }, []);
+    }, []); // Empty dependency array: runs only once on mount
 
+    // Function to update the status of a reservation via PATCH request
+    // id: the reservation id to update
+    // status: the new status ("CONFIRMED" or "CANCELLED")
     const handleStatusChange = async (id: number, status: string) => {
+        // Send PATCH request to update the reservation status
+        // 1st arg: URL with reservation id
+        // 2nd arg: body with the new status
+        // 3rd arg: config with credentials for cookie authentication
         await axios.patch(`${API_URL}/api/reservations/${id}`,
             { status },
             { withCredentials: true }
         )
-        // Met à jour le state local pour refléter le changement
+        // Update the local state to reflect the change without refetching
+        // .map() creates a new array where only the modified reservation has its status changed
         setReservations(reservations.map(r =>
             r.id_RESERVATION === id ? { ...r, status } : r
         ))
     }
 
-    const filteredReservations = reservations.filter(r => filterStatus === "All" || r.status === filterStatus)
+    // Filter reservations by status and sort by id (ascending)
+    // If filterStatus is "All", show all reservations
+    // Otherwise, show only reservations matching the selected status
+    const filteredReservations = reservations
+        .filter(r => filterStatus === "All" || r.status === filterStatus)
+        .sort((a, b) => a.id_RESERVATION - b.id_RESERVATION)
     return (
         <Box
             display="flex"
@@ -135,32 +162,23 @@ const AdminReservations = () => {
                                 header: "Actions",
                                 render: (r) => (
                                     <Flex gap={3}>
-                                        <Button
-                                            size="sm"
-                                            bg="#3E4D28"
-                                            color="white"
-                                            _hover={{ opacity: 0.8 }}
-                                            isDisabled={r.status === "CONFIRMED"}
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                handleStatusChange(r.id_RESERVATION, "CONFIRMED")
-                                            }}
-                                        >
-                                            Confirmer
-                                        </Button>
-                                        <Button
-                                            size="sm"
-                                            bg="#8C6E21"
-                                            color="white"
-                                            _hover={{ bg: "#6e5519" }}
-                                            isDisabled={r.status === "CANCELLED"}
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                handleStatusChange(r.id_RESERVATION, "CANCELLED")
-                                            }}
-                                        >
-                                            Annuler
-                                        </Button>
+                                        {r.status === "CONFIRMED" && (
+                                            <Button
+                                                size="sm"
+                                                bg="#8C6E21"
+                                                color="white"
+                                                _hover={{ bg: "#6e5519" }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    setReservationToCancel(r.id_RESERVATION)
+                                                }}
+                                            >
+                                                Annuler
+                                            </Button>
+                                        )}
+                                        {r.status === "CANCELLED" && (
+                                            <Text color="red.400" fontWeight="bold">Annulée</Text>
+                                        )}
                                     </Flex>
                                 )
                             }
@@ -168,6 +186,24 @@ const AdminReservations = () => {
                     />
                 )}
             </Box>
+            {/* Confirmation modal: opens when the admin clicks "Annuler" on a reservation */}
+            {/* The admin must enter their password to confirm the cancellation */}
+            {/* isOpen: true when a reservation id is stored in reservationToCancel */}
+            {/* onClose: resets the state to null, closing the modal */}
+            {/* onConfirm: calls handleStatusChange with "CANCELLED" status then closes the modal */}
+            {/* The password parameter comes from the modal input but is not sent to the API */}
+            {/* It serves as a confirmation step to prevent accidental cancellations */}
+            <ConfirmModal
+                isOpen={reservationToCancel !== null}
+                onClose={() => setReservationToCancel(null)}
+                title="Annuler la réservation"
+                message="Voulez-vous vraiment annuler cette réservation ? Cette action est irréversible."
+                onConfirm={(password) => {
+                    if (reservationToCancel) handleStatusChange(reservationToCancel, "CANCELLED")
+                    setReservationToCancel(null)
+                }}
+            />
+
             <Footer />
         </Box>
     )
