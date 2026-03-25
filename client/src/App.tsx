@@ -17,12 +17,12 @@ import AttractionDetailPage from './pages/AttractionDetailPage'
 // Import the scroll to top component
 import ScrollToTop from './components/ScrollToTop'
 // Import the admin layout
-import AdminNavlinkMenu from './components/AdminNavlinkMenu'
+// import AdminNavlinkMenu from './components/AdminNavlinkMenu'
 // Import the admin pages
 // import AdminDashboard from './pages/admin/AdminDashboard'
 // import AdminMembers from './pages/admin/AdminMembers'
 // import AdminAttractions from './pages/admin/AdminAttractions'
-// import AdminReservations from './pages/admin/AdminReservations'
+import AdminReservations from './pages/admin/AdminReservations'
 
 import Faq from './pages/Faq'
 import HomePage from './pages/HomePage'
@@ -44,8 +44,8 @@ const App = () => {
                 <Route path="/admin" element={<AdminHomePage />}>
                     {/* <Route index element={<AdminDashboard />} />
                     <Route path="members" element={<AdminMembers />} />
-                    <Route path="attractions" element={<AdminAttractions />} />
-                    <Route path="reservations" element={<AdminReservations />} /> */}
+                    <Route path="attractions" element={<AdminAttractions />} />*/}
+                        
                 </Route>
 
 
@@ -61,6 +61,7 @@ const App = () => {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/plan" element={<Plan />} />
                 <Route path="/admin/attractions" element={<AdminGuard><AdminAttractions /></AdminGuard>} />
+                <Route path="/admin/reservations" element={<AdminReservations />}/>
             </Routes>
         </BrowserRouter>
     );
