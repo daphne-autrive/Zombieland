@@ -54,12 +54,15 @@ export default function AdminMenu() {
                 spacing={8}
                 p={4}
                 
+                
             >
                 <SidebarLink to="/admin">Dashboard</SidebarLink>
                 <SidebarLink to="/admin/attractions">Attractions</SidebarLink>
                 <SidebarLink to="/admin/members">Membres</SidebarLink>
                 <SidebarLink to="/admin/reservations">Réservations</SidebarLink>
             </VStack>
+
+           
         </Flex>
     )
 }
@@ -70,6 +73,7 @@ function SidebarLink({ to, children }: { to: string, children: React.ReactNode }
         <Box
             as={NavLink}
             to={to}
+            end
             px={3}
             py={2}
             borderRadius="md"
@@ -78,11 +82,12 @@ function SidebarLink({ to, children }: { to: string, children: React.ReactNode }
                 bg: "zombieland.cta1orange",
                 cursor: "pointer",
             }}
+            
             _activeLink={{
                 bg: "gray.700",
                 fontWeight: "bold",
-                border: "2px solid",
-                borderColor: "orange.400",
+                border: "0.5px solid",
+                borderColor: "zombieland.cta1orange",
             }}
         >
             {children}
