@@ -1,6 +1,6 @@
 // Admin page to manage attractions : list, filter, edit and delete
 import { useEffect, useState } from "react"
-import { Box, Text, Button, Flex, Menu, MenuButton, MenuList, MenuItem, Spinner } from "@chakra-ui/react"
+import { Box, Text, Button, Flex, Input, Spinner } from "@chakra-ui/react"
 import { useNavigate } from "react-router-dom"
 import Header from "../../components/Header"
 import Footer from "../../components/Footer"
@@ -13,19 +13,21 @@ import { FaTrash } from 'react-icons/fa'
 import ConfirmModal from "../../components/ConfirmModal"
 
 
-const categoryToEnum: Record<string, string> = {
-    "Peur Acceptable": "LOW",
-    "Peur Survivable": "MEDIUM",
-    "Peur Mortelle": "HIGH",
+const intensityToLabel: Record<string, string> = {
+    "LOW": "Acceptable",
+    "MEDIUM": "Survivable",
+    "HIGH": "Mortelle"
 }
 
 const AdminAttractions = () => {
     const [attractions, setAttractions] = useState<Attraction[]>([])
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const navigate = useNavigate()
     const [attractionToDelete, setAttractionToDelete] = useState<number | null>(null)
+
+    const [search, setSearch] = useState("")
+    const [sort, setSort] = useState({ by: "name", direction: "asc" })
 
     const fetchAttractions = async () => {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/attractions`)
@@ -59,9 +61,37 @@ const AdminAttractions = () => {
     }
 
     // Filter attractions by category
-    const filteredAttractions = selectedCategory
-        ? attractions.filter(a => a.intensity === categoryToEnum[selectedCategory])
-        : attractions
+    const filterTool = search.trim().toLowerCase()
+    const filteredAttractions = attractions
+        .filter(a =>
+            a.name.toLowerCase().includes(filterTool) ||
+            a.intensity.toLowerCase().includes(filterTool)
+        )
+        .sort((a, b) => {
+            if (sort.by === "name") return a.name.localeCompare(b.name) * (sort.direction === "asc" ? 1 : -1)
+            if (sort.by === "intensity") return a.intensity.localeCompare(b.intensity) * (sort.direction === "asc" ? 1 : -1)
+            if (sort.by === "duration") return ((a.duration ?? 0) - (b.duration ?? 0)) * (sort.direction === "asc" ? 1 : -1)
+            if (sort.by === "capacity") return ((a.capacity ?? 0) - (b.capacity ?? 0)) * (sort.direction === "asc" ? 1 : -1)
+            if (sort.by === "min_height") return ((a.min_height ?? 0) - (b.min_height ?? 0)) * (sort.direction === "asc" ? 1 : -1)
+            return 0
+        })
+
+    const handleSortChange = (by: "name" | "intensity" | "duration" | "capacity" | "min_height") => {
+        if (sort.by === by) {
+            setSort({ by, direction: sort.direction === "asc" ? "desc" : "asc" })
+        }
+        else {
+            setSort({ by, direction: "asc" })
+        }
+    }
+
+    const headerToField = {
+        "Nom": "name",
+        "Intensité": "intensity",
+        "Durée": "duration",
+        "Capacité": "capacity",
+        "Taille min.": "min_height"
+    } as const
 
     return (
         <Box
@@ -103,7 +133,7 @@ const AdminAttractions = () => {
                             bgPosition="center"
                             color="zombieland.white"
                             border="none"
-                            _hover={{ 
+                            _hover={{
                                 opacity: 0.85,
                                 boxShadow: "0 8px 16px rgba(0,0,0,0.6), 0 0 30px rgba(250, 130, 52, 0.3)"
                             }}
@@ -122,31 +152,17 @@ const AdminAttractions = () => {
                         </Button>
                     </Flex>
 
-                    {/* Filter button */}
+                    {/* Searchbar */}
                     <Flex justifyContent={{ base: "center", lg: "flex-end" }} mt={8} mb={6}>
-                        <Menu>
-                            <MenuButton
-                                color="zombieland.white"
-                                px={4}
-                                py={2}
-                                border="2px solid"
-                                borderColor="zombieland.primary"
-                                borderRadius="md"
-                                transition="all 0.3s ease"
-                                _hover={{
-                                    borderColor: "zombieland.cta1orange",
-                                    color: "zombieland.cta1orange"
-                                }}
-                            >
-                                Filtrer par catégorie
-                            </MenuButton>
-                            <MenuList bg="#1a1a1a" border="1px solid #333">
-                                <MenuItem bg="#1a1a1a" color="white" _hover={{ bg: "#333" }} onClick={() => setSelectedCategory(null)}>Toutes</MenuItem>
-                                <MenuItem bg="#1a1a1a" color="white" _hover={{ bg: "#333" }} onClick={() => setSelectedCategory("Peur Acceptable")}>Peur Acceptable</MenuItem>
-                                <MenuItem bg="#1a1a1a" color="white" _hover={{ bg: "#333" }} onClick={() => setSelectedCategory("Peur Survivable")}>Peur Survivable</MenuItem>
-                                <MenuItem bg="#1a1a1a" color="white" _hover={{ bg: "#333" }} onClick={() => setSelectedCategory("Peur Mortelle")}>Peur Mortelle</MenuItem>
-                            </MenuList>
-                        </Menu>
+                        <Input
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Rechercher une attraction..."
+                            color="zombieland.white"
+                            borderColor="zombieland.primary"
+                            bg="rgba(0,0,0,0.3)"
+                            mb={6}
+                        />
                     </Flex>
 
                     {/* Loading spinner */}
@@ -162,6 +178,10 @@ const AdminAttractions = () => {
                     {!loading && (
                         <AdminTable
                             data={filteredAttractions}
+                            onHeaderClick={(header) => {
+                                const field = headerToField[header as keyof typeof headerToField]
+                                if (field) handleSortChange(field)
+                            }}
                             columns={[
                                 {
                                     header: "Nom",
@@ -178,7 +198,7 @@ const AdminAttractions = () => {
                                 },
                                 {
                                     header: "Intensité",
-                                    render: (a) => a.intensity
+                                    render: (a) => intensityToLabel[a.intensity] ?? a.intensity
                                 },
                                 {
                                     header: "Durée",
