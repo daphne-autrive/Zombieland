@@ -1,5 +1,5 @@
 // Admin page to manage reservations: list, filter, edit and delete
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import {
     Box, Text, Button, Flex, Spinner,
     Badge, Heading
@@ -11,7 +11,7 @@ import AdminTable from "@/components/AdminTable";
 import AdminMenu from "@/components/AdminNavlinkMenu";
 import bgImage from "../../assets/centrerecherche.png";
 import marche from "../../assets/marche.png"
-import type {  } from "@types";
+import type { } from "@types";
 import type { Reservation } from "@/types/Reservations";
 import axios from "axios";
 import { API_URL } from "@/config/api";
@@ -78,146 +78,145 @@ const AdminReservations = () => {
         .filter(r => filterStatus === "All" || r.status === filterStatus)
         .sort((a, b) => a.id_RESERVATION - b.id_RESERVATION)
     return (
-    <Box
-        display="flex"
-        flexDirection="column"
-        minHeight="100vh"
-        bgAttachment="fixed"
-        bgImage={`url(${bgImage})`}
-        bgSize="cover"
-    >
-        <Header />
+        <Box
+            display="flex"
+            flexDirection="column"
+            minHeight="100vh"
+            bgAttachment="fixed"
+            bgImage={`url(${bgImage})`}
+            bgSize="cover"
+        >
+            <Header />
 
-        {/* MAIN LAYOUT : sidebar + content */}
-        <Flex flex="1">
+            {/* MAIN LAYOUT : sidebar + content */}
+            <Flex flex="1">
 
-            {/* LEFT SIDEBAR — 30% */}
-            <Box
-                width={30}
-                minWidth="250px"
-                maxWidth="350px"
-                borderRight="1px solid rgba(255,255,255,0.1)"                   
-
-            >
-                <AdminMenu />
-            </Box>
-            {/* RIGHT CONTENT — 70% */}
-            <Box width={70} flex="1" px={10}>
-            <Heading
-                    fontWeight="bold"
-                    color="zombieland.white"
-                    textAlign="center"
-                    fontFamily="heading"
-                    fontSize="54px"
-                    mb={8}
+                {/* LEFT SIDEBAR — 30% */}
+                <Box
+                    display={{ base: 'none', lg: 'block' }}
+                    minWidth="240px"
+                    maxWidth="240px"
+                    borderRight="1px solid rgba(255,255,255,0.1)"
                 >
-                  Zombieland Admin
-                </Heading>
-                {/* the flex put 4 cards on Wrap*/}
-                <Flex
-                wrap="wrap"
-                gap="6"
-                justify="center">
-                    {/* Description and details of 1 card*/}
-                    <Box
-                    w="300px"
-                    h="300px"
-                    bgImage={`url(${marche})`} opacity={0.5}   
-                >
-                        
-                    </Box>
-                    <Box
-                    w="300px"
-                    h="300px"
-                    bgImage={`url(${marche})`}opacity={0.5}  
+                    <AdminMenu />
+                </Box>
+                {/* RIGHT CONTENT — 70% */}
+                <Box width={70} flex="1" px={10}>
+                    <Heading
+                        fontWeight="bold"
+                        color="zombieland.white"
+                        textAlign="center"
+                        fontFamily="heading"
+                        fontSize="54px"
+                        mb={8}
                     >
-                        
-                    </Box>
-                    <Box
-                    w="300px"
-                    h="300px"
-                    bgImage={`url(${marche})`}opacity={0.5}  
-                    >
-                        
-                    </Box>
-                    <Box
-                    w="300px"
-                    h="300px"
-                    bgImage={`url(${marche})`}opacity={0.5}  
-                    >
-                        
-                    </Box>
-
-
-                </Flex>
-
-            
-                <Heading
-                    fontWeight="bold"
-                    color="zombieland.white"
-                    textAlign="center"
-                    fontFamily="heading"
-                    fontSize="30px"
-                    mt={8}
-                    mb={8}
-                >
-                    Zombieland Admin 
-                </Heading>
-                <Flex
-                    wrap="wrap"
-                    gap="6"
-                    justifyContent="center"
-                    mb={10}>
+                        Zombieland Admin
+                    </Heading>
+                    {/* the flex put 4 cards on Wrap*/}
+                    <Flex
+                        wrap="wrap"
+                        gap="6"
+                        justify="center">
+                        {/* Description and details of 1 card*/}
                         <Box
-                        w="450px"
-                        h="450px"
-                        bgImage={`url(${marche})`}
-                        opacity={0.5}>
+                            w="300px"
+                            h="300px"
+                            bgImage={`url(${marche})`} opacity={0.5}
+                        >
 
                         </Box>
                         <Box
-                        w="450px"
-                        h="450px"
-                        bgImage={`url(${marche})`}>
+                            w="300px"
+                            h="300px"
+                            bgImage={`url(${marche})`} opacity={0.5}
+                        >
 
                         </Box>
                         <Box
-                        w="450px"
-                        h="450px"
-                        bgImage={`url(${marche})`}>
+                            w="300px"
+                            h="300px"
+                            bgImage={`url(${marche})`} opacity={0.5}
+                        >
 
                         </Box>
                         <Box
-                        w="450px"
-                        h="450px"
-                        bgImage={`url(${marche})`}>
+                            w="300px"
+                            h="300px"
+                            bgImage={`url(${marche})`} opacity={0.5}
+                        >
 
                         </Box>
 
-                </Flex>
-            
-                <Heading
-                    fontWeight="bold"
-                    color="zombieland.white"
-                    textAlign="center"
-                    fontFamily="heading"
-                    fontSize="30px"
-                    mb={10}
-                >
-                    Gestion des réservations
-                </Heading>
 
-                {/* Loading spinner */}
-                {loading && (
-                    <Flex justify="center" mt={10}>
-                        <Spinner color="zombieland.primary" size="xl" />
                     </Flex>
-                )}
 
-                {error && <Text color="red.400">{error}</Text>}
 
-                {/* Reservations table */}
-                {!loading && (
+                    <Heading
+                        fontWeight="bold"
+                        color="zombieland.white"
+                        textAlign="center"
+                        fontFamily="heading"
+                        fontSize="30px"
+                        mt={8}
+                        mb={8}
+                    >
+                        Zombieland Admin
+                    </Heading>
+                    <Flex
+                        wrap="wrap"
+                        gap="6"
+                        justifyContent="center"
+                        mb={10}>
+                        <Box
+                            w="450px"
+                            h="450px"
+                            bgImage={`url(${marche})`}
+                            opacity={0.5}>
+
+                        </Box>
+                        <Box
+                            w="450px"
+                            h="450px"
+                            bgImage={`url(${marche})`}>
+
+                        </Box>
+                        <Box
+                            w="450px"
+                            h="450px"
+                            bgImage={`url(${marche})`}>
+
+                        </Box>
+                        <Box
+                            w="450px"
+                            h="450px"
+                            bgImage={`url(${marche})`}>
+
+                        </Box>
+
+                    </Flex>
+
+                    <Heading
+                        fontWeight="bold"
+                        color="zombieland.white"
+                        textAlign="center"
+                        fontFamily="heading"
+                        fontSize="30px"
+                        mb={10}
+                    >
+                        Gestion des réservations
+                    </Heading>
+
+                    {/* Loading spinner */}
+                    {loading && (
+                        <Flex justify="center" mt={10}>
+                            <Spinner color="zombieland.primary" size="xl" />
+                        </Flex>
+                    )}
+
+                    {error && <Text color="red.400">{error}</Text>}
+
+                    {/* Reservations table */}
+                    {!loading && (
                         <AdminTable
                             data={filteredReservations}
                             columns={[
@@ -295,8 +294,8 @@ const AdminReservations = () => {
                         setReservationToCancel(null)
                     }}
                 />
-                </Flex>
-                <Footer />
+            </Flex>
+            <Footer />
         </Box>
     )
 }
