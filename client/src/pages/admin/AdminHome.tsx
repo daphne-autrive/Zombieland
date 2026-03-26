@@ -14,7 +14,7 @@ import AdminTable from "@/components/AdminTable";
 import AdminMenu from "@/components/AdminNavlinkMenu";
 import bgImage from "../../assets/centrerecherche.png";
 import marche from "../../assets/marche.png"
-import type {  } from "@types";
+import type { } from "@types";
 import type { Reservation } from "@/types/Reservations";
 
 const AdminReservations = () => {
@@ -69,217 +69,231 @@ const AdminReservations = () => {
     };
 
     return (
-    <Box
-        display="flex"
-        flexDirection="column"
-        minHeight="100vh"
-        bgAttachment="fixed"
-        bgImage={`url(${bgImage})`}
-        bgSize="cover"
-    >
-        <Header />
+        <Box
+            display="flex"
+            flexDirection="column"
+            minHeight="100vh"
+            bgAttachment="fixed"
+            bgImage={`url(${bgImage})`}
+            bgSize="cover"
+        >
+            <Header />
 
-        {/* MAIN LAYOUT : sidebar + content */}
-        <Flex flex="1">
+            {/* MAIN LAYOUT : sidebar + content */}
+            <Flex flex="1">
 
-            {/* LEFT SIDEBAR — 30% */}
-            <Box
-                width={30}
-                minWidth="250px"
-                maxWidth="350px"
-                borderRight="1px solid rgba(255,255,255,0.1)"                   
+                {/* LEFT SIDEBAR — 30% */}
+                <Box
+                    width={30}
+                    minWidth="250px"
+                    maxWidth="350px"
+                    borderRight="1px solid rgba(255,255,255,0.1)"
 
-            >
-                <AdminMenu />
-            </Box>
-            {/* RIGHT CONTENT — 70% */}
-            <Box width={70} flex="1" px={10}>
-                <Heading
-                    fontWeight="bold"
-                    color="zombieland.white"
-                    textAlign="center"
-                    fontFamily="heading"
-                    fontSize="54px"
-                    mb={10}
                 >
-                    Zombieland Admin 
-                </Heading>
-                <Flex
-                    wrap="wrap"
-                    gap="6"
-                    justifyContent="center"
-                    mb={10}>
+                    <AdminMenu />
+                </Box>
+                {/* RIGHT CONTENT — 70% */}
+                <Box width={70} flex="1" px={10}>
+                    <Heading
+                        fontWeight="bold"
+                        color="zombieland.white"
+                        textAlign="center"
+                        fontFamily="heading"
+                        fontSize="54px"
+                        mb={10}
+                    >
+                        Zombieland Admin
+                    </Heading>
+                    <Flex
+                        wrap="wrap"
+                        gap="6"
+                        justifyContent="center"
+                        mb={10}>
                         <Box
-                        w="450px"
-                        h="450px"
-                        bgImage={`url(${marche})`}
-                        opacity={0.5}>
+                            w="450px"
+                            h="450px"
+                            bg="black" opacity={0.7}
+                            border="2px"
+                        >
+                            {/* 2 flex text between 1 flex */}
+                            <Flex direction="column" justify="space-between" h="100%">
+                                <Flex justify="center" mt={2}  >
+                                    <Text fontSize="60" color="zombieland.white" fontWeight="extrabold">
+                                        {reservations.length}
+                                    </Text>
+                                </Flex>
+
+                                <Flex justify="center" >
+                                    <Text fontSize="45" color="zombieland.white" fontFamily="heading" >
+                                        Réservations
+                                    </Text>
+                                </Flex>
+                            </Flex>
+                        </Box>
+                        <Box
+                            w="450px"
+                            h="450px"
+                            bgImage={`url(${marche})`}>
 
                         </Box>
                         <Box
-                        w="450px"
-                        h="450px"
-                        bgImage={`url(${marche})`}>
+                            w="450px"
+                            h="450px"
+                            bgImage={`url(${marche})`}>
 
                         </Box>
                         <Box
-                        w="450px"
-                        h="450px"
-                        bgImage={`url(${marche})`}>
-
-                        </Box>
-                        <Box
-                        w="450px"
-                        h="450px"
-                        bgImage={`url(${marche})`}>
+                            w="450px"
+                            h="450px"
+                            bgImage={`url(${marche})`}>
 
                         </Box>
 
-                </Flex>
-            
-                <Heading
-                    fontWeight="bold"
-                    color="zombieland.white"
-                    textAlign="center"
-                    fontFamily="heading"
-                    fontSize="30px"
-                    mb={10}
-                >
-                    Gestion des réservations
-                </Heading>
-
-                {/* Loading spinner */}
-                {loading && (
-                    <Flex justify="center" mt={10}>
-                        <Spinner color="zombieland.primary" size="xl" />
                     </Flex>
-                )}
 
-                {error && <Text color="red.400">{error}</Text>}
+                    <Heading
+                        fontWeight="bold"
+                        color="zombieland.white"
+                        textAlign="center"
+                        fontFamily="heading"
+                        fontSize="30px"
+                        mb={10}
+                    >
+                        Gestion des réservations
+                    </Heading>
 
-                {/* Reservations table */}
-                {!loading && (
-                    <AdminTable
-                        data={reservations}
-                        onRowClick={(reservation) =>
-                            navigate(`/reservations/${reservation.id_RESERVATION}`)
-                        }
-                        columns={[
-                            {
-                                header: "Numéro",
-                                render: (r) => r.id_RESERVATION
-                            },
-                            {
-                                header: "Utilisateur",
-                                render: (r) => r.id_USER
-                            },
-                            {
-                                header: "Billet",
-                                render: (r) => r.id_TICKET
-                            },
-                            {
-                                header: "Nb Tickets",
-                                render: (r) => r.nb_tickets ?? "—"
-                            },
-                            {
-                                header: "Date",
-                                render: (r) =>
-                                    new Date(r.date).toLocaleDateString("fr-FR")
-                            },
-                            {
-                                header: "Montant",
-                                render: (r) => `${r.total_amount} €`
-                            },
-                            {
-                                header: "Statut",
-                                render: (r) => r.status
-                            },
-                            {
-                                header: "Actions",
-                                render: (r) => (
-                                    <Flex gap={3}>
-                                        <Button
-                                            size="sm"
-                                            border="2px solid"
-                                            borderColor="zombieland.primary"
-                                            color="zombieland.white"
-                                            bg="transparent"
-                                            _hover={{
-                                                borderColor: "zombieland.cta1orange",
-                                                color: "zombieland.cta1orange"
-                                            }}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                navigate(`/admin/reservations/${r.id_RESERVATION}/edit`);
-                                            }}
-                                        >
-                                            Modifier
-                                        </Button>
+                    {/* Loading spinner */}
+                    {loading && (
+                        <Flex justify="center" mt={10}>
+                            <Spinner color="zombieland.primary" size="xl" />
+                        </Flex>
+                    )}
 
-                                        <Button
-                                            size="sm"
-                                            border="2px solid"
-                                            borderColor="red.500"
-                                            color="red.400"
-                                            bg="transparent"
-                                            _hover={{ bg: "red.500", color: "white" }}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setReservationToDelete(r.id_RESERVATION);
-                                            }}
-                                        >
-                                            Supprimer
-                                        </Button>
-                                    </Flex>
-                                )
+                    {error && <Text color="red.400">{error}</Text>}
+
+                    {/* Reservations table */}
+                    {!loading && (
+                        <AdminTable
+                            data={reservations}
+                            onRowClick={(reservation) =>
+                                navigate(`/reservations/${reservation.id_RESERVATION}`)
                             }
-                        ]}
-                    />
-                )}
+                            columns={[
+                                {
+                                    header: "Numéro",
+                                    render: (r) => r.id_RESERVATION
+                                },
+                                {
+                                    header: "Utilisateur",
+                                    render: (r) => r.id_USER
+                                },
+                                {
+                                    header: "Billet",
+                                    render: (r) => r.id_TICKET
+                                },
+                                {
+                                    header: "Nb Tickets",
+                                    render: (r) => r.nb_tickets ?? "—"
+                                },
+                                {
+                                    header: "Date",
+                                    render: (r) =>
+                                        new Date(r.date).toLocaleDateString("fr-FR")
+                                },
+                                {
+                                    header: "Montant",
+                                    render: (r) => `${r.total_amount} €`
+                                },
+                                {
+                                    header: "Statut",
+                                    render: (r) => r.status
+                                },
+                                {
+                                    header: "Actions",
+                                    render: (r) => (
+                                        <Flex gap={3}>
+                                            <Button
+                                                size="sm"
+                                                border="2px solid"
+                                                borderColor="zombieland.primary"
+                                                color="zombieland.white"
+                                                bg="transparent"
+                                                _hover={{
+                                                    borderColor: "zombieland.cta1orange",
+                                                    color: "zombieland.cta1orange"
+                                                }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigate(`/admin/reservations/${r.id_RESERVATION}/edit`);
+                                                }}
+                                            >
+                                                Modifier
+                                            </Button>
 
-                {/* Delete confirmation popup */}
-                <AlertDialog
-                    isOpen={reservationToDelete !== null}
-                    leastDestructiveRef={cancelRef}
-                    onClose={() => setReservationToDelete(null)}
-                    isCentered
-                >
-                    <AlertDialogOverlay>
-                        <AlertDialogContent bg="#1a1a1a" border="1px solid #333">
-                            <AlertDialogHeader color="zombieland.white" fontWeight="bold">
-                                Supprimer la réservation
-                            </AlertDialogHeader>
+                                            <Button
+                                                size="sm"
+                                                border="2px solid"
+                                                borderColor="red.500"
+                                                color="red.400"
+                                                bg="transparent"
+                                                _hover={{ bg: "red.500", color: "white" }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setReservationToDelete(r.id_RESERVATION);
+                                                }}
+                                            >
+                                                Supprimer
+                                            </Button>
+                                        </Flex>
+                                    )
+                                }
+                            ]}
+                        />
+                    )}
 
-                            <AlertDialogBody color="gray.400">
-                                Voulez-vous vraiment supprimer cette réservation ? Cette action est irréversible.
-                            </AlertDialogBody>
+                    {/* Delete confirmation popup */}
+                    <AlertDialog
+                        isOpen={reservationToDelete !== null}
+                        leastDestructiveRef={cancelRef}
+                        onClose={() => setReservationToDelete(null)}
+                        isCentered
+                    >
+                        <AlertDialogOverlay>
+                            <AlertDialogContent bg="#1a1a1a" border="1px solid #333">
+                                <AlertDialogHeader color="zombieland.white" fontWeight="bold">
+                                    Supprimer la réservation
+                                </AlertDialogHeader>
 
-                            <AlertDialogFooter gap={3}>
-                                <Button ref={cancelRef} onClick={() => setReservationToDelete(null)}>
-                                    Annuler
-                                </Button>
+                                <AlertDialogBody color="gray.400">
+                                    Voulez-vous vraiment supprimer cette réservation ? Cette action est irréversible.
+                                </AlertDialogBody>
 
-                                <Button
-                                    bg="red.500"
-                                    color="white"
-                                    _hover={{ bg: "red.600" }}
-                                    onClick={() => {
-                                        if (reservationToDelete) handleDelete(reservationToDelete);
-                                        setReservationToDelete(null);
-                                    }}
-                                >
-                                    Supprimer
-                                </Button>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialogOverlay>
-                </AlertDialog>
-            </Box>
-        </Flex>
+                                <AlertDialogFooter gap={3}>
+                                    <Button ref={cancelRef} onClick={() => setReservationToDelete(null)}>
+                                        Annuler
+                                    </Button>
 
-        <Footer />
-    </Box>
-);
+                                    <Button
+                                        bg="red.500"
+                                        color="white"
+                                        _hover={{ bg: "red.600" }}
+                                        onClick={() => {
+                                            if (reservationToDelete) handleDelete(reservationToDelete);
+                                            setReservationToDelete(null);
+                                        }}
+                                    >
+                                        Supprimer
+                                    </Button>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialogOverlay>
+                    </AlertDialog>
+                </Box>
+            </Flex>
+
+            <Footer />
+        </Box>
+    );
 }
 
 export default AdminReservations;
