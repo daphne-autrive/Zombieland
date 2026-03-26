@@ -128,7 +128,7 @@ const AdminMembers = () => {
             Gestion des membres
           </Text>
 
-          {/* Create new member button */}
+          {/* Create member button */}
                     <Flex justifyContent="center" mt={8} mb={6}>
                         <Button
                             bgImage={`url(${bgBouton})`}
