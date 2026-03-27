@@ -260,33 +260,35 @@ function MyReservations() {
                                     {reservation.status}
                                 </Text>
 
-                                <Flex justifyContent="flex-end">
-                                    <Button
-                                        onClick={() => {
-                                            // if it's an admin, we skip the 10 days check and directly open the confirmation modal with password, 
-                                            // because admins should be able to cancel at any time
-                                            // otherwise, check the 10 days rule before opening the modal
-                                            if (currentUser?.role === 'ADMIN') {
-                                                setReservationToCancel(reservation.id_RESERVATION);
-                                            } else {
-                                                handleCancelClick(reservation);
-                                            }
-                                        }}
-                                        bgImage={`url(${bgBouton})`}
-                                        bgSize="cover"
-                                        bgPosition="center"
-                                        color="zombieland.secondary"
-                                        fontFamily="body"
-                                        fontWeight="bold"
-                                        fontSize="14px"
-                                        py={3}
-                                        px={4}
-                                        borderRadius="full"
-                                        boxShadow="inset 0 2px 8px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.5)"
-                                        _hover={{ opacity: 0.8 }}>
-                                        Annuler
-                                    </Button>
-                                </Flex>
+                                {new Date(reservation.date) >= new Date() && (
+                                    <Flex justifyContent="flex-end">
+                                        <Button
+                                            onClick={() => {
+                                                // if it's an admin, we skip the 10 days check and directly open the confirmation modal with password, 
+                                                // because admins should be able to cancel at any time
+                                                // otherwise, check the 10 days rule before opening the modal
+                                                if (currentUser?.role === 'ADMIN') {
+                                                    setReservationToCancel(reservation.id_RESERVATION);
+                                                } else {
+                                                    handleCancelClick(reservation);
+                                                }
+                                            }}
+                                            bgImage={`url(${bgBouton})`}
+                                            bgSize="cover"
+                                            bgPosition="center"
+                                            color="zombieland.secondary"
+                                            fontFamily="body"
+                                            fontWeight="bold"
+                                            fontSize="14px"
+                                            py={3}
+                                            px={4}
+                                            borderRadius="full"
+                                            boxShadow="inset 0 2px 8px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.5)"
+                                            _hover={{ opacity: 0.8 }}>
+                                            Annuler
+                                        </Button>
+                                    </Flex>
+                                )}
                             </Box>
                         ))}
 
@@ -351,7 +353,12 @@ function MyReservations() {
                 title="Annuler la réservation"
                 message="Voulez-vous vraiment annuler cette réservation ? Cette action est irréversible."
                 onConfirm={(password) => {
-                    if (reservationToCancel) handleCancel(reservationToCancel, password)
+                    if (reservationToCancel) {
+                        // Small delay to let the ConfirmModal close before showing the success modal
+                        setTimeout(() => {
+                            handleCancel(reservationToCancel, password)
+                        }, 300)
+                    }
                     setReservationToCancel(null)
                 }}
             />
@@ -361,12 +368,15 @@ function MyReservations() {
                 isOpen={showSuccessModal}
                 onClose={() => {
                     setShowSuccessModal(false);
-                    // we redirect to the member's reservations only if it's an admin cancelling another member's reservation, 
-                    // otherwise we stay on the same page and just see the updated list of reservations
-                    const destination = (isAdmin && id)
-                        ? `/admin/members/${id}`
-                        : '/my-account/reservations';
-                    navigate(destination);
+                    // Small delay before redirect to avoid visual flash
+                    // If the user is an admin, we redirect to the member's reservations page, 
+                    // otherwise we redirect to the user's own reservations page
+                    setTimeout(() => {
+                        const destination = (isAdmin && id)
+                            ? `/admin/members/${id}`
+                            : '/my-account/reservations';
+                        navigate(destination);
+                    }, 300)
                 }}
                 title="Annulation confirmée"
                 message="Votre réservation a été annulée avec succès. Vous allez être redirigé."
