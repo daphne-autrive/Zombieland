@@ -62,6 +62,11 @@ return (
     <Header />
 
     <Box
+      minH="100vh"
+      bgImage={`url(${bgImage})`}
+      bgSize="cover"
+      bgPosition="center"
+      bgAttachment={{ base: "scroll", lg: "fixed" }}
       flex={1}
       display="flex"
       alignItems="center"

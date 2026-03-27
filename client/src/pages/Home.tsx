@@ -99,7 +99,7 @@ const HomePage = () => {
             display="flex"
             flexDirection="column"
             bgImage={`url(${bgImage})`}
-            bgAttachment="fixed"
+            bgAttachment={{ base: "scroll", lg: "fixed" }}
             bgSize="cover"
             w="100%"
             overflow="hidden"
