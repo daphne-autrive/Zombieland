@@ -17,6 +17,9 @@ function InfoModal({ isOpen, onClose, title, message, titleColor = "zombieland.w
                 bg="zombieland.bgsecondary"
                 border="1px solid"
                 borderColor="zombieland.primary"
+                mx={4}
+                maxW={{ base: "85%", md: "450px" }}
+
             >
                 <ModalHeader
                     color={titleColor}

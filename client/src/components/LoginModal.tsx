@@ -56,6 +56,9 @@ function LoginModal({ isOpen, onClose, onConfirm, title }: LoginModalProps) {
           fontFamily="heading"
           borderBottom="1px solid"
           borderColor="zombieland.secondary"
+          mx={4}
+          maxW={{ base: "85%", md: "450px" }}
+
         >
           {title}
         </ModalHeader>
