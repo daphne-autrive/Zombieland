@@ -15,7 +15,7 @@ export const getAllReservations = async (req: Request, res: Response, next: Next
         include: {
             user: {
                 select: { email: true }
-                }
+            }
         }
     })
     // Return reservations with a 200 status (success)
@@ -41,7 +41,12 @@ export const createReservation = async (req: Request, res: Response, next: NextF
     // id_USER is optional: only provided when an admin creates for a member
     const { nb_tickets, date, id_TICKET, id_USER } = req.body;
 
-    // Adding a maximum of 10k tickets per days
+    // Validate date format
+    if (!date || isNaN(new Date(date).getTime())) {
+        throw new BadRequestError("Date invalide")
+    }
+
+    // Adding a maximum of 9999 tickets per day
     const reservationsByDay = await prisma.reservation.groupBy({
         by: ['date'],
         where: {
@@ -51,14 +56,18 @@ export const createReservation = async (req: Request, res: Response, next: NextF
         _sum: { nb_tickets: true }
     })
 
-    // If reservztionsByDay[0] is undefined, 
-    // it means there are no reservations for this date, so we set totalTickets to 0
-    // if exists "?", and if nul or undifined "??" use 0 (optionnal chaining and nullish coalescing)
-    // If the total number of tickets for this date plus the number of tickets 
-    // in the new reservation exceeds 10,000, return an error
     const totalTickets = reservationsByDay[0]?._sum.nb_tickets ?? 0
-    if (totalTickets + nb_tickets > 9999) {
+    const availableSpots = 9999 - totalTickets
+
+    // If the park is full
+    // Si le parc est complet
+    if (availableSpots <= 0) {
         throw new BadRequestError("Capacité maximale atteinte pour cette date")
+    }
+
+    // If not enough spots for the requested tickets
+    if (totalTickets + nb_tickets > 9999) {
+        throw new BadRequestError(`Vous ne pouvez pas réserver autant de billets. Il reste seulement ${availableSpots} place(s) disponible(s) pour cette date.`)
     }
 
     // If id_USER is provided, it means an admin is creating a reservation for a member
@@ -88,6 +97,7 @@ export const createReservation = async (req: Request, res: Response, next: NextF
             id_TICKET,
             id_USER: id_USER || req.user.id,
             total_amount: 0,
+            status: 'CONFIRMED'
         }
     });
 
