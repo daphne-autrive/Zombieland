@@ -6,11 +6,10 @@ import bgImage from '../assets/bg-image.png'
 import bgBouton from '../assets/bg-bouton.png'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import ConfirmModal from '../components/ConfirmModal'
 import InfoModal from '../components/InfoModal'
-
-
+import { isoToLocalDate } from '@/utils/date'
 
 // defines the shape of a reservation object
 // use an interface instead of any allows ts to check that we are accessing valid fiels
@@ -34,39 +33,77 @@ function MyReservations() {
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
     const [message, setMessage] = useState('')
+    const [currentUser, setCurrentUser] = useState<{ role: string } | null>(null)
     const [reservationToCancel, setReservationToCancel] = useState<number | null>(null)
     const [blockedMessage, setBlockedMessage] = useState<string | null>(null)
+    // pagination states
+    const [searchTerm, setSearchTerm] = useState('')
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 5
+    // id management
+    // isAdmin is true only if the connected user is an admin AND there is a member id in the URL
+    // this prevents members from accessing other members' reservations even if they know the URL
+    const { id } = useParams()
+    const isAdmin = currentUser?.role === 'ADMIN' && !!id
+
+    // Filtering and sorting the reservations based on the search term and the current page
+    const filteredReservations = reservations
+        .filter((r) => r.status !== 'CANCELLED')
+        .filter((r) => {
+            const search = searchTerm.toLowerCase()
+            const dateStr = new Date(r.date).toLocaleDateString('fr-FR').toLowerCase()
+            return dateStr.includes(search) || r.id_RESERVATION.toString().includes(search)
+        })
+        // Sort by default by date desc (most recent first)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+
+    // Pagination logic
+    // 4. Pagination
+    const indexOfLastItem = currentPage * itemsPerPage
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage
+    const currentItems = filteredReservations.slice(indexOfFirstItem, indexOfLastItem)
+    const totalPages = Math.ceil(filteredReservations.length / itemsPerPage)
 
     // Fetch reservations when the page loads
     useEffect(() => {
-        const fetchReservations = async () => {
-            // Call the backend API to retrieve the reservations
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/me`, {
-                credentials: 'include' // Send the cookie to authenticate the user
+        const init = async () => {
+            // 1. Fetch user first
+            const resUser = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
+                credentials: 'include'
             })
-            const data = await response.json()
-            if (!response.ok) {
-                setLoading(false)
-                return
+            const userData = await resUser.json()
+            setCurrentUser(userData)
 
-            }
+            // 2. Then fetch reservations based on role
+            const isAdminUser = userData.role === 'ADMIN' && !!id
+            const url = isAdminUser
+                ? `${import.meta.env.VITE_API_URL}/api/reservations/user/${id}`
+                : `${import.meta.env.VITE_API_URL}/api/reservations/me`
+
+            const response = await fetch(url, { credentials: 'include' })
+            const data = await response.json()
+            if (!response.ok) { setLoading(false); return }
             setReservations(data)
             setLoading(false)
         }
-        fetchReservations()
+        init()
     }, []) // Runs only once on mount
 
     // Check if the reservation is less than 10 days away
-    // Vérifie si la réservation est à moins de 10 jours
-    const isWithin10Days = (date: string) => {
-        const reservationDate = new Date(date)
+    const isWithin10Days = (dateStr: string) => {
+        const reservationDate = isoToLocalDate(dateStr)
         const today = new Date()
-        const diffDays = Math.ceil((reservationDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+        // Set time to midnight for accurate day comparison
+        today.setHours(0, 0, 0, 0)
+        // Calculate the difference in days between the reservation date and today
+        const diffTime = reservationDate.getTime() - today.getTime()
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+        // Return true if the reservation is within 10 days, false otherwise
         return diffDays < 10
     }
 
     // Handle cancel button click — check 10 days rule first
-    // Gère le clic sur annuler — vérifie la règle des 10 jours d'abord
+
     const handleCancelClick = (reservation: Reservation) => {
         if (isWithin10Days(reservation.date)) {
             setBlockedMessage(`Impossible d'annuler cette réservation car elle est dans moins de 10 jours (le ${new Date(reservation.date).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}).`)
@@ -76,8 +113,8 @@ function MyReservations() {
     }
 
     // Cancel a reservation by sending a delete request to the api
-    const handleCancel = async (id: number, password: string) => {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/${id}`, {
+    const handleCancel = async (id_res: number, password: string) => {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/${id_res}`, {
             method: 'DELETE',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
@@ -85,9 +122,15 @@ function MyReservations() {
         })
 
         if (response.ok) {
-            setReservations(reservations.filter((r: Reservation) => r.id_RESERVATION !== id))
+            setReservations(reservations.filter((r: Reservation) => r.id_RESERVATION !== id_res))
             setMessage('Votre annulation a bien été prise en compte.')
-            navigate('/my-account/reservations')
+            // Navigate to the member's reservations page after cancellation 
+            // (in case an admin is cancelling another member's reservation)
+            const destination = (isAdmin && id)
+                ? `/admin/members/${id}`
+                : '/my-account/reservations'
+
+            navigate(destination)
         } else {
             const data = await response.json()
             setMessage(data.message)
@@ -123,7 +166,7 @@ function MyReservations() {
                     textAlign="center"
                     color="zombieland.white"
                 >
-                    Mes réservations
+                    {isAdmin ? "Réservations du membre" : "Mes réservations"}
                 </Heading>
 
                 {loading ? (
@@ -187,7 +230,10 @@ function MyReservations() {
 
                             <Flex justifyContent="flex-end">
                                 <Button
-                                    onClick={() => handleCancelClick(reservation)}
+                                    onClick={() => isAdmin
+                                        ? setReservationToCancel(reservation.id_RESERVATION) // admin → pas de règle J-10
+                                        : handleCancelClick(reservation) // membre → règle J-10
+                                    }
                                     bgImage={`url(${bgBouton})`}
                                     bgSize="cover"
                                     bgPosition="center"
@@ -219,26 +265,6 @@ function MyReservations() {
                 >
                     {message}
                 </Text>
-            )}
-
-            {/* Blocked cancellation popup */}
-            {blockedMessage && (
-                <Box
-                    position="fixed"
-                    top="50%"
-                    left="50%"
-                    transform="translate(-50%, -50%)"
-                    bg="#1a1a1a"
-                    border="1px solid #333"
-                    borderRadius="md"
-                    p={6}
-                    zIndex={1000}
-                    maxW="400px"
-                    w="90%"
-                >
-                    <Text color="red.400" fontWeight="bold" mb={4}>{blockedMessage}</Text>
-                    <Button onClick={() => setBlockedMessage(null)} w="100%">Fermer</Button>
-                </Box>
             )}
 
             {/* Confirm cancellation modal with password */}
