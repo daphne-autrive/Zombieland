@@ -100,7 +100,7 @@ function MyReservations() {
             minH="100vh"
             bgImage={`url(${bgImage})`}
             bgSize="cover"
-            // bgAttachment="fixed"
+            // bgAttachment={{ base: "scroll", lg: "fixed" }}
             bgPosition="center"
             display="flex"
             flexDirection="column"

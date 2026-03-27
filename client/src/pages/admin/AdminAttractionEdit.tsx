@@ -139,7 +139,7 @@ const AdminAttractionEdit = () => {
             bgImage={`url(${bgImage})`}
             bgSize="cover"
             bgPosition="center"
-            bgAttachment="fixed"
+            bgAttachment={{ base: "scroll", lg: "fixed" }}
             display="flex"
             flexDirection="column"
         >

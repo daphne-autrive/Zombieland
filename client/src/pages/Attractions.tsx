@@ -57,7 +57,7 @@ const AttractionsPage = () => {
             display="flex"
             flexDirection="column"
             minHeight="100vh"
-            bgAttachment="fixed"
+            bgAttachment={{ base: "scroll", lg: "fixed" }}
             bgImage={`url(${bgImage})`}
             bgSize="cover"
         >
