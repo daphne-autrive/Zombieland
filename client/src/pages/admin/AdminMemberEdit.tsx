@@ -6,8 +6,8 @@ import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import AdminNavlinkMenu from '../../components/AdminNavlinkMenu'
 import ConfirmModal from '@/components/ConfirmModal'
-import bgImage from '../../assets/bg-image.png'
-import bgBouton from '../../assets/bg-bouton.png'
+import bgImage from '../../assets/bg-image.webp'
+import bgBouton from '../../assets/bg-bouton.webp'
 import type { Member } from '@/types/Member'
 
 const AdminMemberEdit = () => {
@@ -65,7 +65,18 @@ const AdminMemberEdit = () => {
   }
 
   return (
-    <Box display="flex" flexDirection="column" minHeight="100vh" backgroundImage={`url(${bgImage})`} bgSize="cover">
+
+    <Box
+      display="flex"
+      flexDirection="column"
+      minHeight="100vh"
+      bgImage={`url(${bgImage})`}
+      bgSize="cover"
+      bgRepeat="no-repeat"
+      bgAttachment="fixed"
+      bgPosition="center top"
+      w="100%"
+      overflow="hidden">
 
       <Header />
 

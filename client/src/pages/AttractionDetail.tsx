@@ -7,16 +7,17 @@ import axios from "axios";
 import { Badge, Box, Button, Flex, Heading, Image, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import bgImage from '../assets/bg-image.png'
-import Card from '../assets/Card.png';
+import bgImage from '../assets/bg-image.webp'
+import Card from '../assets/Card.webp';
+import { PageBackground } from "@/components/PageBackground";
 import { API_URL } from '../config/api.ts'
-import bgBouton from '../assets/bg-bouton.png'
-import img1 from "../assets/quarantaine.png"
-import img2 from "../assets/ridebiomasse.png"
-import img3 from "../assets/marche.png"
-import img4 from "../assets/grand8.png"
-import img5 from "../assets/fossecadavres.png"
-import img6 from "../assets/centrerecherche.png"
+import bgBouton from '../assets/bg-bouton.webp'
+import img1 from "../assets/quarantaine.webp"
+import img2 from "../assets/ridebiomasse.webp"
+import img3 from "../assets/marche.webp"
+import img4 from "../assets/grand8.webp"
+import img5 from "../assets/fossecadavres.webp"
+import img6 from "../assets/centrerecherche.webp"
 
 
 const categoryColors: Record<string, string> = {
@@ -82,14 +83,7 @@ const AttractionDetailPage = () => {
     return <p>Attraction non trouvé</p>
   }
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      minHeight="100vh"
-      bgAttachment="fixed"
-      bgImage={`url(${bgImage})`}
-      bgSize="cover"
-    >
+    <PageBackground bgImage={bgImage}>
       <Header />
 
       <Box flex="1" p={3} pt={{ base: "60px", lg: "100px" }} pb="100px">
@@ -258,7 +252,7 @@ const AttractionDetailPage = () => {
       {error && <Text>{error}</Text>}
 
       <Footer />
-    </Box>
+    </PageBackground>
   );
 };
 

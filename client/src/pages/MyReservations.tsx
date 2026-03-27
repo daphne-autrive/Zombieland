@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import { Box, Button, Input, Heading, Text, Flex, Spinner } from '@chakra-ui/react'
-import bgImage from '../assets/bg-image.png'
-import bgBouton from '../assets/bg-bouton.png'
+import bgImage from '../assets/bg-image.webp'
+import bgBouton from '../assets/bg-bouton.webp'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { PageBackground } from '../components/PageBackground'
 import { useNavigate, useParams } from 'react-router-dom'
 import ConfirmModal from '../components/ConfirmModal'
 import InfoModal from '../components/InfoModal'
@@ -100,7 +101,7 @@ function MyReservations() {
         const diffTime = reservationDate.getTime() - today.getTime()
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
         // Return true if the reservation is within 10 days, false otherwise
-        return diffDays < 10
+        return diffDays <= 10
     }
 
     // Handle cancel button click — check 10 days rule first
@@ -136,15 +137,7 @@ function MyReservations() {
     }
 
     return (
-        <Box
-            minH="100vh"
-            bgImage={`url(${bgImage})`}
-            bgSize="cover"
-            // bgAttachment="fixed"
-            bgPosition="center"
-            display="flex"
-            flexDirection="column"
-        >
+        <PageBackground bgImage={bgImage}>
             <Header />
 
             <Box
@@ -383,7 +376,7 @@ function MyReservations() {
             />
 
             <Footer />
-        </Box>
+        </PageBackground>
     )
 }
 

@@ -9,7 +9,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminTable from "@/components/AdminTable";
 import AdminMenu from "@/components/AdminNavlinkMenu";
-import laboratoirez from "../../assets/laboratoirez.png"
+import laboratoirez from "../../assets/laboratoirez.webp"
 import type { Reservation } from "@/types/Reservations";
 import axios from "axios";
 import { API_URL } from "@/config/api";
@@ -112,6 +112,10 @@ const AdminReservations = () => {
             bgAttachment="fixed"
             bgImage={`url(${laboratoirez})`}
             bgSize="cover"
+            bgRepeat="no-repeat"
+            bgPosition="center top"
+            w="100%"
+            overflow="hidden"
         >
             <Header />
 

@@ -3,7 +3,7 @@
 import { Box, Flex, Image, Text, IconButton, Menu, MenuItem, MenuList, MenuButton } from '@chakra-ui/react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import logo from '../assets/logo.png'
+import logo from '../assets/logo.webp'
 import { FaUserCircle } from 'react-icons/fa'
 import axios from 'axios'
 import { API_URL } from '@/config/api'
@@ -21,16 +21,19 @@ function Header() {
 
     useEffect(() => {
         const fetchUser = async () => {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
-                credentials: 'include'
-            },)
-
-            if (response.ok) {
-                const data = await response.json()
+            try {
+                
+                const response = await axios.get(`${API_URL}/api/auth/me`,
+    
+                    { withCredentials: true },
+                );
+                const data = response.data
                 setFirstname(data.firstname)
                 setRole(data.role)
+                setIsLoading(false)
+            } catch (error) {
+                setIsLoading(false)
             }
-            setIsLoading(false)
         }
         fetchUser()
     }, [location]) // re-fetch user on every route change to sync header state after login/logout via modal

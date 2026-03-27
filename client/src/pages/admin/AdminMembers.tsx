@@ -11,8 +11,8 @@ import AdminNavlinkMenu from "@/components/AdminNavlinkMenu"
 import type { Member } from "@/types/Member"
 import { formatDateForDisplay } from "@/utils/date"
 
-import bgBouton from '../../assets/bg-bouton.png'
-import bgImage from '../../assets/bg-image.png'
+import bgBouton from '../../assets/bg-bouton.webp'
+import bgImage from '../../assets/bg-image.webp'
 
 const AdminMembers = () => {
   // State for members, loading and error
@@ -95,8 +95,13 @@ const AdminMembers = () => {
       display="flex"
       flexDirection="column"
       minHeight="100vh"
-      backgroundImage={`url(${bgImage})`}
+      bgImage={`url(${bgImage})`}
       bgSize="cover"
+      bgRepeat="no-repeat"
+      bgAttachment="fixed"
+      bgPosition="center top"
+      w="100%"
+      overflow="hidden"
     >
       <Header />
 

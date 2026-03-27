@@ -5,21 +5,22 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Box, Image, Button, Text, Wrap, WrapItem, IconButton, Flex, Heading, Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalBody, useDisclosure } from "@chakra-ui/react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu"
+import { PageBackground } from "../components/PageBackground";
 // Images
-import bgButton from '../assets/bg-bouton.png';
-import bgImage from '../assets/bg-image.png';
-import zombi from '../assets/zombi.png';
-import fosse from '../assets/fosse.png';
-import grandhuit from '../assets/grandhuit.png';
-import reception from '../assets/reception.png';
-import train from '../assets/train.png';
-import parkEntryLandscape from '../assets/park-entry-landscape.png';
-import img1 from "../assets/quarantaine.png"
-import img2 from "../assets/ridebiomasse.png"
-import img3 from "../assets/marche.png"
-import img4 from "../assets/grand8.png"
-import img5 from "../assets/fossecadavres.png"
-import img6 from "../assets/centrerecherche.png"
+import bgButton from '../assets/bg-bouton.webp';
+import bgImage from '../assets/bg-image.webp';
+import zombi from '../assets/zombi.webp';
+import fosse from '../assets/fosse.webp';
+import grandhuit from '../assets/grandhuit.webp';
+import reception from '../assets/reception.webp';
+import train from '../assets/train.webp';
+import parkEntryLandscape from '../assets/park-entry-landscape.webp';
+import img1 from "../assets/quarantaine.webp"
+import img2 from "../assets/ridebiomasse.webp"
+import img3 from "../assets/marche.webp"
+import img4 from "../assets/grand8.webp"
+import img5 from "../assets/fossecadavres.webp"
+import img6 from "../assets/centrerecherche.webp"
 
 
 
@@ -95,15 +96,7 @@ const HomePage = () => {
         ? attractions.filter(a => a.intensity === categoryToEnum[selectedCategory])
         : attractions;
     return (
-        <Box
-            display="flex"
-            flexDirection="column"
-            bgImage={`url(${bgImage})`}
-            bgAttachment="fixed"
-            bgSize="cover"
-            w="100%"
-            overflow="hidden"
-        >
+        <PageBackground bgImage={bgImage}>
             <Header />
 
             {/* Picture enter parc */}
@@ -151,14 +144,15 @@ const HomePage = () => {
                 → Réserver maintenant
             </Button>
 
-            <Box px={10} py={16} maxW="700px" mx="auto" textAlign="center">
+            <Box px={10} py={16} maxW="900px" mx="auto" textAlign="center">
                 <Text
-                    fontSize="2xl"
+                    fontSize={{ base: "2xl", sm: "3xl", lg: "4xl" }}
                     color="zombieland.white"
                     fontFamily="heading"
                     letterSpacing="0.1em"
                     textTransform="uppercase"
-                    mb={6}
+                    mb={8}
+                    fontWeight="bold"
                 >
                     Une ville abandonnée. Des zombies. Et vous.
                 </Text>
@@ -167,8 +161,8 @@ const HomePage = () => {
                     border="1px solid"
                     borderColor="zombieland.primary"
                     borderRadius="md"
-                    px={8}
-                    py={6}
+                    px={{ base: 6, lg: 10 }}
+                    py={8}
                     boxShadow="inset 0 2px 6px rgba(0,0,0,0.4), 0 0 30px rgba(71, 97, 130, 0.3)"
                     backdropFilter="blur(4px)"
                     transition="all 0.3s ease"
@@ -180,23 +174,23 @@ const HomePage = () => {
                     }}
                 >
                     <Text
-                        fontSize="md"
+                        fontSize={{ base: "md", sm: "lg", lg: "xl" }}
                         color="zombieland.white"
                         fontFamily="body"
                         fontWeight="300"
-                        lineHeight="1.9"
-                        mb={4}
+                        lineHeight="2"
+                        mb={6}
                     >
                         Bienvenue à ZombieLand, une expérience immersive où chaque attraction
                         vous plonge au cœur d'un monde post-apocalyptique...
                     </Text>
-                    <Box w="40px" h="1px" bg="zombieland.cta1orange" mx="auto" my={4} />
+                    <Box w="40px" h="1px" bg="zombieland.cta1orange" mx="auto" my={6} />
                     <Text
-                        fontSize="md"
+                        fontSize={{ base: "md", sm: "lg", lg: "xl" }}
                         color="zombieland.white"
                         fontFamily="body"
                         fontWeight="400"
-                        lineHeight="1.9"
+                        lineHeight="2"
                     >
                         Ici, survivre fait partie du jeu. Arriverez-vous à survivre ?
                         Maîtriserez-vous vos peurs ?
@@ -359,9 +353,8 @@ const HomePage = () => {
                     </ModalBody>
                 </ModalContent>
             </Modal>
-
             <Footer />
-        </Box>
+        </PageBackground>
     );
 };
 

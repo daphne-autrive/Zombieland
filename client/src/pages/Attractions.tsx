@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
-import { Box, Wrap, WrapItem, Menu, MenuButton, MenuList, MenuItem, Text, Heading } from "@chakra-ui/react";
+import { Box, Wrap, WrapItem, Menu, MenuButton, MenuList, MenuItem, Text } from "@chakra-ui/react";
 import AttractionCard from "../components/AttractionsCard";
 import type { Attraction } from "@types";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import bgImage from '../assets/bg-image.png';
-import img1 from "../assets/quarantaine.png"
-import img2 from "../assets/ridebiomasse.png"
-import img3 from "../assets/marche.png"
-import img4 from "../assets/grand8.png"
-import img5 from "../assets/fossecadavres.png"
-import img6 from "../assets/centrerecherche.png"
+import bgImage from '../assets/bg-image.webp';
+import img1 from "../assets/quarantaine.webp"
+import img2 from "../assets/ridebiomasse.webp"
+import img3 from "../assets/marche.webp"
+import img4 from "../assets/grand8.webp"
+import img5 from "../assets/fossecadavres.webp"
+import img6 from "../assets/centrerecherche.webp"
+import { PageBackground } from "../components/PageBackground";
 
 const categoryToEnum: Record<string, string> = {
     "Peur Acceptable": "LOW",
@@ -52,32 +53,14 @@ const AttractionsPage = () => {
         ? attractions.filter(a => a.intensity === categoryToEnum[selectedCategory])
         : attractions;
 
-    return (
-        <Box
-            display="flex"
-            flexDirection="column"
-            minHeight="100vh"
-            bgAttachment="fixed"
-            bgImage={`url(${bgImage})`}
-            bgSize="cover"
-        >
+return (
+        <PageBackground bgImage={bgImage}>
             <Header />
 
-            <Box flex="1" p={3} pt={{ base: "60px", md: "100px" }} pb="100px">
-
-                {/* Title */}
-                <Heading
-                    mb={12}
-                    fontFamily="heading"
-                    fontSize="54px"
-                    textAlign="center"
-                    color="zombieland.white"
-                >
-                    Nos attractions
-                </Heading>
+            <Box flex="1" p={3} pt="100px" pb="100px">
 
                 {/* Bouton unique Filtrer par catégorie */}
-                <Box display="flex" justifyContent={{ base: "center", lg: "center" }} alignItems="center" pr={{ base: 0, lg: 8 }} mb={6} minH="60px">
+                <Box display="flex" justifyContent="flex-end" pr={8} mb={6}>
                     <Menu>
                         <MenuButton
                             color="zombieland.white"
@@ -96,46 +79,23 @@ const AttractionsPage = () => {
                         </MenuButton>
 
                         <MenuList bg="#1a1a1a" border="1px solid #333">
-                            <MenuItem
-                                bg="#1a1a1a"
-                                color="white"
-                                _hover={{ bg: "#333" }}
-                                onClick={() => setSelectedCategory(null)}
-                            >
+                            <MenuItem bg="#1a1a1a" color="white" _hover={{ bg: "#333" }} onClick={() => setSelectedCategory(null)}>
                                 Toutes
                             </MenuItem>
-
-                            <MenuItem
-                                bg="#1a1a1a"
-                                color="white"
-                                _hover={{ bg: "#333" }}
-                                onClick={() => setSelectedCategory("Peur Acceptable")}
-                            >
+                            <MenuItem bg="#1a1a1a" color="white" _hover={{ bg: "#333" }} onClick={() => setSelectedCategory("Peur Acceptable")}>
                                 Peur Acceptable
                             </MenuItem>
-
-                            <MenuItem
-                                bg="#1a1a1a"
-                                color="white"
-                                _hover={{ bg: "#333" }}
-                                onClick={() => setSelectedCategory("Peur Survivable")}
-                            >
+                            <MenuItem bg="#1a1a1a" color="white" _hover={{ bg: "#333" }} onClick={() => setSelectedCategory("Peur Survivable")}>
                                 Peur Survivable
                             </MenuItem>
-
-                            <MenuItem
-                                bg="#1a1a1a"
-                                color="white"
-                                _hover={{ bg: "#333" }}
-                                onClick={() => setSelectedCategory("Peur Mortelle")}
-                            >
+                            <MenuItem bg="#1a1a1a" color="white" _hover={{ bg: "#333" }} onClick={() => setSelectedCategory("Peur Mortelle")}>
                                 Peur Mortelle
                             </MenuItem>
                         </MenuList>
                     </Menu>
                 </Box>
 
-                {/*Cartes filtrées */}
+                {/* Cartes filtrées */}
                 <Wrap spacing="30px" justify="center" maxW="1000px" mx="auto">
                     {filteredAttractions.map((attraction) => (
                         <WrapItem key={attraction.id_ATTRACTION}>
@@ -146,12 +106,12 @@ const AttractionsPage = () => {
                         </WrapItem>
                     ))}
                 </Wrap>
+
+                {error && <Text>{error}</Text>}
             </Box>
 
-            {error && <Text>{error}</Text>}
-
             <Footer />
-        </Box>
+        </PageBackground>
     );
 };
 
