@@ -8,6 +8,7 @@ import bgImage from '../assets/bg-image.webp'
 import bgBouton from '../assets/bg-bouton.webp'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { PageBackground } from '../components/PageBackground'
 
 
 function Login() {
@@ -37,16 +38,7 @@ function Login() {
 
   return (
 
-    <Box
-      minH="100vh"
-      bgImage={`url(${bgImage})`}
-      bgSize="cover"
-      bgPosition="center"
-      bgAttachment={{ base: "scroll", lg: "fixed" }}
-      display="flex"
-      flexDirection="column"
-
-    >
+    <PageBackground bgImage={bgImage}>
       <Header />
 
       <Box
@@ -153,9 +145,8 @@ function Login() {
           )}
         </Box>
       </Box>
-
       <Footer />
-    </Box>
+    </PageBackground>
   )
 }
 

@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Box, Image, Button, Text, Wrap, WrapItem, IconButton, Flex, Heading, Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalBody, useDisclosure } from "@chakra-ui/react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu"
+import { PageBackground } from "../components/PageBackground";
 // Images
 import bgButton from '../assets/bg-bouton.webp';
 import bgImage from '../assets/bg-image.webp';
@@ -95,15 +96,7 @@ const HomePage = () => {
         ? attractions.filter(a => a.intensity === categoryToEnum[selectedCategory])
         : attractions;
     return (
-        <Box
-            display="flex"
-            flexDirection="column"
-            bgImage={`url(${bgImage})`}
-            bgAttachment={{ base: "scroll", lg: "fixed" }}
-            bgSize="cover"
-            w="100%"
-            overflow="hidden"
-        >
+        <PageBackground bgImage={bgImage}>
             <Header />
 
             {/* Picture enter parc */}
@@ -359,9 +352,8 @@ const HomePage = () => {
                     </ModalBody>
                 </ModalContent>
             </Modal>
-
             <Footer />
-        </Box>
+        </PageBackground>
     );
 };
 

@@ -8,6 +8,7 @@ import bgImage from '../assets/bg-image.webp'
 import bgBouton from '../assets/bg-bouton.webp'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { PageBackground } from '../components/PageBackground'
 
 function Register() {
   //setting the changing of the inputs and the validation message as well
@@ -50,27 +51,16 @@ function Register() {
   }
 
 return (
-  <Box
-    minH="100vh"
-    bgImage={`url(${bgImage})`}
-    bgSize="cover"
-    bgPosition="center"
-    bgAttachment="fixed"
-    display="flex"
-    flexDirection="column"
-  >
+  <PageBackground bgImage={bgImage}>
     <Header />
 
     <Box
-      bgImage={`url(${bgImage})`}
-      bgSize="cover"
-      bgPosition="center"
-      bgAttachment={{ base: "scroll", lg: "fixed" }}
       flex={1}
       display="flex"
       alignItems="center"
       justifyContent="center"
       minH="70vh"
+      w="100%"
     >
       <Box
         w="500px"
@@ -213,7 +203,7 @@ return (
     </Box>
 
     <Footer />
-  </Box>
+  </PageBackground>
 )
 }
 

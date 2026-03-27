@@ -11,6 +11,7 @@ import img3 from "../assets/marche.webp"
 import img4 from "../assets/grand8.webp"
 import img5 from "../assets/fossecadavres.webp"
 import img6 from "../assets/centrerecherche.webp"
+import { PageBackground } from "../components/PageBackground";
 
 const categoryToEnum: Record<string, string> = {
     "Peur Acceptable": "LOW",
@@ -53,14 +54,7 @@ const AttractionsPage = () => {
         : attractions;
 
 return (
-        <Box
-            display="flex"
-            flexDirection="column"
-            minHeight="100vh"
-            bgAttachment={{ base: "scroll", lg: "fixed" }}
-            bgImage={`url(${bgImage})`}
-            bgSize="cover"
-        >
+        <PageBackground bgImage={bgImage}>
             <Header />
 
             <Box flex="1" p={3} pt="100px" pb="100px">
@@ -117,7 +111,7 @@ return (
             </Box>
 
             <Footer />
-        </Box>
+        </PageBackground>
     );
 };
 

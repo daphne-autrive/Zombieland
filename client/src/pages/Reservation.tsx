@@ -8,6 +8,7 @@ import { Box, Button, Checkbox, Heading, Text, Input, Flex, FormControl, FormLab
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import LoginModal from '../components/LoginModal'
+import { PageBackground } from '../components/PageBackground'
 // Import the calendar component from react-day-picker
 import { DayPicker } from 'react-day-picker'
 import 'react-day-picker/style.css'
@@ -144,15 +145,7 @@ function Reservation() {
     }
 
     return (
-        <Box
-            minH="100vh"
-            bgImage={`url(${bgImage})`}
-            bgSize="cover"
-            bgPosition="center"
-            bgAttachment={'fixed'}
-            display="flex"
-            flexDirection="column"
-        >
+        <PageBackground bgImage={bgImage}>
             <Header />
 
             <Box
@@ -436,7 +429,7 @@ function Reservation() {
                 title="Connexion"
             />
             <Footer />
-        </Box >
+        </PageBackground>
     )
 }
 export default Reservation

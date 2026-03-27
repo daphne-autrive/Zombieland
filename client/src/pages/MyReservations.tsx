@@ -6,6 +6,7 @@ import bgImage from '../assets/bg-image.webp'
 import bgBouton from '../assets/bg-bouton.webp'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { PageBackground } from '../components/PageBackground'
 import { useNavigate } from 'react-router-dom'
 import ConfirmModal from '../components/ConfirmModal'
 import InfoModal from '../components/InfoModal'
@@ -96,15 +97,7 @@ function MyReservations() {
 
     const activeReservations = reservations.filter((r: Reservation) => r.status !== 'CANCELLED')
     return (
-        <Box
-            minH="100vh"
-            bgImage={`url(${bgImage})`}
-            bgSize="cover"
-            // bgAttachment={{ base: "scroll", lg: "fixed" }}
-            bgPosition="center"
-            display="flex"
-            flexDirection="column"
-        >
+        <PageBackground bgImage={bgImage}>
             <Header />
 
             <Box
@@ -262,7 +255,7 @@ function MyReservations() {
             />
 
             <Footer />
-        </Box>
+        </PageBackground>
     )
 }
 

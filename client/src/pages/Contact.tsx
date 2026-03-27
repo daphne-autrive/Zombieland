@@ -4,18 +4,11 @@ import { Box, Heading, Text, SimpleGrid } from '@chakra-ui/react'
 import bgImage from '../assets/bg-image.webp'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { PageBackground } from '../components/PageBackground'
 
 function Contact() {
     return (
-        <Box
-            minH="100vh"
-            bgImage={`url(${bgImage})`}
-            bgSize="cover"
-            bgPosition="center"
-            bgAttachment={{ base: "scroll", lg: "fixed" }}
-            display="flex"
-            flexDirection="column"
-        >
+        <PageBackground bgImage={bgImage}>
             <Header />
 
             <Box
@@ -172,7 +165,7 @@ function Contact() {
             </Box>
 
             <Footer />
-        </Box>
+        </PageBackground>
     )
 }
 
