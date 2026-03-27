@@ -108,7 +108,7 @@ function Login() {
       <Box
         display="flex"
         flexDirection="column"
-        alignItems={{ base: 'center', lg: 'flex-end' }}
+        alignItems="center"
         px={10}
         pb={{ base: 28, lg: 6 }}
       >
