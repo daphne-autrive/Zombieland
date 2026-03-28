@@ -10,6 +10,8 @@ import { PageBackground } from '../components/PageBackground'
 import { useNavigate } from 'react-router-dom'
 import ConfirmModal from '../components/ConfirmModal'
 import InfoModal from '../components/InfoModal'
+import { API_URL } from '@/config/api'
+import axios, { isAxiosError } from 'axios'
 
 
 
@@ -40,19 +42,19 @@ function MyReservations() {
 
     // Fetch reservations when the page loads
     useEffect(() => {
+        setLoading(true)
         const fetchReservations = async () => {
-            // Call the backend API to retrieve the reservations
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/me`, {
-                credentials: 'include' // Send the cookie to authenticate the user
-            })
-            const data = await response.json()
-            if (!response.ok) {
-                setLoading(false)
-                return
-
+            try {
+                // Call the backend API to retrieve the reservations
+                const response = await axios.get(`${API_URL}/api/reservations/me`, {
+                    withCredentials: true // Send the cookie to authenticate the user
+                })
+                setReservations(response.data)
+            } catch (error) {
+                setMessage("Erreur lors de la récupération d'une réservation")
+            } finally {
+                setLoading(false);
             }
-            setReservations(data)
-            setLoading(false)
         }
         fetchReservations()
     }, []) // Runs only once on mount
@@ -78,20 +80,24 @@ function MyReservations() {
 
     // Cancel a reservation by sending a delete request to the api
     const handleCancel = async (id: number, password: string) => {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/${id}`, {
-            method: 'DELETE',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password })
-        })
-
-        if (response.ok) {
-            setReservations(reservations.filter((r: Reservation) => r.id_RESERVATION !== id))
-            setMessage('Votre annulation a bien été prise en compte.')
-            navigate('/my-account/reservations')
-        } else {
-            const data = await response.json()
-            setMessage(data.message)
+        try {
+            await axios.delete(`${API_URL}/api/reservations/${id}`, 
+                {data: {password}, 
+                withCredentials: true,
+            })
+    
+            
+                setReservations(reservations.filter((r: Reservation) => r.id_RESERVATION !== id))
+                setMessage('Votre annulation a bien été prise en compte.')
+                navigate('/my-account/reservations')
+            
+        } catch (error) {
+            const message = "Votre annulation n'a pas été pris en compte"
+            if(isAxiosError(error)){
+                setMessage(error.response?.data.message || message)
+            } else {
+                setMessage(message)
+            }
         }
     }
 
