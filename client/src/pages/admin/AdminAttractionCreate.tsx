@@ -68,11 +68,12 @@ const AdminAttractionCreate = () => {
                 formData.append('image', fileInputRef.current.files[0])
                 
                 errorMessage= "Attraction créée mais erreur lors de l'upload de l'image"
-                
-                await axios.patch(`${API_URL}/api/attractions/${data.id_ATTRACTION}/image`, {
+
+                await axios.patch(`${API_URL}/api/attractions/${data.id_ATTRACTION}/image`, 
                     formData
-                },{
+                ,{
                     withCredentials: true,
+                    headers: { 'Content-Type': 'multipart/form-data' }
                 })
             }
             // Redirect to admin attractions page after success
