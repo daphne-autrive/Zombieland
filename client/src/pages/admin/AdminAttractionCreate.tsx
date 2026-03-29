@@ -10,6 +10,8 @@ import bgBouton from '../../assets/bg-bouton.png'
 import Card from '../../assets/Card.png'
 import ConfirmModal from "../../components/ConfirmModal"
 import defaultImage from "../../assets/quarantaine.png"
+import { API_URL } from "@/config/api"
+import axios from "axios"
 
 const categoryColors: Record<string, string> = {
     LOW: "green",
@@ -41,48 +43,49 @@ const AdminAttractionCreate = () => {
     }
 
     const handleSubmit = async (password: string) => {
-        // Create the attraction first
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/attractions`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name,
-                description,
-                min_height: minHeight === "" ? undefined : minHeight,
-                duration: duration === "" ? undefined : duration,
-                capacity: capacity === "" ? undefined : capacity,
-                intensity,
-                password
-            })
-        })
+        let errorMessage = "Erreur lors de la création de l'attraction"
+        try {
+            // Create the attraction first
+            const res = await axios.post(`${API_URL}/api/attractions`, 
+                {
+                    name,
+                    description,
+                    min_height: minHeight === "" ? undefined : minHeight,
+                    duration: duration === "" ? undefined : duration,
+                    capacity: capacity === "" ? undefined : capacity,
+                    intensity,
+                    password
+                },
+                {
+                    withCredentials: true,
+            });
 
-        if (!res.ok) {
-            setError("Erreur lors de la création de l'attraction")
-            return
-        }
+            const data = res.data
 
-        const data = await res.json()
-
-        // If an image was selected, upload it after creation
-        if (fileInputRef.current?.files?.[0]) {
-            const formData = new FormData()
-            formData.append('image', fileInputRef.current.files[0])
-
-            const imageRes = await fetch(`${import.meta.env.VITE_API_URL}/api/attractions/${data.id_ATTRACTION}/image`, {
-                method: 'PATCH',
-                credentials: 'include',
-                body: formData
-            })
-
-            if (!imageRes.ok) {
-                setError("Attraction créée mais erreur lors de l'upload de l'image")
-                return
+            // If an image was selected, upload it after creation
+            if (fileInputRef.current?.files?.[0]) {
+                const formData = new FormData()
+                formData.append('image', fileInputRef.current.files[0])
+                
+                errorMessage= "Attraction créée mais erreur lors de l'upload de l'image"
+                
+                await axios.patch(`${API_URL}/api/attractions/${data.id_ATTRACTION}/image`, {
+                    formData
+                },{
+                    withCredentials: true,
+                })
             }
+            // Redirect to admin attractions page after success
+            setTimeout(() => navigate('/admin/attractions'), 1500)
+        } catch (error) {
+            setError(errorMessage)
+            // premier if
+            // setError("Erreur lors de la création de l'attraction")
+                
+            //deuxieme if
+            // setError("Attraction créée mais erreur lors de l'upload de l'image")
+                
         }
-
-        // Redirect to admin attractions page after success
-        setTimeout(() => navigate('/admin/attractions'), 1500)
     }
 
     // Shared input style matching the card theme
