@@ -4,6 +4,13 @@ import AttractionCard from "../components/AttractionsCard";
 import type { Attraction } from "@types";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import bgImage from '../assets/bg-image.webp';
+import img1 from "../assets/quarantaine.webp"
+import img2 from "../assets/ridebiomasse.webp"
+import img3 from "../assets/marche.webp"
+import img4 from "../assets/grand8.webp"
+import img5 from "../assets/fossecadavres.webp"
+import img6 from "../assets/centrerecherche.webp"
 import { PageBackground } from "../components/PageBackground";
 import bgImage from '../assets/bg-image.png';
 import img1 from "../assets/quarantaine.png"
