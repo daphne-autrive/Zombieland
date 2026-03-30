@@ -4,6 +4,8 @@ import { prisma } from '../lib/prisma.js'
 import { Request, Response, NextFunction } from 'express';
 import { BadRequestError, NotFoundError, UnauthorizedError } from "../utils/AppError.js";
 import * as argon2 from 'argon2'
+import { attractionSchema } from '../schemas/attraction.schema.js';
+import { ZodError } from 'zod';
 
 // const prisma = new PrismaClient()
 export const getAttractions = async (req: Request, res: Response, next: NextFunction) => {
@@ -61,36 +63,75 @@ export const getAttractionById = async (req: Request, res: Response, next: NextF
     return res.json(findAttraction)
 }
 
-// create a new attraction admin only
 export const createAttraction = async (req: Request, res: Response, next: NextFunction) => {
-    const { name, description, min_height, duration, capacity, intensity, password } = req.body
+    try {
+        
+        // 1. Validate incoming data with Zod
+        
+        // We manually convert numeric fields because Zod does not parse strings into numbers.
+        const parsedData = attractionSchema.parse({
+            ...req.body,
+            min_height: req.body.min_height ? Number(req.body.min_height) : undefined,
+            duration: req.body.duration ? Number(req.body.duration) : undefined,
+            capacity: req.body.capacity ? Number(req.body.capacity) : undefined,
+        })
 
-    // Fetch the admin user from the DB to compare the password
-    const user = await prisma.user.findUnique({
-        where: { id_USER: req.user!.id }
-    })
+        const { name, description, min_height, duration, capacity, intensity } = parsedData
 
-    if (!user) {
-        throw new NotFoundError("Utilisateur introuvable")
-    }
+        
+        // 2. Fetch the admin user to verify the password
+        
+        const user = await prisma.user.findUnique({
+            where: { id_USER: req.user!.id }
+        })
 
-    const rightPassword = await argon2.verify(user.password, password)
-    if (!rightPassword) {
-        throw new UnauthorizedError("Mot de passe incorrect")
-    }
-
-    const attraction = await prisma.attraction.create({
-        data: {
-            name,
-            description,
-            min_height: min_height || 0,
-            duration: duration || 0,
-            capacity: capacity || 0,
-            intensity,
+        if (!user) {
+            throw new NotFoundError("Utilisateur introuvable")
         }
-    })
-    return res.status(201).json(attraction)
+
+        
+        // 3. Compare provided password with stored hash
+        
+        const rightPassword = await argon2.verify(user.password, req.body.password)
+        if (!rightPassword) {
+            throw new UnauthorizedError("Mot de passe incorrect")
+        }
+        
+        // 4. Create the attraction in the database
+        
+        const attraction = await prisma.attraction.create({
+            data: {
+                name,
+                description,
+                min_height: min_height ?? 0,
+                duration: duration ?? 0,
+                capacity: capacity ?? 0,
+                intensity,
+            }
+        })
+
+        return res.status(201).json(attraction)
+
+    } catch (err: unknown) {
+        
+
+        // 5. Handle Zod validation errors
+        
+        if (err instanceof ZodError) {
+            return res.status(400).json({
+                error: "Invalid data",
+                details: err.issues
+            })
+        }
+
+        // Forward any other error to the global error handler
+        next(err)
+    }
 }
+
+
+
+
 
 // delete an attraction by admin only, requires password confirmation
 export const deleteAttraction = async (req: Request, res: Response, next: NextFunction) => {

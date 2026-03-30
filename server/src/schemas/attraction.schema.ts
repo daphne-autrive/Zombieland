@@ -8,10 +8,12 @@ export const attractionSchema = z.object({
   min_height: z.number().int().positive().optional(),
   duration: z.number().int().positive().optional(),
   capacity: z.number().int().positive().optional(),
-  intensity: z.enum(['LOW','MEDIUM','HIGH']).optional(),
-})
+  intensity: z.enum(['LOW', 'MEDIUM', 'HIGH']).optional(),
+});
 
-// Schema for creating/updating an attraction, includes password field for authentication
-export const attractionWithPasswordSchema = attractionSchema.extend({
-  password: z.string().min(1, { error: "Le mot de passe est requis" })
-})
+export const PasswordAttractionSchema = attractionSchema.extend({
+  password: z.string().min(1, { error: "Le mot de passe est requis" }),
+});
+
+export type AttractionInput = z.infer<typeof attractionSchema>
+export type PasswordAttractionInput = z.infer<typeof PasswordAttractionSchema>
