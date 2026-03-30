@@ -9,6 +9,8 @@ import ConfirmModal from '@/components/ConfirmModal'
 import bgImage from '../../assets/bg-image.webp'
 import bgBouton from '../../assets/bg-bouton.webp'
 import type { Member } from '@/types/Member'
+import { API_URL } from '@/config/api'
+import axios from 'axios'
 
 const AdminMemberEdit = () => {
   const { id } = useParams()
@@ -22,46 +24,56 @@ const AdminMemberEdit = () => {
 
   useEffect(() => {
     const fetchMember = async () => {
-      // Fetch member data
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${id}/profile`, {
-        credentials: 'include'
-      })
-      const data = await res.json()
-      setMember(data)
-      setForm({ firstname: data.firstname, lastname: data.lastname, email: data.email, password: '', role: data.role })
-      // Fetch reservations of the member
-      const resResa = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/user/${id}`, { credentials: 'include' })
-      const dataResa = await resResa.json()
-      setReservations(dataResa)
+      try {
+        const res = await axios.get(`${API_URL}/api/users/${id}/profile`, {
+          withCredentials: true
+        })
+
+        setMember(res.data)
+        setForm({ firstname: res.data.firstname, lastname: res.data.lastname, email: res.data.email, password: '', role: res.data.role })
+
+      } catch (error) {
+        setMessage("Erreur lors de la récupération du membre")
+      }
     }
     fetchMember()
   }, [id])
 
   const handleUpdate = async (currentPassword: string) => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${id}/profile`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({
-        firstname: form.firstname || undefined,
-        lastname: form.lastname || undefined,
-        email: form.email || undefined,
-        password: form.password || undefined,
-        role: form.role,
-        currentPassword
-      })
-    })
-    if (res.ok) setMessage('Profil mis à jour !')
-    else setMessage('Une erreur est survenue.')
+    try {
+      await axios.patch(`${API_URL}/api/users/${id}/profile`,
+        {
+          firstname: form.firstname || undefined,
+          lastname: form.lastname || undefined,
+          email: form.email || undefined,
+          password: form.password || undefined,
+          role: form.role,
+          currentPassword
+        },
+        {
+          withCredentials: true,
+
+        })
+      setMessage('Profil mis à jour !')
+
+    } catch (error) {
+      setMessage('Une erreur est survenue.')
+
+    }
   }
 
   const handleDelete = async () => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${id}`, {
-      method: 'DELETE',
-      credentials: 'include'
-    })
-    if (res.ok) navigate('/admin/members')
-    else setMessage('Une erreur est survenue.')
+    try {
+
+      await axios.delete(`${API_URL}/api/users/${id}`, {
+
+        withCredentials: true
+      })
+      navigate('/admin/members')
+    } catch (error) {
+      setMessage('Une erreur est survenue.')
+
+    }
   }
 
   return (

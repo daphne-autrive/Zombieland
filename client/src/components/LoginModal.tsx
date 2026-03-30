@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Text } from '@chakra-ui/react'
 import { API_URL } from '@/config/api'
-import axios, { isAxiosError } from 'axios'
+import axios from 'axios'
 
 interface LoginModalProps {
   isOpen: boolean
@@ -44,8 +44,7 @@ function LoginModal({ isOpen, onClose, onConfirm, title }: LoginModalProps) {
       } catch (error) {
         //otherwise displaying an error message getting from the back if possible, otherwise a default one
         const message = 'Email ou mot de passe invalide.'
-
-        setMessage(isAxiosError(error)?error.response?.data || message : message)
+        setMessage(message)
   }
 }
 

@@ -20,8 +20,9 @@ import bgBouton from '../assets/bg-bouton.webp'
 //Import utility functions to handle date formats
 import { toLocalDateString, isoToLocalDate, getTodayMidnight } from '../utils/date'
 import InfoModal from '../components/InfoModal'
-// Navigation
-import { useNavigate } from 'react-router-dom'
+import { API_URL } from '@/config/api'
+import axios, { isAxiosError } from 'axios'
+
 
 function Reservation() {
 
@@ -84,14 +85,15 @@ function Reservation() {
 
     // useEffect to fetch availability data from the back 
     // called on mount and after each successful reservation
-    const fetchAvailabilities = useCallback(async () => {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/availabilities`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-        })
-        const data = await response.json()
-        setAvailabilities(data)
-    }, [])
+    const fetchAvailabilities = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/api/reservations/availabilities`)
+            setAvailabilities(response.data)
+
+        } catch (error) {
+            setMessage("Erreur lors de la récupération des disponibilités")
+        }
+    }
 
     // Fetch availabilities on component mount
     useEffect(() => {
@@ -117,49 +119,47 @@ function Reservation() {
             return
         }
 
-        // Set loading state
-        setIsLoading(true)
-
         try {
             // Send the form data to the back via fetch
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations`, {
-                method: 'POST', // Create a new reservation
-                headers: { 'Content-Type': 'application/json' }, // Send JSON},
-                body: JSON.stringify({
+            await axios.post(`${API_URL}/api/reservations`,
+                {   // body
                     nb_tickets: parseInt(nbTickets) || 1, // The number of the tickets on by default
                     date: date, // The date of the visit choosen by the client
                     id_TICKET: 1
-                }),
-                credentials: 'include' //to get the cookie sent from the back, the browser is automatically dealing with
-            })
-
+                },
+                {
+                    withCredentials: true //to get the cookie sent from the back, the browser is automatically dealing with
+                })
             // The response is ok (status 200-299), success message
-            if (response.ok) {
-                setIsSuccessModalOpen(true)
-                setNbTickets('1')
-                setDate(today)
-                setConfirmed(false)
-                fetchAvailabilities()
-            } else {
-                if (response.status === 401) {
+
+            setIsSuccessModalOpen(true)
+            setNbTickets('1')
+            setDate(today)
+            setConfirmed(false)
+            fetchAvailabilities()
+
+        } catch (error) {
+            if (isAxiosError(error)) {
+                if (error.response?.status === 401) {
                     // If the user is not authenticated, open the login modal
                     setIsLoginModalOpen(true)
                     setMessage('Veuillez vous connecter pour confirmer votre réservation.')
                     return
-                }
-                const errorData = await response.json()
-                if (errorData.message?.includes("place(s) disponible") || errorData.message?.includes("Capacité maximale")) {
-                    setPartialFullMessage(errorData.message)
                 } else {
+                    // Otherwise, display a generic error message
+                    const errorData = error.response?.data
                     setMessage(errorData.message || 'Une erreur est survenue, veuillez réessayer.')
                 }
-
+            } else {
+                setMessage('Une erreur est survenue, veuillez réessayer.')
             }
         } finally {
             // Reset loading state
             setIsLoading(false)
         }
     }
+
+
 
     return (
         <PageBackground bgImage={bgImage}>

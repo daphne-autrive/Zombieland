@@ -10,7 +10,11 @@ import { PageBackground } from '../components/PageBackground'
 import { useNavigate, useParams } from 'react-router-dom'
 import ConfirmModal from '../components/ConfirmModal'
 import InfoModal from '../components/InfoModal'
+import { API_URL } from '@/config/api'
+import axios, { isAxiosError } from 'axios'
 import { isoToLocalDate } from '@/utils/date'
+
+
 
 // defines the shape of a reservation object
 // use an interface instead of any allows ts to check that we are accessing valid fiels
@@ -68,28 +72,36 @@ function MyReservations() {
 
     // Fetch reservations when the page loads
     useEffect(() => {
+        setLoading(true)
         const init = async () => {
-            // 1. Fetch user first
-            const resUser = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
-                credentials: 'include'
+            try {
+                // 1. Fetch user first
+            const resUser = await axios.get(`${API_URL}/api/auth/me`, {
+                withCredentials: true
             })
-            const userData = await resUser.json()
+            const userData = resUser.data
             setCurrentUser(userData)
 
             // 2. Then fetch reservations based on role
             const isAdminUser = userData.role === 'ADMIN' && !!id
             const url = isAdminUser
-                ? `${import.meta.env.VITE_API_URL}/api/reservations/user/${id}`
-                : `${import.meta.env.VITE_API_URL}/api/reservations/me`
+                ? `${API_URL}/api/reservations/user/${id}`
+                : `${API_URL}/api/reservations/me`
 
-            const response = await fetch(url, { credentials: 'include' })
-            const data = await response.json()
-            if (!response.ok) { setLoading(false); return }
+            const response = await axios.get(url, { withCredentials: true })
+            const data = response.data
             setReservations(data)
-            setLoading(false)
+            
+
+            } catch (error) {
+                setMessage("Erreur lors de la récupération d'une réservation")
+            } finally {
+                setLoading(false);
+            }
         }
         init()
-    }, []) // Runs only once on mount
+    }, [id]) // Runs only once on mount
+    
 
     // Check if the reservation is less than 10 days away
     const isWithin10Days = (dateStr: string) => {
@@ -116,23 +128,25 @@ function MyReservations() {
     }
 
     // Cancel a reservation by sending a delete request to the api
-    const handleCancel = async (id_res: number, password: string) => {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations/${id_res}`, {
-            method: 'DELETE',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password })
-        })
-
-        if (response.ok) {
-            // 1. update the list of reservations by filtering out the cancelled one
-            setReservations(reservations.filter((r: Reservation) => r.id_RESERVATION !== id_res))
-
-            // 2. display success message in the modal
-            setShowSuccessModal(true)
-        } else {
-            const data = await response.json()
-            setMessage(data.message)
+    const handleCancel = async (id: number, password: string) => {
+        try {
+            await axios.delete(`${API_URL}/api/reservations/${id}`, 
+                {data: {password}, 
+                withCredentials: true,
+            })
+    
+            
+                setReservations(reservations.filter((r: Reservation) => r.id_RESERVATION !== id))
+                setMessage('Votre annulation a bien été prise en compte.')
+                navigate('/my-account/reservations')
+            
+        } catch (error) {
+            const message = "Votre annulation n'a pas été pris en compte"
+            if(isAxiosError(error)){
+                setMessage(error.response?.data.message || message)
+            } else {
+                setMessage(message)
+            }
         }
     }
 
