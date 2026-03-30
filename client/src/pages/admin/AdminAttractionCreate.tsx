@@ -56,13 +56,20 @@ const AdminAttractionCreate = () => {
                 password
             })
         })
-
         if (!res.ok) {
-            setError("Erreur lors de la création de l'attraction")
+            const data = await res.json()
+
+            if (data.details) {
+                // Zod validation errors
+                setError(data.details[0].message)
+            } else {
+                setError("Erreur lors de la création de l'attraction")
+            }
+
             return
         }
 
-        const data = await res.json()
+
 
         // If an image was selected, upload it after creation
         if (fileInputRef.current?.files?.[0]) {
