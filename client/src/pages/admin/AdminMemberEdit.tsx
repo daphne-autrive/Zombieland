@@ -43,10 +43,10 @@ const AdminMemberEdit = () => {
     try {
       await axios.patch(`${API_URL}/api/users/${id}/profile`,
         {
-          firstname: form.firstname || undefined,
-          lastname: form.lastname || undefined,
-          email: form.email || undefined,
-          password: form.password || undefined,
+          firstname: form.firstname,
+          lastname: form.lastname,
+          email: form.email,
+          password: form.password,
           role: form.role,
           currentPassword
         },
