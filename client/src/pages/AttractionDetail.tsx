@@ -219,6 +219,7 @@ const AttractionDetailPage = () => {
                   _hover={{ bg: "zombieland.cta2orange", color: "zombieland.white" }}
                   onClick={() => navigate("/attractions")}
                   width={{ base: "100%", md: "auto" }} // responsive
+                  aria-label="Retour aux attractions"
                 >
                   ← RETOUR
                 </Button>
@@ -236,6 +237,7 @@ const AttractionDetailPage = () => {
                   _hover={{ bg: "zombieland.cta2orange", color: "zombieland.white" }}
                   onClick={() => navigate("/reservation")}
                   width={{ base: "100%", md: "auto" }} // responsive
+                  aria-label="Rejoindre l'horreur et réserver"
                 >
                    REJOINDRE L'HORREUR →
                 </Button>

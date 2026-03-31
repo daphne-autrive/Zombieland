@@ -139,6 +139,7 @@ const HomePage = () => {
                 py={6}
                 px={12}
                 boxShadow="0 4px 12px rgba(0,0,0,0.3)"
+                aria-label="Réserver maintenant"
             >
                 → Réserver maintenant
             </Button>
@@ -322,6 +323,7 @@ const HomePage = () => {
                 py={6}
                 px={12}
                 boxShadow="0 4px 12px rgba(0,0,0,0.3)"
+                aria-label="Voir toutes nos attractions"
             >
                 → Toutes nos attractions
             </Button>

@@ -254,6 +254,7 @@ function MyAccount() {
             boxShadow="inset 0 2px 8px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.5)"
             _hover={{ bg: "zombieland.cta2orange", color: "zombieland.white" }}
             w="100%"
+            aria-label="Sauvegarder les modifications de mon profil"
           >
             → Sauvegarder
           </Button>
@@ -341,6 +342,7 @@ function MyAccount() {
             _hover={{ bg: "zombieland.cta2orange", color: "zombieland.white" }}
             mt={4}
             w="100%"
+            aria-label="Voir toutes mes réservations"
           >
             → Voir toutes mes réservations
           </Button>
@@ -401,6 +403,7 @@ function MyAccount() {
             boxShadow="inset 0 2px 8px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.5)"
             _hover={{ bg: "zombieland.cta2orange", color: "zombieland.white" }}
             w="100%"
+            aria-label="Supprimer mon compte définitivement"
           >
             → Supprimer mon compte
           </Button>

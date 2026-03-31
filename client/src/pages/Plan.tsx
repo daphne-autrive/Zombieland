@@ -209,6 +209,7 @@ function Plan() {
                             textTransform="uppercase"
                             boxShadow="inset 0 2px 8px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.5)"
                             _hover={{ bg: "zombieland.cta2orange", color: "zombieland.white" }}
+                            aria-label="Télécharger le plan du parc"
                         >
                             Télécharger le plan
                         </Button>

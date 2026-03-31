@@ -129,7 +129,7 @@ const AttractionCard = ({ id_ATTRACTION, name, description, intensity, image, sh
                         // pousse le bouton en bas
                         alignSelf="flex-end" // aligne le bouton à droite
                         onClick={() => navigate(`/attractions/${id_ATTRACTION}`)}
-
+                        aria-label={`En savoir plus sur ${name}`}
                     >
                         → VOIR PLUS
                     </Button>

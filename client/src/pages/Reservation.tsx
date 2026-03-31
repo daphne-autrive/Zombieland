@@ -419,6 +419,7 @@ function Reservation() {
                         cursor: "not-allowed",
                         pointerEvents: "none"
                     }}
+                    aria-label="Confirmer la réservation et rejoindre l'horreur"
                 >
                     {isLoading ? '⏳ Traitement...' : '→ REJOINDRE L\'HORREUR'}
                 </Button>
