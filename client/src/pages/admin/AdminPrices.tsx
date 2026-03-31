@@ -14,7 +14,7 @@ const AdminTarifs = () => {
 
     const fetchPrice = async () => {
         try {
-            const res = await axios.get(`${API_URL}/api/ticket/amount`)
+            const res = await axios.get(`${API_URL}/api/tickets`, { withCredentials: true })
             setPrice(res.data.price)
         } catch {
             setMessage("Erreur lors du chargement du tarif")
@@ -25,7 +25,7 @@ const AdminTarifs = () => {
 
     const updatePrice = async () => {
         try {
-            await axios.put(`${API_URL}/api/ticket/amount`, { price })
+            await axios.put(`${API_URL}/api/tickets/price`, { price }, { withCredentials: true })
             setMessage("Tarif mis à jour avec succès")
         } catch {
             setMessage("Erreur lors de la mise à jour")
