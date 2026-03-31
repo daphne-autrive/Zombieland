@@ -143,7 +143,7 @@ const HomePage = () => {
                 → Réserver maintenant
             </Button>
 
-            <Box px={10} py={16} maxW="900px" mx="auto" textAlign="center">
+            <Box px={10} py={16} maxW="1000px" mx="auto" textAlign="center">
                 <Text
                     fontSize={{ base: "2xl", sm: "3xl", lg: "4xl" }}
                     color="zombieland.white"
@@ -283,7 +283,7 @@ const HomePage = () => {
 
             </Flex>
 
-            <Heading mb={8} fontFamily="heading" fontSize="36px" textAlign="center" color="zombieland.white" textShadow="2px 2px 4px rgba(0,0,0,0.5)" letterSpacing="1px">
+            <Heading mb={8} mt={12} px={4} fontFamily="heading" fontSize="36px" textAlign="center" color="zombieland.white" textShadow="2px 2px 4px rgba(0,0,0,0.5)" letterSpacing="1px">
                 Les expériences qui vous attendent
             </Heading>
 
