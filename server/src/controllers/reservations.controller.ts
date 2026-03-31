@@ -119,7 +119,7 @@ export const createReservation = async (req: Request, res: Response, next: NextF
             id_TICKET,
              id_USER: id_USER || req.user.id, // ← ici
 
-            total_amount: 0,
+            total_amount: nb_tickets * Number(ticket.amount),
             status: 'CONFIRMED'
         }
     });
