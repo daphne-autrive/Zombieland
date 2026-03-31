@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
     Box, Text, Button, Flex, Spinner,
     Badge, Heading,
+    Input,
 } from "@chakra-ui/react";
 
 import Header from "@/components/Header";
@@ -16,6 +17,9 @@ import { API_URL } from "@/config/api";
 import ConfirmModal from "@/components/ConfirmModal";
 
 const AdminReservations = () => {
+    const [sort, setSort] = useState({ by: "name", direction: "asc" })
+
+    const [search, setSearch] = useState("")
     //State to store the total of attractions
     const [attractions, setAttractions] = useState(Number);
     //State to store the total of Members
@@ -32,6 +36,7 @@ const AdminReservations = () => {
     // Fetch all reservations from the API when the component mounts
     useEffect(() => {
         const axiosReservation = async () => {
+
             try {
                 // GET request to retrieve all reservations (admin only route)
                 // withCredentials: true sends the httpOnly cookie for authentication
@@ -40,7 +45,8 @@ const AdminReservations = () => {
                         withCredentials: true,
                     });
                 // Store the reservations data in state
-                setReservations(response.data)
+                setReservations(response.data);
+
                 // Set loading to false once data is received
                 setLoading(false)
             } catch (error) {
@@ -50,6 +56,7 @@ const AdminReservations = () => {
         };
         // Call the function
         axiosReservation()
+
     }, []); // Empty dependency array: runs only once on mount
 
     // Function to update the status of a reservation via PATCH request
@@ -70,6 +77,7 @@ const AdminReservations = () => {
             r.id_RESERVATION === id ? { ...r, status } : r
         ))
     }
+
 
     //fetch all attractions
     useEffect(() => {
@@ -98,10 +106,52 @@ const AdminReservations = () => {
 
 
     //  CALCUL REVENUS total
-    const totalAmount = reservations.reduce((sum, r) => sum + Number(r.total_amount), 0);
+    if (!Array.isArray(reservations)) return null;
 
+    const totalAmount = reservations.reduce(
+        (sum, r) => sum + Number(r.total_amount),
+        0
+    );
+    const filterTool = search.trim().toLowerCase()
 
+    const filteredReservations = reservations
+        .filter(r => {
+            const fullName = `${r.user?.firstname ?? ""} ${r.user?.lastname ?? ""}`.toLowerCase()
 
+            return (
+                fullName.includes(filterTool) ||
+                r.id_USER.toString().includes(filterTool) ||
+                r.date.toLowerCase().includes(filterTool) ||
+                r.nb_tickets.toString().includes(filterTool) ||
+                r.status.toLowerCase().includes(filterTool)
+            )
+        })
+        .sort((a, b) => {
+            const dir = sort.direction === "asc" ? 1 : -1
+
+            switch (sort.by) {
+                case "name":
+                    return (
+                        `${a.user.firstname} ${a.user.lastname}`
+                            .localeCompare(`${b.user.firstname} ${b.user.lastname}`)
+                    ) * dir
+
+                case "member":
+                    return (a.id_USER - b.id_USER) * dir
+
+                case "date":
+                    return a.date.localeCompare(b.date) * dir
+
+                case "tickets":
+                    return (a.nb_tickets - b.nb_tickets) * dir
+
+                case "status":
+                    return a.status.localeCompare(b.status) * dir
+
+                default:
+                    return 0
+            }
+        })
 
 
     return (
@@ -191,6 +241,7 @@ const AdminReservations = () => {
                             h="300px"
                             bg="rgba(0, 0, 0, 0.5)"
                             border="2px"
+
                         >
                             {/* 2 flex text between 1 flex */}
                             <Flex direction="column" justify="space-between" h="100%">
@@ -255,6 +306,17 @@ const AdminReservations = () => {
 
                         </Box>
                     </Flex>
+                    <Flex justifyContent={{ base: "center", lg: "flex-end" }} mt={8} mb={6}>
+                        <Input
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Rechercher une reservation..."
+                            color="zombieland.white"
+                            borderColor="zombieland.primary"
+                            bg="#476182"
+                            mb={6}
+                        />
+                    </Flex>
 
                     <Heading
                         fontWeight="bold"
@@ -263,6 +325,7 @@ const AdminReservations = () => {
                         fontFamily="heading"
                         fontSize="30px"
                         mb={10}
+                        mt={10}
                     >
                         Gestion des réservations
                     </Heading>
@@ -275,68 +338,71 @@ const AdminReservations = () => {
                     )}
 
                     {error && <Text color="red.400">{error}</Text>}
-
-                    {/* Reservations table */}
-                    {!loading && (
-                        <AdminTable
-                            data={reservations}
-                            columns={[
-                                {
-                                    header: "ID",
-                                    render: (r) => r.id_RESERVATION
-                                },
-                                {
-                                    header: "Membre",
-                                    render: (r) => r.id_USER
-                                },
-                                {
-                                    header: "Date",
-                                    render: (r) => new Date(r.date).toLocaleDateString('fr-FR', {
-                                        weekday: 'long',
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric'
-                                    })
-                                },
-                                {
-                                    header: "Billets",
-                                    render: (r) => r.nb_tickets
-                                },
-                                {
-                                    header: "Statut",
-                                    render: (r) => (
-                                        <Badge colorScheme={r.status === "CONFIRMED" ? "green" : "red"}>
-                                            {r.status}
-                                        </Badge>
-                                    )
-                                },
-                                {
-                                    header: "Actions",
-                                    render: (r) => (
-                                        <Flex gap={3}>
-                                            {r.status === "CONFIRMED" && (
-                                                <Button
-                                                    size="sm"
-                                                    bg="#8C6E21"
-                                                    color="white"
-                                                    _hover={{ bg: "#6e5519" }}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        setReservationToCancel(r.id_RESERVATION)
-                                                    }}
-                                                >
-                                                    Annuler
-                                                </Button>
-                                            )}
-                                            {r.status === "CANCELLED" && (
-                                                <Text color="red.400" fontWeight="bold">Annulée</Text>
-                                            )}
-                                        </Flex >
-                                    )
-                                }
-                            ]}
-                        />
-                    )}
+                    <Box mb={10}>
+                        {/* Reservations table */}
+                        {!loading && (
+                            <AdminTable
+                                data={filteredReservations}
+                                columns={[
+                                    {
+                                        header: "Nom",
+                                        render: (r) => r.user
+                                            ? `${r.user.firstname} ${r.user.lastname}`
+                                            : "Utilisateur inconnu"
+                                    },
+                                    {
+                                        header: "Membre",
+                                        render: (r) => r.id_USER
+                                    },
+                                    {
+                                        header: "Date",
+                                        render: (r) => new Date(r.date).toLocaleDateString('fr-FR', {
+                                            weekday: 'long',
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric'
+                                        })
+                                    },
+                                    {
+                                        header: "Billets",
+                                        render: (r) => r.nb_tickets
+                                    },
+                                    {
+                                        header: "Statut",
+                                        render: (r) => (
+                                            <Badge colorScheme={r.status === "CONFIRMED" ? "green" : "red"}>
+                                                {r.status}
+                                            </Badge>
+                                        )
+                                    },
+                                    {
+                                        header: "Actions",
+                                        render: (r) => (
+                                            <Flex gap={3}>
+                                                {r.status === "CONFIRMED" && (
+                                                    <Button
+                                                        size="sm"
+                                                        bg="#8C6E21"
+                                                        color="white"
+                                                        _hover={{ bg: "#6e5519" }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation()
+                                                            setReservationToCancel(r.id_RESERVATION)
+                                                        }}
+                                                    >
+                                                        Annuler
+                                                    </Button>
+                                                )}
+                                                {r.status === "CANCELLED" && (
+                                                    <Text color="red.400" fontWeight="bold">Annulée</Text>
+                                                )}
+                                            </Flex >
+                                        )
+                                    }
+                                ]}
+                            />
+                        )}
+                    </Box>
                 </Box>
                 {/* Confirmation modal: opens when the admin clicks "Annuler" on a reservation */}
                 {/* The admin must enter their password to confirm the cancellation */}
