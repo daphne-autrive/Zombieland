@@ -209,14 +209,14 @@ function MyReservations() {
                                 color="zombieland.secondary"
                                 fontFamily="body"
                                 fontWeight="bold"
-                                fontSize="16px"
+                                fontSize={{ base: "12px", md: "16px" }}
                                 py={5}
                                 px={4}
                                 borderRadius="full"
                                 letterSpacing="1px"
                                 textTransform="uppercase"
                                 boxShadow="inset 0 2px 8px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.5)"
-                                _hover={{ bg: "zombieland.cta2orange" }}
+                                _hover={{ bg: "zombieland.cta2orange", color: "zombieland.white" }}
                             >
                                 → Réserver maintenant
                             </Button>
@@ -290,7 +290,7 @@ function MyReservations() {
                                             color="zombieland.secondary"
                                             fontFamily="body"
                                             fontWeight="bold"
-                                            fontSize="14px"
+                                            fontSize={{ base: "12px", md: "14px" }}
                                             py={3}
                                             px={4}
                                             borderRadius="full"

@@ -208,7 +208,7 @@ function Plan() {
                             letterSpacing="1px"
                             textTransform="uppercase"
                             boxShadow="inset 0 2px 8px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.5)"
-                            _hover={{ bg: "zombieland.cta2orange" }}
+                            _hover={{ bg: "zombieland.cta2orange", color: "zombieland.white" }}
                         >
                             Télécharger le plan
                         </Button>
