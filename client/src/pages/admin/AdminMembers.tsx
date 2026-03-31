@@ -1,7 +1,7 @@
 // Admin page to see the list of the members, filter them, edit and delete them
 
 import { useEffect, useState } from "react"
-import { Box, Button, Text, Input, Flex, Spinner } from "@chakra-ui/react"
+import { Box, Button, Text, Input, Flex, Spinner, Heading } from "@chakra-ui/react"
 import { useNavigate } from "react-router-dom"
 import Header from "../../components/Header"
 import Footer from "../../components/Footer"
@@ -135,6 +135,16 @@ const AdminMembers = () => {
             fontSize="54px">
             Gestion des membres
           </Text>
+          <Heading
+                                  fontWeight="bold"
+                                  color="zombieland.white"
+                                  textAlign="left"
+                                  fontFamily="body"
+                                  fontSize="24px"
+                                  mb={8}
+                              >
+                                  Admin / Members
+                              </Heading>
 
           {/* Create member button */}
                     <Flex justifyContent="center" mt={8} mb={6}>

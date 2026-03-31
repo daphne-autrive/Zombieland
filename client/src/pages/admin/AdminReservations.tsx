@@ -4,7 +4,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { API_URL } from "@/config/api";
 import type { Reservation } from "@/types/Reservations";
-import { Badge, Box, Button, Flex, Input, Spinner, Text } from "@chakra-ui/react";
+import { Badge, Box, Button, Flex, Heading, Input, Spinner, Text } from "@chakra-ui/react";
 import AdminTable from "@/components/AdminTable";
 import bgImage from '../../assets/bgadminpage.webp'
 import ConfirmModal from "@/components/ConfirmModal";
@@ -139,7 +139,16 @@ const AdminReservations = () => {
                     <Text fontWeight="bold" color="zombieland.white" mb={6} textAlign="center" fontFamily="heading" fontSize="54px">
                         Gestion des réservations
                     </Text>
-
+                    <Heading
+                                            fontWeight="bold"
+                                            color="zombieland.white"
+                                            textAlign="left"
+                                            fontFamily="body"
+                                            fontSize="24px"
+                                            mb={8}
+                                        >
+                                            Admin / Réservations
+                                        </Heading>
                     {/* Searchbar */}
                     <Flex justifyContent={{ base: "center", lg: "flex-end" }} mb={6}>
                         <Input
