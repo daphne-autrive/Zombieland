@@ -216,7 +216,7 @@ const AttractionDetailPage = () => {
                   fontWeight="bold"
                   px={6}
                   py={5}
-                  _hover={{ bg: "zombieland.cta2orange" }}
+                  _hover={{ bg: "zombieland.cta2orange", color: "zombieland.white" }}
                   onClick={() => navigate("/attractions")}
                   width={{ base: "100%", md: "auto" }} // responsive
                 >
@@ -233,7 +233,7 @@ const AttractionDetailPage = () => {
                   fontWeight="bold"
                   px={6}
                   py={5}
-                  _hover={{ bg: "zombieland.cta2orange" }}
+                  _hover={{ bg: "zombieland.cta2orange", color: "zombieland.white" }}
                   onClick={() => navigate("/reservation")}
                   width={{ base: "100%", md: "auto" }} // responsive
                 >
