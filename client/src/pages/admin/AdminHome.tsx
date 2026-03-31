@@ -15,6 +15,7 @@ import type { Reservation } from "@/types/Reservations";
 import axios from "axios";
 import { API_URL } from "@/config/api";
 import ConfirmModal from "@/components/ConfirmModal";
+import { useNavigate } from "react-router";
 
 const AdminReservations = () => {
     const [sort, _setSort] = useState({ by: "name", direction: "asc" })
@@ -32,6 +33,7 @@ const AdminReservations = () => {
     const [error, setError] = useState<string | null>(null);
     // State to store the id of the reservation to cancel (opens the confirmation modal)
     const [reservationToCancel, setReservationToCancel] = useState<number | null>(null)
+    const navigate = useNavigate()
 
     // Fetch all reservations from the API when the component mounts
     useEffect(() => {
@@ -152,7 +154,7 @@ const AdminReservations = () => {
                     return 0
             }
         })
-        const lastReservations = filteredReservations.slice(-4).reverse();   
+    const lastReservations = filteredReservations.slice(-4).reverse();
 
 
     return (
@@ -214,10 +216,16 @@ const AdminReservations = () => {
                     >
                         {/* Description and details of 1 card*/}
                         <Box
+                            onClick={() => navigate('/admin/reservations')}
                             w="300px"
                             h="300px"
                             bg="rgba(0, 0, 0, 0.5)"
                             border="2px"
+                            _hover={{
+                                transform: "translateY(-3px)",
+                                boxShadow: "0 8px 20px rgba(250, 235, 220, 0.2)",
+                                opacity: 0.9
+                            }}
                         >
                             {/* 2 flex text between 1 flex */}
                             <Flex direction="column" justify="space-between" h="100%">
@@ -238,10 +246,16 @@ const AdminReservations = () => {
 
 
                         <Box
+                            onClick={() => navigate('/admin/members')}
                             w="300px"
                             h="300px"
                             bg="rgba(0, 0, 0, 0.5)"
                             border="2px"
+                            _hover={{
+                                transform: "translateY(-3px)",
+                                boxShadow: "0 8px 20px rgba(250, 235, 220, 0.2)",
+                                opacity: 0.9
+                            }}
 
                         >
                             {/* 2 flex text between 1 flex */}
@@ -260,10 +274,16 @@ const AdminReservations = () => {
                             </Flex>
                         </Box>
                         <Box
+                            onClick={() => navigate('/admin/attractions')}
                             w="300px"
                             h="300px"
                             bg="rgba(0, 0, 0, 0.5)"
                             border="2px"
+                            _hover={{
+                                transform: "translateY(-3px)",
+                                boxShadow: "0 8px 20px rgba(250, 235, 220, 0.2)",
+                                opacity: 0.9
+                            }}
                         >
                             {/* 2 flex text between 1 flex */}
                             <Flex direction="column" justify="space-between" h="100%" >
@@ -287,6 +307,12 @@ const AdminReservations = () => {
                             h="300px"
                             bg="rgba(0, 0, 0, 0.5)"
                             border="2px"
+                            onClick={() => navigate('/admin/price')}
+                            _hover={{
+                                transform: "translateY(-3px)",
+                                boxShadow: "0 8px 20px rgba(250, 235, 220, 0.2)",
+                                opacity: 0.9
+                            }}
 
                         >
                             {/* 2 flex text between 1 flex */}
