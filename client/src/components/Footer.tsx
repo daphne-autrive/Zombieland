@@ -21,16 +21,16 @@ function Footer() {
                         Suivez-nous sur les réseaux sociaux
                     </Text>
                     <Flex gap={4}>
-                        <a href="https://facebook.com" target="_blank" rel="noreferrer">
+                        <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Suivez Zombieland sur Facebook">
                             <FaFacebook color="#FAEBDC" size={24} />
                         </a>
-                        <a href="https://instagram.com" target="_blank" rel="noreferrer">
+                        <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Suivez Zombieland sur Instagram">
                             <FaInstagram color="#FAEBDC" size={24} />
                         </a>
-                        <a href="https://tiktok.com" target="_blank" rel="noreferrer">
+                        <a href="https://tiktok.com" target="_blank" rel="noreferrer" aria-label="Suivez Zombieland sur TikTok">
                             <FaTiktok color="#FAEBDC" size={24} />
                         </a>
-                        <a href="https://youtube.com" target="_blank" rel="noreferrer">
+                        <a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="Suivez Zombieland sur YouTube">
                             <FaYoutube color="#FAEBDC" size={24} />
                         </a>
                     </Flex>
@@ -71,16 +71,16 @@ function Footer() {
                         Suivez-nous sur les réseaux sociaux
                     </Text>
                     <Flex gap={4} justifyContent="center">
-                        <a href="https://facebook.com" target="_blank" rel="noreferrer">
+                        <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Suivez Zombieland sur Facebook">
                             <FaFacebook color="#FAEBDC" size={24} />
                         </a>
-                        <a href="https://instagram.com" target="_blank" rel="noreferrer">
+                        <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Suivez Zombieland sur Instagram">
                             <FaInstagram color="#FAEBDC" size={24} />
                         </a>
-                        <a href="https://tiktok.com" target="_blank" rel="noreferrer">
+                        <a href="https://tiktok.com" target="_blank" rel="noreferrer" aria-label="Suivez Zombieland sur TikTok">
                             <FaTiktok color="#FAEBDC" size={24} />
                         </a>
-                        <a href="https://youtube.com" target="_blank" rel="noreferrer">
+                        <a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="Suivez Zombieland sur YouTube">
                             <FaYoutube color="#FAEBDC" size={24} />
                         </a>
                     </Flex>
