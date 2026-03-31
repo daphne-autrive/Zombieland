@@ -1,6 +1,6 @@
 // Admin page to manage attractions : list, filter, edit and delete
 import { useEffect, useState } from "react"
-import { Box, Text, Button, Flex, Input, Spinner } from "@chakra-ui/react"
+import { Box, Text, Button, Flex, Input, Spinner, Heading } from "@chakra-ui/react"
 import { useNavigate } from "react-router-dom"
 import Header from "../../components/Header"
 import Footer from "../../components/Footer"
@@ -131,6 +131,16 @@ const AdminAttractions = () => {
                     <Text fontWeight="bold" color="zombieland.white" mb={6} textAlign="center" fontFamily="heading" fontSize="54px">
                         Gestion des attractions
                     </Text>
+                    <Heading
+                                            fontWeight="bold"
+                                            color="zombieland.white"
+                                            textAlign="left"
+                                            fontFamily="body"
+                                            fontSize="24px"
+                                            mb={8}
+                                        >
+                                            Admin / Attractions
+                                        </Heading>
 
                     {/* Create new attraction button */}
                     <Flex justifyContent="center" mt={8} mb={6}>
