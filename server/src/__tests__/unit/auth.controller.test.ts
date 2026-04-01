@@ -84,6 +84,20 @@ import { prisma } from '../../lib/prisma.js'
 import * as argon2 from 'argon2'
 import type { User } from '@prisma/client'
 
+// Create fake User object to reuse in tests
+//==========================================
+
+const fakeUser = {
+    id_USER: 1,
+    email: 'test@test.com',
+    password: 'hashedPassword',
+    firstname: 'John',
+    lastname: 'Doe',
+    role: 'MEMBER',
+    created_at: new Date(),
+    updated_at: new Date()
+} satisfies User
+
 // TESTS
 // =====
 
@@ -139,16 +153,7 @@ describe('login', () => {
     it('devrait retourner 401 si mot de passe incorrect', async () => {
 
         // ARRANGE
-        vi.mocked(prisma.user.findUnique).mockResolvedValue({
-            id_USER: 1,
-            email: 'test@test.com',
-            password: 'hashedPassword',
-            firstname: 'John',
-            lastname: 'Doe',
-            role: 'MEMBER',
-            created_at: new Date(),
-            updated_at: new Date()
-        } satisfies User)
+        vi.mocked(prisma.user.findUnique).mockResolvedValue(fakeUser)
         // satisfies User = TypeScript check to be sur of the shape as Prisma's one
         vi.mocked(argon2.verify).mockResolvedValue(false)
 
@@ -179,16 +184,7 @@ describe('login', () => {
     it('devrait retourner 200 si connexion réussie', async () => {
 
         // ARRANGE
-        vi.mocked(prisma.user.findUnique).mockResolvedValue({
-            id_USER: 1,
-            email: 'test@test.com',
-            password: 'correctPassword',
-            firstname: 'John',
-            lastname: 'Doe',
-            role: 'MEMBER',
-            created_at: new Date(),
-            updated_at: new Date()
-        } satisfies User)
+        vi.mocked(prisma.user.findUnique).mockResolvedValue(fakeUser)
         vi.mocked(argon2.verify).mockResolvedValue(true)
 
         const req = {
@@ -258,16 +254,7 @@ describe('register', () => {
     it('devrait retourner 409 si l\'email est déjà utilisé', async () => {
 
         // ARRANGE
-        vi.mocked(prisma.user.findUnique).mockResolvedValue({
-            id_USER: 1,
-            email: 'john.doe@example.com',
-            password: 'hashedPassword',
-            firstname: 'John',
-            lastname: 'Doe',
-            role: 'MEMBER',
-            created_at: new Date(),
-            updated_at: new Date()
-        } satisfies User)
+        vi.mocked(prisma.user.findUnique).mockResolvedValue(fakeUser)
         const req = {
             body: {
                 email: 'john.doe@example.com',
@@ -301,16 +288,7 @@ describe('register', () => {
 
         // ARRANGE
         vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
-        vi.mocked(prisma.user.create).mockResolvedValue({
-            id_USER: 2,
-            email: 'jane.doe@example.com',
-            password: 'Password1!',
-            firstname: 'Jane',
-            lastname: 'Doe',
-            role: 'MEMBER',
-            created_at: new Date(),
-            updated_at: new Date()
-        } satisfies User)
+        vi.mocked(prisma.user.create).mockResolvedValue(fakeUser)
         const req = {
             body: {
                 email: 'john.doe@example.com',
@@ -416,16 +394,7 @@ describe('me', () => {
     it('devrait retourner 401 si l\'utilisateur n\'est pas connecté', async () => {
 
         // ARRANGE
-        vi.mocked(prisma.user.findUnique).mockResolvedValue({
-            id_USER: 1,
-            email: 'john.doe@example.com',
-            password: 'hashedPassword',
-            firstname: 'John',
-            lastname: 'Doe',
-            role: 'MEMBER',
-            created_at: new Date(),
-            updated_at: new Date()
-        } satisfies User)
+        vi.mocked(prisma.user.findUnique).mockResolvedValue(fakeUser)
         // req.user is defined by the auth middleware
         // so we have to fake it here to test the "me" controller function
         const req = {
@@ -452,16 +421,7 @@ describe('me', () => {
 
     it('devrait retourner 200 et les informations de l\'utilisateur si celui-ci est connecté', async () => {
         // ARRANGE
-        vi.mocked(prisma.user.findUnique).mockResolvedValue({
-            id_USER: 1,
-            email: 'john.doe@example.com',
-            password: 'hashedPassword',
-            firstname: 'John',
-            lastname: 'Doe',
-            role: 'MEMBER',
-            created_at: new Date(),
-            updated_at: new Date()
-        } satisfies User)
+        vi.mocked(prisma.user.findUnique).mockResolvedValue(fakeUser)
         // req.user is defined by the auth middleware
         // so we have to fake it here to test the "me" controller function
         const req = {
@@ -489,7 +449,7 @@ describe('me', () => {
         expect(res.json).toHaveBeenCalledWith(
             expect.objectContaining({
                 id_USER: 1,
-                email: 'john.doe@example.com',
+                email: 'test@test.com',
                 firstname: 'John',
                 lastname: 'Doe',
                 role: 'MEMBER'
