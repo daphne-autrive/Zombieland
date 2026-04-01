@@ -4,6 +4,8 @@ import { Request, Response, NextFunction } from 'express'
 import { getAllUsers, getProfile, updateProfile } from '../controllers/users.controller.js'
 import request from "supertest"
 import app from '../app.js'
+import * as argon2 from 'argon2'
+
 
 // --- MOCKS ------------------------------------------------------------------
 
