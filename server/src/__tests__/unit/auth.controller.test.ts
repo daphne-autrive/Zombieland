@@ -79,7 +79,7 @@ vi.mock('jsonwebtoken', () => ({
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { Request, Response, NextFunction } from 'express'
-import { login, register } from '../../controllers/auth.controller.js'
+import { login, register, logout, me } from '../../controllers/auth.controller.js'
 import { prisma } from '../../lib/prisma.js'
 import * as argon2 from 'argon2'
 import type { User } from '@prisma/client'
@@ -198,8 +198,8 @@ describe('login', () => {
             }
         } as any
         const res = {
-            status: vi.fn().mockReturnThis(), 
-            json: vi.fn(), 
+            status: vi.fn().mockReturnThis(),
+            json: vi.fn(),
             cookie: vi.fn()
         } as any
         const next = vi.fn()
@@ -212,7 +212,8 @@ describe('login', () => {
         }
 
         // ASSERT
-        expect(next).not.toHaveBeenCalled() // no error should be passed to next()
+        // no error should be passed to next()
+        expect(next).not.toHaveBeenCalled()
         expect(res.json).toHaveBeenCalledWith({ message: "Connexion réussie" })
     })
 
@@ -220,13 +221,13 @@ describe('login', () => {
         // ARRANGE
         const req = {
             body: {
-                email: 'pas-un-email',
+                email: 'pas-un-email', // email invalide
                 password: ''
-            }  // email invalide
+            }
         } as any
         const res = {
-            status: vi.fn().mockReturnThis(), 
-            json: vi.fn(), 
+            status: vi.fn().mockReturnThis(),
+            json: vi.fn(),
             cookie: vi.fn()
         } as any
         const next = vi.fn()
@@ -254,7 +255,7 @@ describe('register', () => {
         vi.clearAllMocks()
     })
 
-    it('email déjà existant', async () => {
+    it('devrait retourner 409 si l\'email est déjà utilisé', async () => {
 
         // ARRANGE
         vi.mocked(prisma.user.findUnique).mockResolvedValue({
@@ -296,7 +297,7 @@ describe('register', () => {
         )
     })
 
-    it('inscription réussie doit retourner 201', async () => {
+    it('devrait retourner 201 si l\'inscription est réussie', async () => {
 
         // ARRANGE
         vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
@@ -332,9 +333,8 @@ describe('register', () => {
             next(err)
         }
 
-
         // ASSERT
-        //no error
+        // no error
         // response ok
         // json return user without password
         expect(next).not.toHaveBeenCalled()
@@ -351,8 +351,8 @@ describe('register', () => {
             }
         } as any
         const res = {
-            status: vi.fn().mockReturnThis(), 
-            json: vi.fn(), 
+            status: vi.fn().mockReturnThis(),
+            json: vi.fn(),
             cookie: vi.fn()
         } as any
         const next = vi.fn()
@@ -367,6 +367,164 @@ describe('register', () => {
         // ASSERT
         expect(next).toHaveBeenCalledWith(
             expect.objectContaining({ statusCode: 400 })
+        )
+    })
+})
+
+//LOGOUT
+//======
+
+describe('logout', () => {
+
+    beforeEach(() => {
+        vi.clearAllMocks()
+    })
+
+    it('devrait retourner 200 lors de la déconnexion', async () => {
+
+        // ARRANGE
+        const req = { body: {} } as any
+        const res = {
+            status: vi.fn().mockReturnThis(),
+            json: vi.fn(),
+            clearCookie: vi.fn()
+        } as any
+        const next = vi.fn()
+
+        // ACT
+        try {
+            await logout(req, res, next)
+        } catch (err) {
+            next(err)
+        }
+
+        // ASSERT
+        expect(res.clearCookie).toHaveBeenCalledWith('token', expect.any(Object))
+        expect(res.json).toHaveBeenCalledWith('Déconnexion')
+    })
+})
+
+//ME
+//==
+
+describe('me', () => {
+
+    beforeEach(() => {
+        vi.clearAllMocks()
+    })
+
+    it('devrait retourner 401 si l\'utilisateur n\'est pas connecté', async () => {
+
+        // ARRANGE
+        vi.mocked(prisma.user.findUnique).mockResolvedValue({
+            id_USER: 1,
+            email: 'john.doe@example.com',
+            password: 'hashedPassword',
+            firstname: 'John',
+            lastname: 'Doe',
+            role: 'MEMBER',
+            created_at: new Date(),
+            updated_at: new Date()
+        } satisfies User)
+        // req.user is defined by the auth middleware
+        // so we have to fake it here to test the "me" controller function
+        const req = {
+            user: undefined
+        } as any
+        const res = {
+            status: vi.fn().mockReturnThis(),
+            json: vi.fn(),
+        } as any
+        const next = vi.fn()
+
+        // ACT
+        try {
+            await me(req, res, next)
+        } catch (err) {
+            next(err)
+        }
+
+        // ASSERT
+        expect(next).toHaveBeenCalledWith(
+            expect.objectContaining({ statusCode: 401 })
+        )
+    })
+
+    it('devrait retourner 200 et les informations de l\'utilisateur si celui-ci est connecté', async () => {
+        // ARRANGE
+        vi.mocked(prisma.user.findUnique).mockResolvedValue({
+            id_USER: 1,
+            email: 'john.doe@example.com',
+            password: 'hashedPassword',
+            firstname: 'John',
+            lastname: 'Doe',
+            role: 'MEMBER',
+            created_at: new Date(),
+            updated_at: new Date()
+        } satisfies User)
+        // req.user is defined by the auth middleware
+        // so we have to fake it here to test the "me" controller function
+        const req = {
+            user: {
+                id: 1,
+                role: 'MEMBER'
+            }
+        } as any
+        const res = {
+            status: vi.fn().mockReturnThis(),
+            json: vi.fn(),
+            cookie: vi.fn()
+        } as any
+        const next = vi.fn()
+
+        // ACT
+        try {
+            await me(req, res, next)
+        } catch (err) {
+            next(err)
+        }
+
+        // ASSERT
+        expect(next).not.toHaveBeenCalled()
+        expect(res.json).toHaveBeenCalledWith(
+            expect.objectContaining({
+                id_USER: 1,
+                email: 'john.doe@example.com',
+                firstname: 'John',
+                lastname: 'Doe',
+                role: 'MEMBER'
+            })
+        )
+    })
+
+    it('devrait retourner 404 si l\'utilisateur connecté n\'existe pas en base', async () => {
+
+        // ARRANGE
+        // with fake ID that doesn't exist in database, Prisma should return null
+        vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
+        const req = {
+            user: {
+                id: 999,
+                role: 'MEMBER'
+            }
+        } as any
+        const res = {
+            status: vi.fn().mockReturnThis(),
+            json: vi.fn(),
+            cookie: vi.fn()
+        } as any
+        const next = vi.fn()
+
+        // ACT
+        try {
+            await me(req, res, next)
+        } catch (err) {
+            next(err)
+        }
+
+        // ASSERT
+        expect(next).toHaveBeenCalledWith(
+            expect.objectContaining({ statusCode: 404 })
         )
     })
 })
