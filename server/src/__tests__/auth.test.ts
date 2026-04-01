@@ -69,7 +69,45 @@ vi.mock('argon2', () => ({
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { login } from '../controllers/auth.controller.js'
+import { prisma } from '../lib/prisma.js'
 
 // TESTS
 // =====
 
+//LOGIN
+//=====
+
+describe('login', () => {
+
+    beforeEach(() => {
+        vi.clearAllMocks() // reset all mocks before each test to avoid interference
+    })
+
+    it('devrait retourner 401 si email inexistant', async () => {
+
+        // ARRANGE — setting up the conditions for the test
+        // "If we're looking for an unknown email, Prisma should return null"
+        vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
+
+        // Créating fake req, res, next objects to call the controller function
+        const req = {
+            body: { email: 'inconnu@test.com', password: 'monMotDePasse' }
+        } as any
+
+        const res = {
+            status: vi.fn().mockReturnThis(), // .mockReturnThis() = return res itself
+            json: vi.fn()                      // to allow chaining like res.status(401).
+        } as any
+
+        const next = vi.fn() // Express next() — checking if it's called with an error
+
+        // ACT — calling the real function we're testing
+        // await login(req, res, next)
+
+        // ASSERT — checking the expected outcomes
+        // expect(next).toHaveBeenCalled() // login has to call next() with an UnauthorizedError
+        // expect(prisma.user.findUnique).toHaveBeenCalledWith({
+        //     where: { email: 'inconnu@test.com' }
+        // })
+    })
+})
