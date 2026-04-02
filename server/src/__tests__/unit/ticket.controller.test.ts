@@ -23,12 +23,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { getAllprices, updateTicketPrice } from '../../controllers/ticket.controller.js'
 import { prisma } from '../../lib/prisma.js'
 import * as argon2 from 'argon2'
+import { Prisma } from '@prisma/client'
 import type { Ticket, User } from '@prisma/client'
 
 // Fausses données réutilisées dans tous les tests pour éviter la duplication
 const fakeTicket = {
     id_TICKET: 1,
-    amount: 25,
+    label: 'Billet standard',
+    description: null,
+    amount: new Prisma.Decimal(25),
     created_at: new Date(),
     updated_at: new Date()
 } satisfies Ticket
@@ -96,7 +99,7 @@ describe('updateTicketPrice', () => {
         // Simule un admin existant en BDD, un mot de passe correct et une mise à jour réussie
         vi.mocked(prisma.user.findUnique).mockResolvedValue(fakeAdmin)
         vi.mocked(argon2.verify).mockResolvedValue(true)
-        vi.mocked(prisma.ticket.update).mockResolvedValue({ ...fakeTicket, amount: 30 })
+        vi.mocked(prisma.ticket.update).mockResolvedValue({ ...fakeTicket, amount: new Prisma.Decimal(30) })
 
         const req = {
             body: { price: 30, password: 'correct_password' },
