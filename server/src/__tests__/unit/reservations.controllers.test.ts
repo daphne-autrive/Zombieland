@@ -5,7 +5,9 @@
 import { vi, test, expect, beforeEach, describe } from 'vitest'
 
 // Import the controller functions to test
-import { createReservation, deleteReservation, getAvailabilities } from '../controllers/reservations.controller.js'
+import { createReservation, deleteReservation, getAvailabilities } from '../../controllers/reservations.controller.js'
+// Import argon2 to override verify mock in specific tests
+import * as argon2 from 'argon2'
 
 // Create mock objects for Express Request, Response, and NextFunction
 const mockRequest = vi.fn()
@@ -232,8 +234,8 @@ describe('Reservation Controller Unit Tests', () => {
       mockPrisma.reservation.groupBy.mockResolvedValue([{
         _sum: { nb_tickets: 99 }
       }])
-      mockPrisma.ticket.findUnique.mockRejectedValue({
-        id_ticket: 1,
+      mockPrisma.ticket.findUnique.mockResolvedValue({
+        id_TICKET: 1,
         amount: 128
       })
       const res = mockResponse()
@@ -271,6 +273,8 @@ describe('Reservation Controller Unit Tests', () => {
       // Arrange: Mock database to return existing reservation
       mockPrisma.reservation.findUnique.mockResolvedValue({
         id_RESERVATION: 1,
+        id_USER: 1,                       // must match req.user.id to avoid ForbiddenError
+        date: new Date('2027-06-18'),     // must be > J+10 to pass the cancellation rule
         user:{
           firstname: 'John',
           lastname: 'Doe',
@@ -312,39 +316,91 @@ describe('Reservation Controller Unit Tests', () => {
     // Test: throw error when reservation does not exist | Expected status: 404
     test('should throw NotFoundError when reservation does not exist', async () => {
       // Arrange: Setup request with authenticated user and reservation ID
+      const req = mockRequest()
+      req.body = { password: 'motdepasse' }
 
       // Arrange: Mock database to return null for reservation
+      mockPrisma.reservation.findUnique.mockResolvedValue(null)
+
+      const res = mockResponse()
+      const next = vi.fn()
 
       // Act: Call deleteReservation function
+      try {
+        await deleteReservation(req, res, next)
+      } catch (err) {
+        next(err)
+      }
 
       // Assert: Verify next was called with NotFoundError
-
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ statusCode: 404 })
+      )
     })
 
     // Test: throw error when user is not owner of reservation | Expected status: 403
     test('should throw ForbiddenError when user is not reservation owner', async () => {
       // Arrange: Setup request with authenticated user ID different from reservation owner
+      const req = mockRequest()
+      req.body = { password: 'motdepasse' }
 
       // Arrange: Mock database to return reservation owned by different user
+      mockPrisma.reservation.findUnique.mockResolvedValue({
+        id_RESERVATION: 1,
+        id_USER: 2,              // different from req.user.id (1)
+        date: new Date('2027-06-18')
+      })
+
+      const res = mockResponse()
+      const next = vi.fn()
 
       // Act: Call deleteReservation function
+      try {
+        await deleteReservation(req, res, next)
+      } catch (err) {
+        next(err)
+      }
 
       // Assert: Verify next was called with ForbiddenError
-
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ statusCode: 403 })
+      )
     })
 
     // Test: throw error when password is incorrect | Expected status: 401
     test('should throw UnauthorizedError when password is incorrect', async () => {
       // Arrange: Setup request with authenticated user
+      const req = mockRequest()
+      req.body = { password: 'wrongpassword' }
 
       // Arrange: Mock database to return existing reservation and user
+      mockPrisma.reservation.findUnique.mockResolvedValue({
+        id_RESERVATION: 1,
+        id_USER: 1,
+        date: new Date('2027-06-18')
+      })
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id_USER: 1,
+        password: 'hashedPassword123'
+      })
 
       // Arrange: Mock argon2.verify to return false for wrong password
+      vi.mocked(argon2.verify).mockResolvedValueOnce(false)
+
+      const res = mockResponse()
+      const next = vi.fn()
 
       // Act: Call deleteReservation function with wrong password
+      try {
+        await deleteReservation(req, res, next)
+      } catch (err) {
+        next(err)
+      }
 
       // Assert: Verify next was called with UnauthorizedError
-
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ statusCode: 401 })
+      )
     })
 
   })
@@ -355,35 +411,61 @@ describe('Reservation Controller Unit Tests', () => {
     // Test: retrieve available slots for a date | Expected status: 200
     test('should return available slots for requested date', async () => {
       // Arrange: Setup request with query parameter for date
+      const req = mockRequest()
 
       // Arrange: Mock database to return max capacity setting
+      mockPrisma.setting.findUnique.mockResolvedValue({ value: '100' })
 
       // Arrange: Mock database to return existing reservations for date
+      mockPrisma.reservation.groupBy.mockResolvedValue([
+        { date: new Date('2027-06-18'), _sum: { nb_tickets: 80 } }
+      ])
 
       // Arrange: Setup response mock
+      const res = mockResponse()
+      const next = mockNext
 
       // Act: Call getAvailabilities function
+      try {
+        await getAvailabilities(req, res, next)
+      } catch (err) {
+        next(err)
+      }
 
       // Assert: Verify response status was set to 200
+      expect(res.status).toHaveBeenCalledWith(200)
 
       // Assert: Verify response contains calculated available spots
-
+      expect(res.json).toHaveBeenLastCalledWith([
+        { date: new Date('2027-06-18'), available: true }
+      ])
     })
 
     // Test: return full capacity when no reservations exist | Expected status: 200
     test('should return full capacity when no reservations exist', async () => {
       // Arrange: Setup request with query parameter for date
+      const req = mockRequest()
 
       // Arrange: Mock database to return max capacity setting
+      mockPrisma.setting.findUnique.mockResolvedValue({ value: '100' })
 
       // Arrange: Mock database to return empty reservations
+      mockPrisma.reservation.groupBy.mockResolvedValue([])
 
       // Arrange: Setup response mock
+      const res = mockResponse()
+      const next = mockNext
 
       // Act: Call getAvailabilities function
+      try {
+        await getAvailabilities(req, res, next)
+      } catch (err) {
+        next(err)
+      }
 
       // Assert: Verify response.json was called with max capacity value
-
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.json).toHaveBeenLastCalledWith([])
     })
 
   })
