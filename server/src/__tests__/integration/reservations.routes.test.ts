@@ -3,6 +3,7 @@ import { vi, test, expect, beforeEach } from 'vitest'
 // Import Express request, response and next function types
 import { Request, Response, NextFunction } from 'express'
 
+
 // Create a mock Prisma client that is hoisted to the top of the file
 const mockPrisma = vi.hoisted(() => ({
   // Mock reservation database operations
@@ -26,7 +27,7 @@ vi.mock('@prisma/client', () => ({
 }))
 
 // Mock the authentication middleware with our mockCheckToken
-vi.mock('../middlewares/auth.middleware.js', () => ({
+vi.mock('../../middlewares/auth.middleware.js', () => ({
   checkToken: mockCheckToken
 }))
 
@@ -38,11 +39,12 @@ vi.mock('argon2', () => ({
 // Import Supertest for making HTTP requests in tests
 import supertest from 'supertest'
 // Import the Express app to test
-import app from '../app.js'
+import app from '../../app.js'
 // Import custom error class for unauthorized errors
-import { UnauthorizedError } from '../utils/AppError.js'
+import { UnauthorizedError } from '../../utils/AppError.js'
 // Import argon2 for password verification
 import * as argon2 from 'argon2'
+import { describe } from 'node:test'
 
 // Run before each test to reset mocks and set default behavior
 beforeEach(() => {
@@ -57,8 +59,6 @@ beforeEach(() => {
     next()
   })
 })
-
-
 
 //  1 function 
 // Main test suite for reservation module
