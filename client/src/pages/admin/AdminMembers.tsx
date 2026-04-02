@@ -14,7 +14,7 @@ import { formatDateForDisplay } from "@/utils/date"
 import bgBouton from '../../assets/bg-bouton.webp'
 import bgImage from '../../assets/labodashboard.webp'
 import { API_URL } from "@/config/api"
-import axios from "axios"
+import axiosInstance from "@/lib/axiosInstance"
 
 const AdminMembers = () => {
   // State for members, loading and error
@@ -31,7 +31,7 @@ const AdminMembers = () => {
   const fetchMembers = async () => {
     setLoading(true)
     try {
-      const res = await axios.get<Member[]>(`${API_URL}/api/users`, {
+      const res = await axiosInstance.get<Member[]>(`${API_URL}/api/users`, {
         withCredentials: true
       })
       setMembers(res.data)

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "@/lib/axiosInstance";
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { API_URL } from "@/config/api";
@@ -36,7 +36,7 @@ const AdminReservations = () => {
             try {
                 // GET request to retrieve all reservations (admin only route)
                 // withCredentials: true sends the httpOnly cookie for authentication
-                const response = await axios.get(`${API_URL}/api/reservations`,
+                const response = await axiosInstance.get(`${API_URL}/api/reservations`,
                     {
                         withCredentials: true,
                     });
@@ -61,7 +61,7 @@ const AdminReservations = () => {
         // 1st arg: URL with reservation id
         // 2nd arg: body with the new status
         // 3rd arg: config with credentials for cookie authentication
-        await axios.patch(`${API_URL}/api/reservations/${id}`,
+        await axiosInstance.patch(`${API_URL}/api/reservations/${id}`,
             { status },
             { withCredentials: true }
         )

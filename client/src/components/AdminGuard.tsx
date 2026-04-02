@@ -1,6 +1,6 @@
 // Redirects to home if the user is not logged in or not an admin
 import { API_URL } from '@/config/api'
-import axios from 'axios'
+import axiosInstance from '@/lib/axiosInstance'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -15,7 +15,7 @@ function AdminGuard({ children }: AdminGuardProps) {
     useEffect(() => {
         const checkAdmin = async () => {
             try {
-                const response = await axios.get(`${API_URL}/api/auth/me`,
+                const response = await axiosInstance.get(`${API_URL}/api/auth/me`,
 
                     { withCredentials: true },
                 );

@@ -12,7 +12,7 @@ import AdminTable from "@/components/AdminTable";
 import AdminMenu from "@/components/AdminNavlinkMenu";
 import labodashboard from "../../assets/labodashboard.webp"
 import type { Reservation } from "@/types/Reservations";
-import axios from "axios";
+import axiosInstance from "@/lib/axiosInstance";
 import { API_URL } from "@/config/api";
 import ConfirmModal from "@/components/ConfirmModal";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -44,7 +44,7 @@ const AdminReservations = () => {
             try {
                 // GET request to retrieve all reservations (admin only route)
                 // withCredentials: true sends the httpOnly cookie for authentication
-                const response = await axios.get(`${API_URL}/api/reservations`,
+                const response = await axiosInstance.get(`${API_URL}/api/reservations`,
                     {
                         withCredentials: true,
                     });
@@ -71,7 +71,7 @@ const AdminReservations = () => {
         // 1st arg: URL with reservation id
         // 2nd arg: body with the new status
         // 3rd arg: config with credentials for cookie authentication
-        await axios.patch(`${API_URL}/api/reservations/${id}`,
+        await axiosInstance.patch(`${API_URL}/api/reservations/${id}`,
             { status },
             { withCredentials: true }
         )
@@ -87,7 +87,7 @@ const AdminReservations = () => {
     useEffect(() => {
         const fetchAttractions = async () => {
             try {
-                const res = await axios.get(`${API_URL}/api/attractions`);
+                const res = await axiosInstance.get(`${API_URL}/api/attractions`);
                 setAttractions(res.data.length);
             } catch (err) {
                 console.error("Erreur récupération attractions");

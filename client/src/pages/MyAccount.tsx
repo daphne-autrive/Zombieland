@@ -20,7 +20,8 @@ import bgImage from '../assets/bg-image.webp'
 import bgBouton from '../assets/bg-bouton.webp'
 import { PageBackground } from '../components/PageBackground'
 import { API_URL } from '@/config/api';
-import axios, { isAxiosError } from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
+import { isAxiosError } from 'axios';
 
 //We will need on this page : 
 //  connected user informations (so we need his ID)
@@ -51,7 +52,7 @@ function MyAccount() {
 
     const fetchUser = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/auth/me`, {
+        const response = await axiosInstance.get(`${API_URL}/api/auth/me`, {
           withCredentials: true //to get the cookie sent from the back, the browser is automatically dealing with
         })
         // Convert the response to JSON => { id_USER, firstname, lastname, email, role... }
@@ -68,7 +69,7 @@ function MyAccount() {
     const fetchReservations = async () => {
       try {
 
-        const response = await axios.get(`${API_URL}/api/reservations/me`, {
+        const response = await axiosInstance.get(`${API_URL}/api/reservations/me`, {
           withCredentials: true //to get the cookie sent from the back, the browser is automatically dealing with
         })
         // Convert the response to JSON
@@ -92,7 +93,7 @@ function MyAccount() {
       return
     }
     try {
-      await axios.patch(`${API_URL}/api/users/${currentUser?.id_USER}/profile`, {
+      await axiosInstance.patch(`${API_URL}/api/users/${currentUser?.id_USER}/profile`, {
         //undefined if empty, Prisma doesn't update it
         //thanks to "UserSchema.partial()" used in updateProfile
         //partial() turns the fields as "optionnal"
@@ -138,7 +139,7 @@ function MyAccount() {
 
   const handleDelete = async (password: string) => {
     try {
-      await axios.delete(`${API_URL}/api/users/${currentUser?.id_USER}`, {
+      await axiosInstance.delete(`${API_URL}/api/users/${currentUser?.id_USER}`, {
         data: { password },
         withCredentials: true
       })

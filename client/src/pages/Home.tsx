@@ -26,7 +26,7 @@ import img6 from "../assets/centrerecherche.webp"
 
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "@/config/api";
-import axios from "axios";
+import axiosInstance from "@/lib/axiosInstance";
 
 // Conversion catégories → enum backend
 const categoryToEnum: Record<string, string> = {
@@ -72,7 +72,7 @@ const HomePage = () => {
     useEffect(() => {
         const fetchAttractions = async () => {
             try {
-                const res = await axios.get<Attraction[]>(`${API_URL}/api/attractions`);
+                const res = await axiosInstance.get<Attraction[]>(`${API_URL}/api/attractions`);
                 setAttractions(res.data);
 
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars

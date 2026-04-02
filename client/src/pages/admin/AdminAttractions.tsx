@@ -12,7 +12,7 @@ import AdminMenu from "../../components/AdminNavlinkMenu"
 import { FaTrash } from 'react-icons/fa'
 import ConfirmModal from "../../components/ConfirmModal"
 import { API_URL } from "@/config/api"
-import axios from "axios"
+import axiosInstance from "@/lib/axiosInstance"
 
 
 const intensityToLabel: Record<string, string> = {
@@ -34,7 +34,7 @@ const AdminAttractions = () => {
     const fetchAttractions = async () => {
         setLoading(true)
         try {
-            const res = await axios.get<Attraction[]>(`${API_URL}/api/attractions`)
+            const res = await axiosInstance.get<Attraction[]>(`${API_URL}/api/attractions`)
             setAttractions(res.data)
 
         } catch (error) {
@@ -51,7 +51,7 @@ const AdminAttractions = () => {
 
     const handleDelete = async (id: number, password: string) => {
         try {
-            await axios.delete(`${API_URL}/api/attractions/${id}`, {
+            await axiosInstance.delete(`${API_URL}/api/attractions/${id}`, {
                 data: { password },
 
                 withCredentials: true,

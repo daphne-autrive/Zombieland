@@ -5,7 +5,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import logo from '../assets/logo.webp'
 import { FaUserCircle } from 'react-icons/fa'
-import axios from 'axios'
+import axiosInstance from '@/lib/axiosInstance'
 import { API_URL } from '@/config/api'
 
 function Header() {
@@ -23,7 +23,7 @@ function Header() {
         const fetchUser = async () => {
             try {
                 
-                const response = await axios.get(`${API_URL}/api/auth/me`,
+                const response = await axiosInstance.get(`${API_URL}/api/auth/me`,
     
                     { withCredentials: true },
                 );
@@ -41,7 +41,7 @@ function Header() {
     const handleLogout = async () => {
         try {
 
-            await axios.post(`${API_URL}/api/auth/logout`,
+            await axiosInstance.post(`${API_URL}/api/auth/logout`,
                 {},
                 {
                     withCredentials: true,

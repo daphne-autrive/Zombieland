@@ -21,8 +21,9 @@ import bgBouton from '../assets/bg-bouton.webp'
 import { toLocalDateString, isoToLocalDate, getTodayMidnight } from '../utils/date'
 import InfoModal from '../components/InfoModal'
 import { API_URL } from '@/config/api'
-import axios, { isAxiosError } from 'axios'
+import axiosInstance from '@/lib/axiosInstance'
 import { useNavigate } from 'react-router'
+import { isAxiosError } from 'axios'
 
 
 function Reservation() {
@@ -88,7 +89,7 @@ function Reservation() {
     // called on mount and after each successful reservation
     const fetchAvailabilities = async () => {
         try {
-            const response = await axios.get(`${API_URL}/api/reservations/availabilities`)
+            const response = await axiosInstance.get(`${API_URL}/api/reservations/availabilities`)
             setAvailabilities(response.data)
 
         } catch (error) {
@@ -98,7 +99,7 @@ function Reservation() {
 
     // Fetch ticket price from the API on mount
     useEffect(() => {
-        axios.get(`${API_URL}/api/tickets`)
+        axiosInstance.get(`${API_URL}/api/tickets`)
             .then(res => setTicketPrice(Number(res.data.price)))
             .catch(() => {})
     }, [])
@@ -129,7 +130,7 @@ function Reservation() {
 
         try {
             // Send the form data to the back via fetch
-            await axios.post(`${API_URL}/api/reservations`,
+            await axiosInstance.post(`${API_URL}/api/reservations`,
                 {   // body
                     nb_tickets: parseInt(nbTickets) || 1, // The number of the tickets on by default
                     date: date, // The date of the visit choosen by the client

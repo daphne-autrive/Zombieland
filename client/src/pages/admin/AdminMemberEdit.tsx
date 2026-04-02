@@ -10,7 +10,7 @@ import bgImage from '../../assets/labodashboard.webp'
 import bgBouton from '../../assets/bg-bouton.webp'
 import type { Member } from '@/types/Member'
 import { API_URL } from '@/config/api'
-import axios from 'axios'
+import axiosInstance from '@/lib/axiosInstance'
 import { isAxiosError } from 'axios'
 
 const AdminMemberEdit = () => {
@@ -28,7 +28,7 @@ const AdminMemberEdit = () => {
   useEffect(() => {
     const fetchMember = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/users/${id}/profile`, {
+        const res = await axiosInstance.get(`${API_URL}/api/users/${id}/profile`, {
           withCredentials: true
         })
 
@@ -36,7 +36,7 @@ const AdminMemberEdit = () => {
         setForm({ firstname: res.data.firstname, lastname: res.data.lastname, email: res.data.email, password: '', role: res.data.role })
 
         // Fetch reservations du membre
-        const resaRes = await axios.get(`${API_URL}/api/reservations/user/${id}`, {
+        const resaRes = await axiosInstance.get(`${API_URL}/api/reservations/user/${id}`, {
           withCredentials: true
         })
         setReservations(resaRes.data)
@@ -50,7 +50,7 @@ const AdminMemberEdit = () => {
 
   const handleUpdate = async (currentPassword: string) => {
     try {
-      await axios.patch(`${API_URL}/api/users/${id}/profile`,
+      await axiosInstance.patch(`${API_URL}/api/users/${id}/profile`,
         {
           firstname: form.firstname,
           lastname: form.lastname,
@@ -89,7 +89,7 @@ const AdminMemberEdit = () => {
   const handleDelete = async (password: string) => {
     try {
 
-      await axios.delete(`${API_URL}/api/users/${id}`, {
+      await axiosInstance.delete(`${API_URL}/api/users/${id}`, {
         data: { password },
         withCredentials: true
       })

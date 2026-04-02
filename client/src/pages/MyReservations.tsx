@@ -11,7 +11,8 @@ import { useSearchParams, useNavigate, useParams } from 'react-router-dom'
 import ConfirmModal from '../components/ConfirmModal'
 import InfoModal from '../components/InfoModal'
 import { API_URL } from '@/config/api'
-import axios, { isAxiosError } from 'axios'
+import axiosInstance from '@/lib/axiosInstance'
+import { isAxiosError } from 'axios'
 import { isoToLocalDate } from '@/utils/date'
 
 
@@ -84,7 +85,7 @@ function MyReservations() {
         const init = async () => {
             try {
                 // 1. Fetch user first
-                const resUser = await axios.get(`${API_URL}/api/auth/me`, {
+                const resUser = await axiosInstance.get(`${API_URL}/api/auth/me`, {
                     withCredentials: true
                 })
                 const userData = resUser.data
@@ -98,7 +99,7 @@ function MyReservations() {
                     ? `${API_URL}/api/reservations/user/${id}`   // ← route qui existe
                     : `${API_URL}/api/reservations/me`
 
-                const response = await axios.get(url, { withCredentials: true })
+                const response = await axiosInstance.get(url, { withCredentials: true })
                 const data = response.data
                 setReservations(data)
 
@@ -140,19 +141,19 @@ function MyReservations() {
     // Cancel a reservation by sending a delete request to the api
     const handleCancel = async (reservationId: number, password: string) => {
         try {
-            await axios.delete(`${API_URL}/api/reservations/${reservationId}`, {
+            await axiosInstance.delete(`${API_URL}/api/reservations/${reservationId}`, {
                 data: { password },
                 withCredentials: true,
             })
 
             // Re-fetch instead of local state update — keeps dashboard in sync
-            const resUser = await axios.get(`${API_URL}/api/auth/me`, { withCredentials: true })
+            const resUser = await axiosInstance.get(`${API_URL}/api/auth/me`, { withCredentials: true })
             const userData = resUser.data
             const isAdminUser = userData.role === 'ADMIN' && !!id
             const url = isAdminUser
                 ? `${API_URL}/api/reservations/user/${id}`
                 : `${API_URL}/api/reservations/me`
-            const response = await axios.get(url, { withCredentials: true })
+            const response = await axiosInstance.get(url, { withCredentials: true })
             setReservations(response.data)
 
             setMessage('Votre annulation a bien été prise en compte.')

@@ -3,7 +3,7 @@
 import type { AttractionWithCategories } from "@/types";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "@/lib/axiosInstance";
 import { Badge, Box, Button, Flex, Heading, Image, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -51,7 +51,7 @@ const AttractionDetailPage = () => {
     setIsLoading(true);
     const axiosAttraction = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/attractions/${id}`);
+        const res = await axiosInstance.get(`${API_URL}/api/attractions/${id}`);
         setAttraction(res.data);
       } catch (error) {
         setError("Erreur lors de la récupération d'une attraction")
