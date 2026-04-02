@@ -136,10 +136,10 @@ function MyAccount() {
     //to build the URL of the PATCH route
   }
 
-  const handleDelete = async () => {
+  const handleDelete = async (password: string) => {
     try {
       await axios.delete(`${API_URL}/api/users/${currentUser?.id_USER}`, {
-
+        data: { password },
         withCredentials: true
       })
       // if the account is deleted we send the user on the page register

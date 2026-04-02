@@ -34,3 +34,13 @@ jobs:
       # Run the full test suite and fail the workflow if any test fails
       - name: Run tests
         run: cd server && pnpm test
+  deploy:
+    # Only runs if tests pass and only on main branch
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      # Trigger automatic redeployment on Render via deploy hook
+      - name: Deploy to Render
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
