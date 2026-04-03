@@ -222,7 +222,10 @@ export const deleteReservation = async (req: Request, res: Response, next: NextF
 
     await prisma.reservation.update({
         where: { id_RESERVATION: reservationParam },
-        data: { status: "CANCELLED" }
+        data: {
+            status: "CANCELLED",
+            total_amount: 0
+        }
     })
 
     return res.status(200).json({
