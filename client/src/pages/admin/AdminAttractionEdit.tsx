@@ -17,7 +17,7 @@ import img4 from "../../assets/grand8.webp"
 import img5 from "../../assets/fossecadavres.webp"
 import img6 from "../../assets/centrerecherche.webp"
 import { API_URL } from "@/config/api"
-import axios from "axios"
+import axiosInstance from "@/lib/axiosInstance"
 import { isAxiosError } from "axios"
 
 // Map attraction id to local image
@@ -57,7 +57,7 @@ const AdminAttractionEdit = () => {
         const fetchAttraction = async () => {
             setLoading(true)
             try {
-                const res = await axios.get<AttractionWithCategories>(`${API_URL}/api/attractions/${id}`)
+                const res = await axiosInstance.get<AttractionWithCategories>(`${API_URL}/api/attractions/${id}`)
 
 
                 setName(res.data.name)
@@ -96,7 +96,7 @@ const AdminAttractionEdit = () => {
                 const formData = new FormData()
                 formData.append('image', fileInputRef.current.files[0])
 
-                await axios.patch(`${API_URL}/api/attractions/${id}/image`, formData,
+                await axiosInstance.patch(`${API_URL}/api/attractions/${id}/image`, formData,
                     {
 
                         withCredentials: true,
@@ -107,7 +107,7 @@ const AdminAttractionEdit = () => {
             }
             errorMessage = "Erreur lors de la modification de l'attraction"
             // Then update the other fields
-            await axios.patch(`${API_URL}/api/attractions/${id}`,
+            await axiosInstance.patch(`${API_URL}/api/attractions/${id}`,
                 {
                     name,
                     description,

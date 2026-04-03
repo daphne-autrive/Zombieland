@@ -16,6 +16,8 @@ import reservationsRouter from './routes/reservations.routes.js'
 import ticketRoutes from './routes/ticket.routes.js'
 import settingRoutes from './routes/setting.routes.js'
 import { fileURLToPath } from 'url'
+//CSRF
+import { setCsrfToken, checkCsrf } from './middlewares/csrf.middleware.js'
 
 const app = express()
 
@@ -38,6 +40,12 @@ app.use(cookieParser())
 const __filename=fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
+
+// CSRF token route — called once on app load to give the client its token
+app.get('/api/auth/csrf', setCsrfToken)
+// Apply CSRF check on all routes below (POST, PATCH, DELETE)
+// GET requests are automatically skipped inside checkCsrf
+app.use(checkCsrf)
 
 // Authentication
 app.use('/api/auth', authRoutes)

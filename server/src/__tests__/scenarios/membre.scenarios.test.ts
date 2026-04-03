@@ -8,7 +8,11 @@ const mockPrisma = vi.hoisted(() => ({
     ticket: { findUnique: vi.fn() },
     setting: { findUnique: vi.fn() }
 }))
-
+// Mock CSRF middleware to bypass CSRF protection during tests
+vi.mock('../../middlewares/csrf.middleware.js', () => ({
+    checkCsrf: (_req: any, _res: any, next: any) => next(),
+    setCsrfToken: (_req: any, res: any) => res.json({ csrfToken: 'fake-token' })
+}))
 // Faux middleware d'auth : simule un membre connecté par défaut
 const mockCheckToken = vi.hoisted(() => vi.fn())
 
@@ -244,7 +248,7 @@ describe('Scénario : annulation d\'une réservation (règle J-10)', () => {
         expect(response.body).toHaveProperty('message')
         expect(mockPrisma.reservation.update).toHaveBeenCalledWith({
             where: { id_RESERVATION: 1 },
-            data: { status: 'CANCELLED' }
+            data: { status: 'CANCELLED', total_amount: 0 }
         })
     })
 

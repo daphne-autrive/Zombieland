@@ -13,7 +13,7 @@ import img5 from "../assets/fossecadavres.webp"
 import img6 from "../assets/centrerecherche.webp"
 import { PageBackground } from "../components/PageBackground";
 import { API_URL } from "@/config/api";
-import axios from "axios";
+import axiosInstance from "@/lib/axiosInstance";
 
 const categoryToEnum: Record<string, string> = {
     "Peur Acceptable": "LOW",
@@ -39,7 +39,7 @@ const AttractionsPage = () => {
     useEffect(() => {
         const fetchAttractions = async () => {
             try {
-                const res = await axios.get<Attraction[]>(`${API_URL}/api/attractions`);
+                const res = await axiosInstance.get<Attraction[]>(`${API_URL}/api/attractions`);
                 
                 setAttractions(res.data);
             } catch (err) {

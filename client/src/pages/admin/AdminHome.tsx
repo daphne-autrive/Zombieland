@@ -12,7 +12,7 @@ import AdminTable from "@/components/AdminTable";
 import AdminMenu from "@/components/AdminNavlinkMenu";
 import labodashboard from "../../assets/labodashboard.webp"
 import type { Reservation } from "@/types/Reservations";
-import axios from "axios";
+import axiosInstance from "@/lib/axiosInstance";
 import { API_URL } from "@/config/api";
 import ConfirmModal from "@/components/ConfirmModal";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -44,7 +44,7 @@ const AdminReservations = () => {
             try {
                 // GET request to retrieve all reservations (admin only route)
                 // withCredentials: true sends the httpOnly cookie for authentication
-                const response = await axios.get(`${API_URL}/api/reservations`,
+                const response = await axiosInstance.get(`${API_URL}/api/reservations`,
                     {
                         withCredentials: true,
                     });
@@ -66,28 +66,24 @@ const AdminReservations = () => {
     // Function to update the status of a reservation via PATCH request
     // id: the reservation id to update
     // status: the new status ("CONFIRMED" or "CANCELLED")
-    const handleStatusChange = async (id: number, status: string) => {
-        // Send PATCH request to update the reservation status
-        // 1st arg: URL with reservation id
-        // 2nd arg: body with the new status
-        // 3rd arg: config with credentials for cookie authentication
-        await axios.patch(`${API_URL}/api/reservations/${id}`,
-            { status },
-            { withCredentials: true }
-        )
-        // Update the local state to reflect the change without refetching
-        // .map() creates a new array where only the modified reservation has its status changed
-        setReservations(reservations.map(r =>
-            r.id_RESERVATION === id ? { ...r, status } : r
-        ))
+    const handleCancel = async (id: number, password: string) => {
+        try {
+        await axiosInstance.delete(`${API_URL}/api/reservations/${id}`, {
+            data: { password },
+            withCredentials: true
+        })
+        const response = await axiosInstance.get(`${API_URL}/api/reservations`, { withCredentials: true })
+        setReservations(response.data)
+    } catch (error) {
+        setError("Erreur lors de l'annulation")
     }
-
+}
 
     //fetch all attractions
     useEffect(() => {
         const fetchAttractions = async () => {
             try {
-                const res = await axios.get(`${API_URL}/api/attractions`);
+                const res = await axiosInstance.get(`${API_URL}/api/attractions`);
                 setAttractions(res.data.length);
             } catch (err) {
                 console.error("Erreur récupération attractions");
@@ -100,7 +96,7 @@ const AdminReservations = () => {
 
     //fetch all users
     useEffect(() => {
-        axios
+        axiosInstance
             .get(`${API_URL}/api/users`, { withCredentials: true })
             .then(res => setUsers(res.data.length))
             .catch(() => console.error("Erreur récupération utilisateurs"));
@@ -161,7 +157,7 @@ const AdminReservations = () => {
             }
         })
     const lastReservations = filteredReservations.slice(-4).reverse();
-    const handleSortChange = (by: "firstname" | "date" | "nb_tickets" | "status" | "id_USER" | "total_amount") => {
+    const handleSortChange = (by: "name" | "member" | "date" | "tickets" | "status" | "total") => {
         if (sort.by === by) {
             setSort({ by, direction: sort.direction === "asc" ? "desc" : "asc" })
         } else {
@@ -170,12 +166,12 @@ const AdminReservations = () => {
     }
 
     const headerToField = {
-        "Nom": "firstname",
-        "N° Membre": "id_USER",
+        "Nom": "name",
+        "N° Membre": "member",
         "Date": "date",
-        "Billets": "nb_tickets",
+        "Billets": "tickets",
         "Statut": "status",
-        "Total": "total_amount"
+        "Total": "total"
     } as const
 
 
@@ -395,6 +391,7 @@ const AdminReservations = () => {
                         {!loading && (
                             <AdminTable
                                 data={lastReservations}
+                                onRowClick={(r) => navigate(`/admin/members/${r.id_USER}/reservations?reservationId=${r.id_RESERVATION}`)}
                                 onHeaderClick={(header) => {
                                     const field = headerToField[header as keyof typeof headerToField]
                                     if (field) handleSortChange(field)
@@ -478,8 +475,8 @@ const AdminReservations = () => {
                     onClose={() => setReservationToCancel(null)}
                     title="Annuler la réservation"
                     message="Voulez-vous vraiment annuler cette réservation ? Cette action est irréversible."
-                    onConfirm={() => {
-                        if (reservationToCancel) handleStatusChange(reservationToCancel, "CANCELLED")
+                    onConfirm={(password) => {
+                        if (reservationToCancel) handleCancel(reservationToCancel, password)
                         setReservationToCancel(null)
                     }}
                 />

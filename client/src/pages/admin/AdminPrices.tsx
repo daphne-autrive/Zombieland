@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Box, Heading, Input, Button, Text, Flex, Spinner } from "@chakra-ui/react"
-import axios, { isAxiosError } from "axios"
+import axiosInstance from "@/lib/axiosInstance"
+import { isAxiosError } from "axios"
 import { API_URL } from "@/config/api"
 import Header from "../../components/Header"
 import bgImage from "../../assets/labodashboard.webp"
@@ -22,7 +23,7 @@ const AdminTarifs = () => {
 
     const fetchPrice = async () => {
         try {
-            const res = await axios.get(`${API_URL}/api/tickets`, { withCredentials: true })
+            const res = await axiosInstance.get(`${API_URL}/api/tickets`, { withCredentials: true })
             setPrice(res.data.price)
         } catch {
             setPriceMessage("Erreur lors du chargement du tarif")    
@@ -31,7 +32,7 @@ const AdminTarifs = () => {
     //fetch update price
     const updatePrice = async (password: string) => {
         try {
-            await axios.patch(`${API_URL}/api/tickets/price`, { price, password }, { withCredentials: true })
+            await axiosInstance.patch(`${API_URL}/api/tickets/price`, { price, password }, { withCredentials: true })
             setPriceMessage("Tarif mis à jour avec succès")
         } catch (err) {
             if (isAxiosError(err)) {
@@ -43,7 +44,7 @@ const AdminTarifs = () => {
     //fetch capacity park
     const fetchCapacity = async () => {
         try {
-            const res = await axios.get(`${API_URL}/api/settings`, {
+            const res = await axiosInstance.get(`${API_URL}/api/settings`, {
                 withCredentials: true
             })
 
@@ -56,7 +57,7 @@ const AdminTarifs = () => {
     //fetch update capacity park
     const updateCapacity = async (password: string) => {
         try {
-            await axios.patch(
+            await axiosInstance.patch(
                 `${API_URL}/api/settings`,
                 { value: capacity, password },
                 { withCredentials: true }

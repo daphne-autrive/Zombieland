@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Text } from '@chakra-ui/react'
 import { API_URL } from '@/config/api'
-import axios from 'axios'
+import axiosInstance from '@/lib/axiosInstance'
 
 interface LoginModalProps {
   isOpen: boolean
@@ -26,7 +26,7 @@ function LoginModal({ isOpen, onClose, onConfirm, title }: LoginModalProps) {
         return
       }
   
-      await axios.post(`${API_URL}/api/auth/login`,
+      await axiosInstance.post(`${API_URL}/api/auth/login`,
         { email: email, 
           password: password },
         {

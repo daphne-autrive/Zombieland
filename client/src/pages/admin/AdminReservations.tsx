@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "@/lib/axiosInstance";
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { API_URL } from "@/config/api";
@@ -36,7 +36,7 @@ const AdminReservations = () => {
             try {
                 // GET request to retrieve all reservations (admin only route)
                 // withCredentials: true sends the httpOnly cookie for authentication
-                const response = await axios.get(`${API_URL}/api/reservations`,
+                const response = await axiosInstance.get(`${API_URL}/api/reservations`,
                     {
                         withCredentials: true,
                     });
@@ -53,24 +53,20 @@ const AdminReservations = () => {
         axiosReservation()
     }, []); // Empty dependency array: runs only once on mount
 
-    // Function to update the status of a reservation via PATCH request
-    // id: the reservation id to update
-    // status: the new status ("CONFIRMED" or "CANCELLED")
-    const handleStatusChange = async (id: number, status: string) => {
-        // Send PATCH request to update the reservation status
-        // 1st arg: URL with reservation id
-        // 2nd arg: body with the new status
-        // 3rd arg: config with credentials for cookie authentication
-        await axios.patch(`${API_URL}/api/reservations/${id}`,
-            { status },
-            { withCredentials: true }
-        )
-        // Update the local state to reflect the change without refetching
-        // .map() creates a new array where only the modified reservation has its status changed
-        setReservations(reservations.map(r =>
-            r.id_RESERVATION === id ? { ...r, status } : r
-        ))
+    // Function to update the status of a reservation via DELETE request
+    const handleCancel = async (id: number, password: string) => {
+    try {
+        await axiosInstance.delete(`${API_URL}/api/reservations/${id}`, {
+            data: { password },
+            withCredentials: true
+        })
+        // Re-fetch pour mettre à jour le state
+        const response = await axiosInstance.get(`${API_URL}/api/reservations`, { withCredentials: true })
+        setReservations(response.data)
+    } catch (error) {
+        setError("Erreur lors de l'annulation")
     }
+}
 
     // Filter reservations by status and sort by id (ascending)
     // If filterStatus is "All", show all reservations
@@ -257,8 +253,8 @@ const AdminReservations = () => {
                     onClose={() => setReservationToCancel(null)}
                     title="Annuler la réservation"
                     message="Voulez-vous vraiment annuler cette réservation ? Cette action est irréversible."
-                    onConfirm={() => {
-                        if (reservationToCancel) handleStatusChange(reservationToCancel, "CANCELLED")
+                    onConfirm={(password) => {
+                        if (reservationToCancel) handleCancel(reservationToCancel, password)
                         setReservationToCancel(null)
                     }}
                 />

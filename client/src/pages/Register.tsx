@@ -10,7 +10,8 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { PageBackground } from '../components/PageBackground'
 import { API_URL } from '@/config/api';
-import axios, { isAxiosError } from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
+import { isAxiosError } from 'axios';
 
 function Register() {
   //setting the changing of the inputs and the validation message as well
@@ -29,7 +30,7 @@ function Register() {
     if (form.password === form.confirmPassword) {
       try {
         //fetching replace with axios on the api with post methode
-        await axios.post(`${API_URL}/api/auth/register`,
+        await axiosInstance.post(`${API_URL}/api/auth/register`,
           // body 
           { firstname: form.firstname, lastname: form.lastname, email: form.email, password: form.password },
           { withCredentials: true } //to get the cookie sent from the back, the browser is automatically dealing with
@@ -37,7 +38,7 @@ function Register() {
         setMessage(' Bienvenue : compte créé !');
 
         // Checking who's the current user to redirect to the right page (admin or member)
-        const meRes = await axios.get(`${API_URL}/api/auth/me`, { withCredentials: true })
+        const meRes = await axiosInstance.get(`${API_URL}/api/auth/me`, { withCredentials: true })
         const currentUser = meRes.data
 
         if (currentUser.role === 'ADMIN') {

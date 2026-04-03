@@ -11,7 +11,7 @@ import Card from '../../assets/Card.webp'
 import ConfirmModal from "../../components/ConfirmModal"
 import defaultImage from "../../assets/quarantaine.webp"
 import { API_URL } from "@/config/api"
-import axios from "axios"
+import axiosInstance from "@/lib/axiosInstance"
 import { isAxiosError } from "axios"
 
 
@@ -50,7 +50,7 @@ const AdminAttractionCreate = () => {
         let errorMessage = "Erreur lors de la création de l'attraction"
         try {
             // Create the attraction first
-            const res = await axios.post(`${API_URL}/api/attractions`,
+            const res = await axiosInstance.post(`${API_URL}/api/attractions`,
                 {
                     name,
                     description,
@@ -73,7 +73,7 @@ const AdminAttractionCreate = () => {
 
                 errorMessage = "Attraction créée mais erreur lors de l'upload de l'image"
 
-                await axios.patch(`${API_URL}/api/attractions/${data.id_ATTRACTION}/image`,
+                await axiosInstance.patch(`${API_URL}/api/attractions/${data.id_ATTRACTION}/image`,
                     formData
                     , {
                         withCredentials: true,

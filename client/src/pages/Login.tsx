@@ -10,7 +10,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { PageBackground } from '../components/PageBackground'
 import { API_URL } from '@/config/api';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 
 
 function Login() {
@@ -22,13 +22,13 @@ function Login() {
   const handleSubmit = async () => {
     try {
       //fetching on the api with post methode
-      await axios.post(`${API_URL}/api/auth/login`,
+      await axiosInstance.post(`${API_URL}/api/auth/login`,
         { email: form.email, password: form.password },
         { withCredentials: true } //to get the cookie sent from the back, the browser is automatically dealing with
       )
 
       //checking the role of the user to redirect him to the right page
-      const meRes = await axios.get(`${API_URL}/api/auth/me`, { withCredentials: true })
+      const meRes = await axiosInstance.get(`${API_URL}/api/auth/me`, { withCredentials: true })
       const currentUser = meRes.data
 
       if (currentUser.role === 'ADMIN') {
