@@ -21,7 +21,8 @@ export const UpdateProfileSchema = UserSchema.partial().extend({
     .regex(/[A-Z]/, { error: "Votre mot de passe doit contenir au moins une majuscule" })
     .regex(/[0-9]/, { error: "Votre mot de passe doit contenir au moins un chiffre" })
     .regex(/[^a-zA-Z0-9]/, { error: "Votre mot de passe doit contenir au moins un caractère spécial" })
-    .optional()
+    .optional(),
+  currentPassword: z.string().optional()
 })
 
 export type UserInput = z.infer<typeof UserSchema>
