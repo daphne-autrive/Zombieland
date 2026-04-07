@@ -10,7 +10,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminTable from "@/components/AdminTable";
 import AdminMenu from "@/components/AdminNavlinkMenu";
-import labodashboard from "../../assets/bg-bouton.webp"
+import labodashboard from "../../assets/bgadminpage.png"
+import { FaTicketAlt, FaUsers, FaMoneyBillWave } from "react-icons/fa"
+import { MdAttractions } from "react-icons/md"
 import type { Reservation } from "@/types/Reservations";
 import axiosInstance from "@/lib/axiosInstance";
 import { API_URL } from "@/config/api";
@@ -235,123 +237,128 @@ const AdminReservations = () => {
                         flexDirection="row"
                         w="100%"
                     >
-                        {/* Description and details of 1 card*/}
+                        {/* Card Réservations */}
                         <Box
                             onClick={() => navigate('/admin/reservations')}
                             w={{ base: "100%", md: "45%", lg: "22%" }}
                             h="300px"
-                            bg="rgba(0, 0, 0, 0.5)"
-                            border="2px"
+                            bg="rgba(41, 48, 54, 0.88)"
+                            border="2px solid"
+                            borderColor="zombieland.white"
+                            borderRadius="md"
+                            cursor="pointer"
+                            transition="all 0.25s ease"
                             _hover={{
-                                transform: "translateY(-3px)",
-                                boxShadow: "0 8px 20px rgba(250, 235, 220, 0.2)",
-                                opacity: 0.9
+                                transform: "translateY(-5px)",
+                                bg: "gray.800",
+                                boxShadow: "0 0 24px rgba(71, 97, 130, 0.7)",
+                                borderColor: "zombieland.white"
                             }}
                         >
-                            {/* 2 flex text between 1 flex */}
-                            <Flex direction="column" justify="space-between" h="100%">
-                                <Flex justify="center" mt={2}  >
-                                    <Text fontSize="60" color="zombieland.white" fontWeight="extrabold">
-                                        {reservations.length}
-                                    </Text>
-                                </Flex>
-
-                                <Flex justify="center" >
-                                    <Text fontSize="45" color="zombieland.white" fontFamily="heading" >
-                                        Réservations
-                                    </Text>
-                                </Flex>
+                            <Flex direction="column" align="center" justify="center" h="100%" gap={4}>
+                                <Box color="zombieland.white" fontSize="56px">
+                                    <FaTicketAlt />
+                                </Box>
+                                <Text fontSize="56" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
+                                    {reservations.length}
+                                </Text>
+                                <Text fontSize="28" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
+                                    Réservations
+                                </Text>
                             </Flex>
-                        </Box >
+                        </Box>
 
 
 
+                        {/* Card Membres */}
                         <Box
                             onClick={() => navigate('/admin/members')}
                             w={{ base: "100%", md: "45%", lg: "22%" }}
                             h="300px"
-                            bg="rgba(0, 0, 0, 0.5)"
-                            border="2px"
+                            bg="rgba(41, 48, 54, 0.88)"
+                            border="2px solid"
+                            borderColor="zombieland.white"
+                            borderRadius="md"
+                            cursor="pointer"
+                            transition="all 0.25s ease"
                             _hover={{
-                                transform: "translateY(-3px)",
-                                boxShadow: "0 8px 20px rgba(250, 235, 220, 0.2)",
-                                opacity: 0.9
+                                transform: "translateY(-5px)",
+                                bg: "gray.800",
+                                boxShadow: "0 0 24px rgba(71, 97, 130, 0.7)",
+                                borderColor: "zombieland.white"
                             }}
-
                         >
-                            {/* 2 flex text between 1 flex */}
-                            <Flex direction="column" justify="space-between" h="100%">
-                                <Flex justify="center" mt={2}>
-                                    <Text fontSize="60" color="zombieland.white" fontWeight="extrabold">
-                                        {users}
-                                    </Text>
-                                </Flex>
-
-                                <Flex justify="center" >
-                                    <Text fontSize="45" color="zombieland.white" fontFamily="heading" >
-                                        Membres
-                                    </Text>
-                                </Flex>
+                            <Flex direction="column" align="center" justify="center" h="100%" gap={4}>
+                                <Box color="zombieland.white" fontSize="56px">
+                                    <FaUsers />
+                                </Box>
+                                <Text fontSize="56" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
+                                    {users}
+                                </Text>
+                                <Text fontSize="28" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
+                                    Membres
+                                </Text>
                             </Flex>
                         </Box>
+                        {/* Card Attractions */}
                         <Box
                             onClick={() => navigate('/admin/attractions')}
                             w={{ base: "100%", md: "45%", lg: "22%" }}
                             h="300px"
-                            bg="rgba(0, 0, 0, 0.5)"
-                            border="2px"
+                            bg="rgba(41, 48, 54, 0.88)"
+                            border="2px solid"
+                            borderColor="zombieland.white"
+                            borderRadius="md"
+                            cursor="pointer"
+                            transition="all 0.25s ease"
                             _hover={{
-                                transform: "translateY(-3px)",
-                                boxShadow: "0 8px 20px rgba(250, 235, 220, 0.2)",
-                                opacity: 0.9
+                                transform: "translateY(-5px)",
+                                bg: "gray.800",
+                                boxShadow: "0 0 24px rgba(71, 97, 130, 0.7)",
+                                borderColor: "zombieland.white"
                             }}
                         >
-                            {/* 2 flex text between 1 flex */}
-                            <Flex direction="column" justify="space-between" h="100%" >
-                                <Flex justify="center" mt={2}>
-                                    <Text fontSize="60" color="zombieland.white" fontWeight="extrabold">
-                                        {attractions}
-                                    </Text>
-                                </Flex>
-
-                                <Flex justify="center" >
-                                    <Text fontSize="45" color="zombieland.white" fontFamily="heading" >
-                                        Attractions
-                                    </Text>
-                                </Flex>
+                            <Flex direction="column" align="center" justify="center" h="100%" gap={4}>
+                                <Box color="zombieland.white" fontSize="56px">
+                                    <MdAttractions />
+                                </Box>
+                                <Text fontSize="56" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
+                                    {attractions}
+                                </Text>
+                                <Text fontSize="28" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
+                                    Attractions
+                                </Text>
                             </Flex>
-
-
                         </Box>
+                        {/* Card Revenus */}
                         <Box
                             w={{ base: "100%", md: "45%", lg: "22%" }}
                             h="300px"
-                            bg="rgba(0, 0, 0, 0.5)"
-                            border="2px"
+                            bg="rgba(41, 48, 54, 0.88)"
+                            border="2px solid"
+                            borderColor="zombieland.white"
+                            borderRadius="md"
+                            cursor="pointer"
                             onClick={() => navigate('/admin/price')}
+                            transition="all 0.25s ease"
                             _hover={{
-                                transform: "translateY(-3px)",
-                                boxShadow: "0 8px 20px rgba(250, 235, 220, 0.2)",
-                                opacity: 0.9
+                                transform: "translateY(-5px)",
+                                bg: "gray.800",
+                                boxShadow: "0 0 24px rgba(71, 97, 130, 0.7)",
+                                borderColor: "zombieland.white"
                             }}
-
                         >
-                            {/* 2 flex text between 1 flex */}
-                            <Flex direction="column" justify="space-between" h="100%">
-                                <Flex justify="center" mt={2}>
-                                    <Text fontSize="60" color="zombieland.white" fontWeight="extrabold">
-                                        {`${totalAmount.toFixed(2)} €`}
-                                    </Text>
-                                </Flex>
-
-                                <Flex justify="center" >
-                                    <Text fontSize="45" color="zombieland.white" fontFamily="heading" >
-                                        Total revenus
-                                    </Text>
-                                </Flex>
+                            <Flex direction="column" align="center" justify="center" h="100%" gap={4}>
+                                <Box color="zombieland.white" fontSize="56px">
+                                    <FaMoneyBillWave />
+                                </Box>
+                                <Text fontSize="36" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
+                                    {`${totalAmount.toFixed(2)} €`}
+                                </Text>
+                                <Text fontSize="28" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
+                                    Total revenus
+                                </Text>
                             </Flex>
-
-
                         </Box>
                     </Flex>
                     <Flex justifyContent={{ base: "center", lg: "flex-end" }} mt={8} mb={6}>
