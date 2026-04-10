@@ -25,8 +25,10 @@ const AdminReservations = () => {
     const [search, setSearch] = useState("")
     //State to store the total of attractions
     const [attractions, setAttractions] = useState(Number);
+    const [loadingAttractions, setLoadingAttractions] = useState(true);
     //State to store the total of Members
     const [users, setUsers] = useState(String);
+    const [loadingUsers, setLoadingUsers] = useState(true);
     // State to store the list of reservations from the API
     const [reservations, setReservations] = useState<Reservation[]>([]);
     // State to track loading status while fetching data
@@ -89,19 +91,20 @@ const AdminReservations = () => {
                 setAttractions(res.data.length);
             } catch (err) {
                 console.error("Erreur récupération attractions");
+            } finally {
+                setLoadingAttractions(false);
             }
         };
 
         fetchAttractions();
     }, [location]);
-    // const totalAttractions = attractions.length;
 
     //fetch all users
     useEffect(() => {
         axiosInstance
             .get(`${API_URL}/api/users`, { withCredentials: true })
-            .then(res => setUsers(res.data.length))
-            .catch(() => console.error("Erreur récupération utilisateurs"));
+            .then(res => { setUsers(res.data.length); setLoadingUsers(false); })
+            .catch(() => { console.error("Erreur récupération utilisateurs"); setLoadingUsers(false); });
     }, [location]);
 
 
@@ -260,7 +263,7 @@ const AdminReservations = () => {
                                     <FaTicketAlt />
                                 </Box>
                                 <Text fontSize="32" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
-                                    {reservations.length}
+                                    {loading ? <Spinner size="sm" color="zombieland.white" /> : reservations.length}
                                 </Text>
                                 <Text fontSize="16" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
                                     Réservations
@@ -293,7 +296,7 @@ const AdminReservations = () => {
                                     <FaUsers />
                                 </Box>
                                 <Text fontSize="32" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
-                                    {users}
+                                    {loadingUsers ? <Spinner size="sm" color="zombieland.white" /> : users}
                                 </Text>
                                 <Text fontSize="16" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
                                     Membres
@@ -323,7 +326,7 @@ const AdminReservations = () => {
                                     <MdAttractions />
                                 </Box>
                                 <Text fontSize="32" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
-                                    {attractions}
+                                    {loadingAttractions ? <Spinner size="sm" color="zombieland.white" /> : attractions}
                                 </Text>
                                 <Text fontSize="16" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
                                     Attractions
@@ -353,7 +356,7 @@ const AdminReservations = () => {
                                     <FaMoneyBillWave />
                                 </Box>
                                 <Text fontSize="22" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
-                                    {`${totalAmount.toFixed(2)} €`}
+                                    {loading ? <Spinner size="sm" color="zombieland.white" /> : `${totalAmount.toFixed(2)} €`}
                                 </Text>
                                 <Text fontSize="16" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
                                     Total revenus
