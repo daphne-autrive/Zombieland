@@ -55,18 +55,18 @@ const AdminReservations = () => {
 
     // Function to update the status of a reservation via DELETE request
     const handleCancel = async (id: number, password: string) => {
-    try {
-        await axiosInstance.delete(`${API_URL}/api/reservations/${id}`, {
-            data: { password },
-            withCredentials: true
-        })
-        // Re-fetch pour mettre à jour le state
-        const response = await axiosInstance.get(`${API_URL}/api/reservations`, { withCredentials: true })
-        setReservations(response.data)
-    } catch (error) {
-        setError("Erreur lors de l'annulation")
+        try {
+            await axiosInstance.delete(`${API_URL}/api/reservations/${id}`, {
+                data: { password },
+                withCredentials: true
+            })
+            // Re-fetch pour mettre à jour le state
+            const response = await axiosInstance.get(`${API_URL}/api/reservations`, { withCredentials: true })
+            setReservations(response.data)
+        } catch (error) {
+            setError("Erreur lors de l'annulation")
+        }
     }
-}
 
     // Filter reservations by status and sort by id (ascending)
     // If filterStatus is "All", show all reservations
@@ -210,7 +210,12 @@ const AdminReservations = () => {
                                     header: "Statut",
                                     render: (r) => (
                                         <Badge colorScheme={r.status === "CONFIRMED" ? "green" : "red"}>
-                                            {r.status}
+                                            {r.status === "CONFIRMED" && (
+                                                <Text>Confirmée</Text>
+                                            )}
+                                            {r.status === "CANCELLED" && (
+                                                <Text>Annulée</Text>
+                                            )}
                                         </Badge>
                                     )
                                 },
@@ -232,9 +237,7 @@ const AdminReservations = () => {
                                                     Annuler
                                                 </Button>
                                             )}
-                                            {r.status === "CANCELLED" && (
-                                                <Text color="red.400" fontWeight="bold">Annulée</Text>
-                                            )}
+
                                         </Flex>
                                     )
                                 }
