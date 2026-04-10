@@ -70,16 +70,16 @@ const AdminReservations = () => {
     // status: the new status ("CONFIRMED" or "CANCELLED")
     const handleCancel = async (id: number, password: string) => {
         try {
-        await axiosInstance.delete(`${API_URL}/api/reservations/${id}`, {
-            data: { password },
-            withCredentials: true
-        })
-        const response = await axiosInstance.get(`${API_URL}/api/reservations`, { withCredentials: true })
-        setReservations(response.data)
-    } catch (error) {
-        setError("Erreur lors de l'annulation")
+            await axiosInstance.delete(`${API_URL}/api/reservations/${id}`, {
+                data: { password },
+                withCredentials: true
+            })
+            const response = await axiosInstance.get(`${API_URL}/api/reservations`, { withCredentials: true })
+            setReservations(response.data)
+        } catch (error) {
+            setError("Erreur lors de l'annulation")
+        }
     }
-}
 
     //fetch all attractions
     useEffect(() => {
@@ -241,7 +241,7 @@ const AdminReservations = () => {
                         <Box
                             onClick={() => navigate('/admin/reservations')}
                             w={{ base: "100%", md: "45%", lg: "22%" }}
-                            h="300px"
+                            h="160px"
                             bg="rgba(41, 48, 54, 0.88)"
                             border="2px solid"
                             borderColor="zombieland.white"
@@ -255,14 +255,14 @@ const AdminReservations = () => {
                                 borderColor: "zombieland.white"
                             }}
                         >
-                            <Flex direction="column" align="center" justify="center" h="100%" gap={4}>
-                                <Box color="zombieland.white" fontSize="56px">
+                            <Flex direction="column" align="center" justify="center" h="100%" gap={2}>
+                                <Box color="zombieland.white" fontSize="28px">
                                     <FaTicketAlt />
                                 </Box>
-                                <Text fontSize="56" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
+                                <Text fontSize="32" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
                                     {reservations.length}
                                 </Text>
-                                <Text fontSize="28" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
+                                <Text fontSize="16" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
                                     Réservations
                                 </Text>
                             </Flex>
@@ -274,7 +274,7 @@ const AdminReservations = () => {
                         <Box
                             onClick={() => navigate('/admin/members')}
                             w={{ base: "100%", md: "45%", lg: "22%" }}
-                            h="300px"
+                            h="160px"
                             bg="rgba(41, 48, 54, 0.88)"
                             border="2px solid"
                             borderColor="zombieland.white"
@@ -288,14 +288,14 @@ const AdminReservations = () => {
                                 borderColor: "zombieland.white"
                             }}
                         >
-                            <Flex direction="column" align="center" justify="center" h="100%" gap={4}>
-                                <Box color="zombieland.white" fontSize="56px">
+                            <Flex direction="column" align="center" justify="center" h="100%" gap={2}>
+                                <Box color="zombieland.white" fontSize="28px">
                                     <FaUsers />
                                 </Box>
-                                <Text fontSize="56" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
+                                <Text fontSize="32" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
                                     {users}
                                 </Text>
-                                <Text fontSize="28" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
+                                <Text fontSize="16" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
                                     Membres
                                 </Text>
                             </Flex>
@@ -304,7 +304,7 @@ const AdminReservations = () => {
                         <Box
                             onClick={() => navigate('/admin/attractions')}
                             w={{ base: "100%", md: "45%", lg: "22%" }}
-                            h="300px"
+                            h="160px"
                             bg="rgba(41, 48, 54, 0.88)"
                             border="2px solid"
                             borderColor="zombieland.white"
@@ -318,14 +318,14 @@ const AdminReservations = () => {
                                 borderColor: "zombieland.white"
                             }}
                         >
-                            <Flex direction="column" align="center" justify="center" h="100%" gap={4}>
-                                <Box color="zombieland.white" fontSize="56px">
+                            <Flex direction="column" align="center" justify="center" h="100%" gap={2}>
+                                <Box color="zombieland.white" fontSize="28px">
                                     <MdAttractions />
                                 </Box>
-                                <Text fontSize="56" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
+                                <Text fontSize="32" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
                                     {attractions}
                                 </Text>
-                                <Text fontSize="28" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
+                                <Text fontSize="16" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
                                     Attractions
                                 </Text>
                             </Flex>
@@ -333,7 +333,7 @@ const AdminReservations = () => {
                         {/* Card Revenus */}
                         <Box
                             w={{ base: "100%", md: "45%", lg: "22%" }}
-                            h="300px"
+                            h="160px"
                             bg="rgba(41, 48, 54, 0.88)"
                             border="2px solid"
                             borderColor="zombieland.white"
@@ -348,19 +348,20 @@ const AdminReservations = () => {
                                 borderColor: "zombieland.white"
                             }}
                         >
-                            <Flex direction="column" align="center" justify="center" h="100%" gap={4}>
-                                <Box color="zombieland.white" fontSize="56px">
+                            <Flex direction="column" align="center" justify="center" h="100%" gap={2}>
+                                <Box color="zombieland.white" fontSize="28px">
                                     <FaMoneyBillWave />
                                 </Box>
-                                <Text fontSize="36" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
+                                <Text fontSize="22" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
                                     {`${totalAmount.toFixed(2)} €`}
                                 </Text>
-                                <Text fontSize="28" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
+                                <Text fontSize="16" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
                                     Total revenus
                                 </Text>
                             </Flex>
                         </Box>
                     </Flex>
+                    <Box maxW="1000px" mx="auto" w="100%">
                     <Flex justifyContent={{ base: "center", lg: "flex-end" }} mt={8} mb={6}>
                         <Input
                             value={search}
@@ -383,7 +384,7 @@ const AdminReservations = () => {
                         mb={10}
                         mt={10}
                     >
-                        Gestion des réservations
+                        Dernières réservations
                     </Heading>
 
                     {/* Loading spinner */}
@@ -438,7 +439,12 @@ const AdminReservations = () => {
                                         header: "Statut",
                                         render: (r) => (
                                             <Badge colorScheme={r.status === "CONFIRMED" ? "green" : "red"}>
-                                                {r.status}
+                                                {r.status === "CONFIRMED" && (
+                                                    <Text>Confirmée</Text>
+                                                )}
+                                                {r.status === "CANCELLED" && (
+                                                    <Text>Annulée</Text>
+                                                )}
                                             </Badge>
                                         )
                                     },
@@ -460,15 +466,14 @@ const AdminReservations = () => {
                                                         Annuler
                                                     </Button>
                                                 )}
-                                                {r.status === "CANCELLED" && (
-                                                    <Text color="red.400" fontWeight="bold">Annulée</Text>
-                                                )}
+
                                             </Flex >
                                         )
                                     }
                                 ]}
                             />
                         )}
+                    </Box>
                     </Box>
                 </Box>
                 {/* Confirmation modal: opens when the admin clicks "Annuler" on a reservation */}

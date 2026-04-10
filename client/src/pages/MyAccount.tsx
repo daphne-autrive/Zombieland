@@ -109,7 +109,7 @@ function MyAccount() {
 
       //only if response is ok we update
       //otherwise displaying an error message
-      setMessage(' Votre profile a été mis à jour !');
+      setMessage(' Votre profil a été mis à jour !');
     } catch (error) {
       if (isAxiosError(error)) {
         if (error.response?.data.details) {
@@ -171,7 +171,7 @@ function MyAccount() {
           textAlign="center"
           color="zombieland.white"
         >
-          Bienvenue {currentUser?.firstname} {currentUser?.lastname} !
+          Bonjour {currentUser?.firstname} {currentUser?.lastname} !
         </Heading>
 
         {/* Update form */}

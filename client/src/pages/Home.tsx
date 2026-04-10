@@ -3,7 +3,7 @@ import AttractionCard from "../components/AttractionsCard";
 import type { Attraction } from "@types";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { Box, Image, Button, Text, Wrap, WrapItem, IconButton, Flex, Heading, Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalBody, useDisclosure } from "@chakra-ui/react";
+import { Box, Image, Button, Text, Wrap, WrapItem, Flex, Heading, IconButton, Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalBody, useDisclosure } from "@chakra-ui/react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu"
 import { PageBackground } from "../components/PageBackground";
 // Images
@@ -154,23 +154,21 @@ const HomePage = () => {
                     mb={8}
                     fontWeight="bold"
                 >
-                    Une ville abandonnée. Des zombies. Et vous.
+                    Une ville abandonnée. . des zombies... et vous.
                 </Text>
                 <Box
-                    bg="whiteAlpha.100"
-                    border="1px solid"
-                    borderColor="zombieland.primary"
-                    borderRadius="md"
+                    bg="rgba(41, 48, 54, 0.82)"
+                    border="1px solid rgba(71, 97, 130, 0.5)"
+                    borderRadius="lg"
                     px={{ base: 6, lg: 10 }}
                     py={8}
-                    boxShadow="inset 0 2px 6px rgba(0,0,0,0.4), 0 0 30px rgba(71, 97, 130, 0.3)"
-                    backdropFilter="blur(4px)"
-                    transition="all 0.3s ease"
-                    cursor="pointer"
+                    boxShadow="0 4px 32px rgba(0,0,0,0.4)"
+                    backdropFilter="blur(8px)"
+                    transition="all 0.25s ease"
                     _hover={{
-                        transform: "translateY(-4px)",
-                        boxShadow: "0 8px 24px rgba(0,0,0,0.5), 0 0 50px rgba(71, 97, 130, 0.5)",
-                        borderColor: "zombieland.cta1orange",
+                        bg: "rgba(41, 48, 54, 0.95)",
+                        borderColor: "rgba(250, 235, 220, 0.35)",
+                        boxShadow: "0 8px 40px rgba(0,0,0,0.55)"
                     }}
                 >
                     <Text
@@ -184,7 +182,7 @@ const HomePage = () => {
                         Bienvenue à ZombieLand, une expérience immersive où chaque attraction
                         vous plonge au cœur d'un monde post-apocalyptique...
                     </Text>
-                    <Box w="40px" h="1px" bg="zombieland.cta1orange" mx="auto" my={6} />
+                    <Box w="40px" h="1px" bg="zombieland.white" opacity={0.35} mx="auto" my={6} />
                     <Text
                         fontSize={{ base: "md", sm: "lg", lg: "xl" }}
                         color="zombieland.white"
@@ -198,135 +196,134 @@ const HomePage = () => {
                 </Box>
             </Box>
 
-            {/* Carousel */}
-            <Flex align="flex-start" justify="center" gap={6} py={12} px={8} flexDirection="column">
+            {/* Galerie photos */}
+            <Box px={{ base: 4, lg: 10 }} py={10} maxW="700px" mx="auto" w="100%">
 
-                {/* Top row with buttons and image */}
-                <Flex align="center" justify="center" gap={6} w="100%">
-                    {/* Previous button - outside image */}
+                {/* Image principale portrait */}
+                <Box
+                    borderRadius="md"
+                    overflow="hidden"
+                    cursor="pointer"
+                    onClick={onOpen}
+                    mb={3}
+                    transition="opacity 0.3s ease"
+                    _hover={{ opacity: 0.9 }}
+                >
+                    <Image
+                        src={carouselImages[currentSlide].src}
+                        alt={carouselImages[currentSlide].alt}
+                        w="100%"
+                        objectFit="contain"
+                    />
+                </Box>
+
+                {/* Vignettes avec flèches de chaque côté */}
+                <Flex align="center" gap={2}>
+                    {/* Flèche gauche */}
                     <IconButton
                         aria-label="Précédent"
                         icon={<LuChevronLeft />}
                         onClick={prevSlide}
                         variant="ghost"
                         color="zombieland.white"
-                        bgImage={`url(${bgButton})`}
-                        fontSize="24px"
-                        transition="all 0.3s ease"
-                        _hover={{
-                            transform: "scale(1.1)",
-                            boxShadow: "0 4px 12px rgba(250, 235, 220, 0.2)"
-                        }}
+                        fontSize="22px"
+                        flexShrink={0}
+                        transition="all 0.2s ease"
+                        _hover={{ bg: "rgba(250,235,220,0.15)", transform: "scale(1.2)" }}
                         _active={{ transform: "scale(0.95)" }}
                     />
 
-                    {/* Image */}
-                    <Box
-                        maxW="400px"
-                        w="100%"
-                        borderRadius="lg"
-                        overflow="hidden"
-                        boxShadow="0 12px 32px rgba(0,0,0,0.5)"
-                        border="2px solid rgba(250, 235, 220, 0.1)"
-                        transition="all 0.3s ease"
-                        _hover={{ transform: "scale(1.02)", cursor: "pointer" }}
-                        onClick={onOpen}
-                    >
-                        <Image
-                            src={carouselImages[currentSlide].src}
-                            alt={carouselImages[currentSlide].alt}
-                            w="100%"
-                            borderRadius="lg"
-                            objectFit="cover"
-                            maxH="600px"
-                            transition="all 0.5s ease"
-                        />
-                    </Box>
+                    {/* Vignettes */}
+                    <Flex gap={2} flex="1">
+                        {carouselImages.map((img, index) => (
+                            <Box
+                                key={index}
+                                flex="1"
+                                h={{ base: "55px", md: "72px" }}
+                                borderRadius="sm"
+                                overflow="hidden"
+                                cursor="pointer"
+                                opacity={index === currentSlide ? 1 : 0.45}
+                                border={index === currentSlide ? "2px solid rgba(250,235,220,0.9)" : "2px solid transparent"}
+                                transition="all 0.2s ease"
+                                _hover={{ opacity: 0.85 }}
+                                onClick={() => setCurrentSlide(index)}
+                            >
+                                <Image src={img.src} alt={img.alt} w="100%" h="100%" objectFit="cover" />
+                            </Box>
+                        ))}
+                    </Flex>
 
-                    {/* Next button - outside image */}
+                    {/* Flèche droite */}
                     <IconButton
                         aria-label="Suivant"
                         icon={<LuChevronRight />}
-                        bgImage={`url(${bgButton})`}
                         onClick={nextSlide}
                         variant="ghost"
                         color="zombieland.white"
-                        fontSize="24px"
-                        transition="all 0.3s ease"
-                        _hover={{
-                            transform: "scale(1.1)",
-                            boxShadow: "0 4px 12px rgba(250, 235, 220, 0.2)"
-                        }}
+                        fontSize="22px"
+                        flexShrink={0}
+                        transition="all 0.2s ease"
+                        _hover={{ bg: "rgba(250,235,220,0.15)", transform: "scale(1.2)" }}
                         _active={{ transform: "scale(0.95)" }}
                     />
                 </Flex>
+            </Box>
 
-                {/* Slide indicators - BELOW */}
-                <Flex
-                    justifyContent="center"
-                    gap={2}
-                    w="100%"
-                >
-                    {carouselImages.map((_, index) => (
-                        <Box
-                            key={index}
-                            w={3}
-                            h={3}
-                            borderRadius="full"
-                            bg={index === currentSlide ? "zombieland.cta1orange" : "whiteAlpha.500"}
-                            cursor="pointer"
-                            onClick={() => setCurrentSlide(index)}
-                            transition="all 0.3s ease"
-                            _hover={{ transform: "scale(1.2)" }}
-                        />
-                    ))}
+            {/* Section attractions */}
+            <Box px={{ base: 4, lg: 10 }} py={6} maxW="1100px" mx="auto" w="100%">
+                <Flex align="center" gap={4} mb={8} justify="center">
+                    <Box h="1px" flex="1" bg="rgba(250,235,220,0.15)" />
+                    <Heading
+                        fontFamily="heading"
+                        fontSize={{ base: "32px", lg: "42px" }}
+                        color="zombieland.white"
+                        textAlign="center"
+                        letterSpacing="1px"
+                    >
+                        Les expériences qui vous attendent
+                    </Heading>
+                    <Box h="1px" flex="1" bg="rgba(250,235,220,0.15)" />
                 </Flex>
 
-            </Flex>
+                <Wrap spacing="40px" justify="center" mb={10}>
+                    {filteredAttractions.slice(0, 3).map((attraction) => (
+                        <WrapItem key={attraction.id_ATTRACTION}>
+                            <AttractionCard
+                                {...attraction}
+                                image={attractionImages[attraction.id_ATTRACTION]}
+                            />
+                        </WrapItem>
+                    ))}
+                </Wrap>
+                {error && <Text>{error}</Text>}
 
-            <Heading mb={8} mt={12} px={4} fontFamily="heading" fontSize="36px" textAlign="center" color="zombieland.white" textShadow="2px 2px 4px rgba(0,0,0,0.5)" letterSpacing="1px">
-                Les expériences qui vous attendent
-            </Heading>
-
-            {/* Attractions cards*/}
-            <Wrap spacing="50px" justify="center" maxW="1000px" mx="auto" mb={8}>
-                {filteredAttractions.slice(0, 3).map((attraction) => (
-                    <WrapItem key={attraction.id_ATTRACTION}>
-                        <AttractionCard
-                            {...attraction}
-                            image={attractionImages[attraction.id_ATTRACTION]}
-                        />
-                    </WrapItem>
-                ))}
-            </Wrap>
-            {error && <Text>{error}</Text>}
-
-            {/* Button to navigate attractions*/}
-            <Button
-                onClick={() => navigate('/attractions')}
-                bgImage={`url(${bgButton})`}
-                bgSize="cover"
-                mb={12}
-                bgPosition="center"
-                mx="auto"
-                color="zombieland.secondary"
-                borderRadius="full"
-                transition="all 0.3s ease"
-                _hover={{
-                    transform: "translateY(-3px)",
-                    boxShadow: "0 8px 20px rgba(250, 235, 220, 0.2)",
-                    opacity: 0.9
-                }}
-                _active={{ transform: "translateY(-1px)" }}
-                fontWeight="bold"
-                fontSize="18px"
-                py={6}
-                px={12}
-                boxShadow="0 4px 12px rgba(0,0,0,0.3)"
-                aria-label="Voir toutes nos attractions"
-            >
-                → Toutes nos attractions
-            </Button>
+                <Flex justify="center" mb={8}>
+                    <Button
+                        onClick={() => navigate('/attractions')}
+                        bgImage={`url(${bgButton})`}
+                        bgSize="cover"
+                        bgPosition="center"
+                        color="zombieland.secondary"
+                        borderRadius="full"
+                        transition="all 0.3s ease"
+                        _hover={{
+                            transform: "translateY(-3px)",
+                            boxShadow: "0 8px 20px rgba(250, 235, 220, 0.2)",
+                            opacity: 0.9
+                        }}
+                        _active={{ transform: "translateY(-1px)" }}
+                        fontWeight="bold"
+                        fontSize="18px"
+                        py={6}
+                        px={12}
+                        boxShadow="0 4px 12px rgba(0,0,0,0.3)"
+                        aria-label="Voir toutes nos attractions"
+                    >
+                        → Toutes nos attractions
+                    </Button>
+                </Flex>
+            </Box>
 
             {/* Modal for zoomed carousel image */}
             <Modal isOpen={isOpen} onClose={onClose} size="full" isCentered motionPreset="slideInBottom">
