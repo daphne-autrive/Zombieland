@@ -10,7 +10,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminTable from "@/components/AdminTable";
 import AdminMenu from "@/components/AdminNavlinkMenu";
-import labodashboard from "../../assets/labodashboard.webp"
+import labodashboard from "../../assets/bgadminpage.png"
+import { FaTicketAlt, FaUsers, FaMoneyBillWave } from "react-icons/fa"
+import { MdAttractions } from "react-icons/md"
 import type { Reservation } from "@/types/Reservations";
 import axiosInstance from "@/lib/axiosInstance";
 import { API_URL } from "@/config/api";
@@ -23,8 +25,10 @@ const AdminReservations = () => {
     const [search, setSearch] = useState("")
     //State to store the total of attractions
     const [attractions, setAttractions] = useState(Number);
+    const [loadingAttractions, setLoadingAttractions] = useState(true);
     //State to store the total of Members
     const [users, setUsers] = useState(String);
+    const [loadingUsers, setLoadingUsers] = useState(true);
     // State to store the list of reservations from the API
     const [reservations, setReservations] = useState<Reservation[]>([]);
     // State to track loading status while fetching data
@@ -68,16 +72,16 @@ const AdminReservations = () => {
     // status: the new status ("CONFIRMED" or "CANCELLED")
     const handleCancel = async (id: number, password: string) => {
         try {
-        await axiosInstance.delete(`${API_URL}/api/reservations/${id}`, {
-            data: { password },
-            withCredentials: true
-        })
-        const response = await axiosInstance.get(`${API_URL}/api/reservations`, { withCredentials: true })
-        setReservations(response.data)
-    } catch (error) {
-        setError("Erreur lors de l'annulation")
+            await axiosInstance.delete(`${API_URL}/api/reservations/${id}`, {
+                data: { password },
+                withCredentials: true
+            })
+            const response = await axiosInstance.get(`${API_URL}/api/reservations`, { withCredentials: true })
+            setReservations(response.data)
+        } catch (error) {
+            setError("Erreur lors de l'annulation")
+        }
     }
-}
 
     //fetch all attractions
     useEffect(() => {
@@ -87,19 +91,20 @@ const AdminReservations = () => {
                 setAttractions(res.data.length);
             } catch (err) {
                 console.error("Erreur récupération attractions");
+            } finally {
+                setLoadingAttractions(false);
             }
         };
 
         fetchAttractions();
     }, [location]);
-    // const totalAttractions = attractions.length;
 
     //fetch all users
     useEffect(() => {
         axiosInstance
             .get(`${API_URL}/api/users`, { withCredentials: true })
-            .then(res => setUsers(res.data.length))
-            .catch(() => console.error("Erreur récupération utilisateurs"));
+            .then(res => { setUsers(res.data.length); setLoadingUsers(false); })
+            .catch(() => { console.error("Erreur récupération utilisateurs"); setLoadingUsers(false); });
     }, [location]);
 
 
@@ -235,133 +240,140 @@ const AdminReservations = () => {
                         flexDirection="row"
                         w="100%"
                     >
-                        {/* Description and details of 1 card*/}
+                        {/* Card Réservations */}
                         <Box
                             onClick={() => navigate('/admin/reservations')}
                             w={{ base: "100%", md: "45%", lg: "22%" }}
-                            h="300px"
-                            bg="rgba(0, 0, 0, 0.5)"
-                            border="2px"
+                            h="160px"
+                            bg="rgba(41, 48, 54, 0.88)"
+                            border="2px solid"
+                            borderColor="zombieland.white"
+                            borderRadius="md"
+                            cursor="pointer"
+                            transition="all 0.25s ease"
                             _hover={{
-                                transform: "translateY(-3px)",
-                                boxShadow: "0 8px 20px rgba(250, 235, 220, 0.2)",
-                                opacity: 0.9
+                                transform: "translateY(-5px)",
+                                bg: "gray.800",
+                                boxShadow: "0 0 24px rgba(71, 97, 130, 0.7)",
+                                borderColor: "zombieland.white"
                             }}
                         >
-                            {/* 2 flex text between 1 flex */}
-                            <Flex direction="column" justify="space-between" h="100%">
-                                <Flex justify="center" mt={2}  >
-                                    <Text fontSize="60" color="zombieland.white" fontWeight="extrabold">
-                                        {reservations.length}
-                                    </Text>
-                                </Flex>
-
-                                <Flex justify="center" >
-                                    <Text fontSize="45" color="zombieland.white" fontFamily="heading" >
-                                        Réservations
-                                    </Text>
-                                </Flex>
+                            <Flex direction="column" align="center" justify="center" h="100%" gap={2}>
+                                <Box color="zombieland.white" fontSize="28px">
+                                    <FaTicketAlt />
+                                </Box>
+                                <Text fontSize="32" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
+                                    {loading ? <Spinner size="sm" color="zombieland.white" /> : reservations.length}
+                                </Text>
+                                <Text fontSize="16" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
+                                    Réservations
+                                </Text>
                             </Flex>
-                        </Box >
+                        </Box>
 
 
 
+                        {/* Card Membres */}
                         <Box
                             onClick={() => navigate('/admin/members')}
                             w={{ base: "100%", md: "45%", lg: "22%" }}
-                            h="300px"
-                            bg="rgba(0, 0, 0, 0.5)"
-                            border="2px"
+                            h="160px"
+                            bg="rgba(41, 48, 54, 0.88)"
+                            border="2px solid"
+                            borderColor="zombieland.white"
+                            borderRadius="md"
+                            cursor="pointer"
+                            transition="all 0.25s ease"
                             _hover={{
-                                transform: "translateY(-3px)",
-                                boxShadow: "0 8px 20px rgba(250, 235, 220, 0.2)",
-                                opacity: 0.9
+                                transform: "translateY(-5px)",
+                                bg: "gray.800",
+                                boxShadow: "0 0 24px rgba(71, 97, 130, 0.7)",
+                                borderColor: "zombieland.white"
                             }}
-
                         >
-                            {/* 2 flex text between 1 flex */}
-                            <Flex direction="column" justify="space-between" h="100%">
-                                <Flex justify="center" mt={2}>
-                                    <Text fontSize="60" color="zombieland.white" fontWeight="extrabold">
-                                        {users}
-                                    </Text>
-                                </Flex>
-
-                                <Flex justify="center" >
-                                    <Text fontSize="45" color="zombieland.white" fontFamily="heading" >
-                                        Membres
-                                    </Text>
-                                </Flex>
+                            <Flex direction="column" align="center" justify="center" h="100%" gap={2}>
+                                <Box color="zombieland.white" fontSize="28px">
+                                    <FaUsers />
+                                </Box>
+                                <Text fontSize="32" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
+                                    {loadingUsers ? <Spinner size="sm" color="zombieland.white" /> : users}
+                                </Text>
+                                <Text fontSize="16" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
+                                    Membres
+                                </Text>
                             </Flex>
                         </Box>
+                        {/* Card Attractions */}
                         <Box
                             onClick={() => navigate('/admin/attractions')}
                             w={{ base: "100%", md: "45%", lg: "22%" }}
-                            h="300px"
-                            bg="rgba(0, 0, 0, 0.5)"
-                            border="2px"
+                            h="160px"
+                            bg="rgba(41, 48, 54, 0.88)"
+                            border="2px solid"
+                            borderColor="zombieland.white"
+                            borderRadius="md"
+                            cursor="pointer"
+                            transition="all 0.25s ease"
                             _hover={{
-                                transform: "translateY(-3px)",
-                                boxShadow: "0 8px 20px rgba(250, 235, 220, 0.2)",
-                                opacity: 0.9
+                                transform: "translateY(-5px)",
+                                bg: "gray.800",
+                                boxShadow: "0 0 24px rgba(71, 97, 130, 0.7)",
+                                borderColor: "zombieland.white"
                             }}
                         >
-                            {/* 2 flex text between 1 flex */}
-                            <Flex direction="column" justify="space-between" h="100%" >
-                                <Flex justify="center" mt={2}>
-                                    <Text fontSize="60" color="zombieland.white" fontWeight="extrabold">
-                                        {attractions}
-                                    </Text>
-                                </Flex>
-
-                                <Flex justify="center" >
-                                    <Text fontSize="45" color="zombieland.white" fontFamily="heading" >
-                                        Attractions
-                                    </Text>
-                                </Flex>
+                            <Flex direction="column" align="center" justify="center" h="100%" gap={2}>
+                                <Box color="zombieland.white" fontSize="28px">
+                                    <MdAttractions />
+                                </Box>
+                                <Text fontSize="32" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
+                                    {loadingAttractions ? <Spinner size="sm" color="zombieland.white" /> : attractions}
+                                </Text>
+                                <Text fontSize="16" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
+                                    Attractions
+                                </Text>
                             </Flex>
-
-
                         </Box>
+                        {/* Card Revenus */}
                         <Box
                             w={{ base: "100%", md: "45%", lg: "22%" }}
-                            h="300px"
-                            bg="rgba(0, 0, 0, 0.5)"
-                            border="2px"
+                            h="160px"
+                            bg="rgba(41, 48, 54, 0.88)"
+                            border="2px solid"
+                            borderColor="zombieland.white"
+                            borderRadius="md"
+                            cursor="pointer"
                             onClick={() => navigate('/admin/price')}
+                            transition="all 0.25s ease"
                             _hover={{
-                                transform: "translateY(-3px)",
-                                boxShadow: "0 8px 20px rgba(250, 235, 220, 0.2)",
-                                opacity: 0.9
+                                transform: "translateY(-5px)",
+                                bg: "gray.800",
+                                boxShadow: "0 0 24px rgba(71, 97, 130, 0.7)",
+                                borderColor: "zombieland.white"
                             }}
-
                         >
-                            {/* 2 flex text between 1 flex */}
-                            <Flex direction="column" justify="space-between" h="100%">
-                                <Flex justify="center" mt={2}>
-                                    <Text fontSize="60" color="zombieland.white" fontWeight="extrabold">
-                                        {`${totalAmount.toFixed(2)} €`}
-                                    </Text>
-                                </Flex>
-
-                                <Flex justify="center" >
-                                    <Text fontSize="45" color="zombieland.white" fontFamily="heading" >
-                                        Total revenus
-                                    </Text>
-                                </Flex>
+                            <Flex direction="column" align="center" justify="center" h="100%" gap={2}>
+                                <Box color="zombieland.white" fontSize="28px">
+                                    <FaMoneyBillWave />
+                                </Box>
+                                <Text fontSize="22" color="zombieland.white" fontWeight="extrabold" lineHeight="1">
+                                    {loading ? <Spinner size="sm" color="zombieland.white" /> : `${totalAmount.toFixed(2)} €`}
+                                </Text>
+                                <Text fontSize="16" color="zombieland.white" fontFamily="heading" letterSpacing="wide">
+                                    Total revenus
+                                </Text>
                             </Flex>
-
-
                         </Box>
                     </Flex>
+                    <Box maxW="1000px" mx="auto" w="100%">
                     <Flex justifyContent={{ base: "center", lg: "flex-end" }} mt={8} mb={6}>
                         <Input
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Rechercher une reservation..."
                             color="zombieland.white"
-                            borderColor="zombieland.primary"
-                            bg="#476182"
+                            borderColor="zombieland.white"
+                            bg="rgba(0,0,0,0.3)"
+                            _placeholder={{ color: "zombieland.white" }}
                             mb={6}
                         />
                     </Flex>
@@ -375,7 +387,7 @@ const AdminReservations = () => {
                         mb={10}
                         mt={10}
                     >
-                        Gestion des réservations
+                        Dernières réservations
                     </Heading>
 
                     {/* Loading spinner */}
@@ -430,7 +442,12 @@ const AdminReservations = () => {
                                         header: "Statut",
                                         render: (r) => (
                                             <Badge colorScheme={r.status === "CONFIRMED" ? "green" : "red"}>
-                                                {r.status}
+                                                {r.status === "CONFIRMED" && (
+                                                    <Text>Confirmée</Text>
+                                                )}
+                                                {r.status === "CANCELLED" && (
+                                                    <Text>Annulée</Text>
+                                                )}
                                             </Badge>
                                         )
                                     },
@@ -452,15 +469,14 @@ const AdminReservations = () => {
                                                         Annuler
                                                     </Button>
                                                 )}
-                                                {r.status === "CANCELLED" && (
-                                                    <Text color="red.400" fontWeight="bold">Annulée</Text>
-                                                )}
+
                                             </Flex >
                                         )
                                     }
                                 ]}
                             />
                         )}
+                    </Box>
                     </Box>
                 </Box>
                 {/* Confirmation modal: opens when the admin clicks "Annuler" on a reservation */}

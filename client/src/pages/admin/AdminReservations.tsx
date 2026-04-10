@@ -6,7 +6,7 @@ import { API_URL } from "@/config/api";
 import type { Reservation } from "@/types/Reservations";
 import { Badge, Box, Button, Flex, Heading, Input, Spinner, Text } from "@chakra-ui/react";
 import AdminTable from "@/components/AdminTable";
-import bgImage from '../../assets/labodashboard.webp'
+import bgImage from '../../assets/bgadminpage.png'
 import ConfirmModal from "@/components/ConfirmModal";
 import AdminMenu from "@/components/AdminNavlinkMenu";
 import { useNavigate } from "react-router-dom";
@@ -55,18 +55,18 @@ const AdminReservations = () => {
 
     // Function to update the status of a reservation via DELETE request
     const handleCancel = async (id: number, password: string) => {
-    try {
-        await axiosInstance.delete(`${API_URL}/api/reservations/${id}`, {
-            data: { password },
-            withCredentials: true
-        })
-        // Re-fetch pour mettre à jour le state
-        const response = await axiosInstance.get(`${API_URL}/api/reservations`, { withCredentials: true })
-        setReservations(response.data)
-    } catch (error) {
-        setError("Erreur lors de l'annulation")
+        try {
+            await axiosInstance.delete(`${API_URL}/api/reservations/${id}`, {
+                data: { password },
+                withCredentials: true
+            })
+            // Re-fetch pour mettre à jour le state
+            const response = await axiosInstance.get(`${API_URL}/api/reservations`, { withCredentials: true })
+            setReservations(response.data)
+        } catch (error) {
+            setError("Erreur lors de l'annulation")
+        }
     }
-}
 
     // Filter reservations by status and sort by id (ascending)
     // If filterStatus is "All", show all reservations
@@ -155,8 +155,9 @@ const AdminReservations = () => {
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Rechercher une réservation..."
                             color="zombieland.white"
-                            borderColor="zombieland.primary"
+                            borderColor="zombieland.white"
                             bg="rgba(0,0,0,0.3)"
+                            _placeholder={{ color: "zombieland.white" }}
                             mb={6}
                         />
                     </Flex>
@@ -209,7 +210,12 @@ const AdminReservations = () => {
                                     header: "Statut",
                                     render: (r) => (
                                         <Badge colorScheme={r.status === "CONFIRMED" ? "green" : "red"}>
-                                            {r.status}
+                                            {r.status === "CONFIRMED" && (
+                                                <Text>Confirmée</Text>
+                                            )}
+                                            {r.status === "CANCELLED" && (
+                                                <Text>Annulée</Text>
+                                            )}
                                         </Badge>
                                     )
                                 },
@@ -231,9 +237,7 @@ const AdminReservations = () => {
                                                     Annuler
                                                 </Button>
                                             )}
-                                            {r.status === "CANCELLED" && (
-                                                <Text color="red.400" fontWeight="bold">Annulée</Text>
-                                            )}
+
                                         </Flex>
                                     )
                                 }

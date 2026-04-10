@@ -1,6 +1,5 @@
 // generic table component reusable for all admin pages
 import { Table, Thead, Tbody, Tr, Th, Td, TableContainer } from "@chakra-ui/react"
-import bgAdmin from '../assets/bgadmin.webp'
 
 
 
@@ -23,25 +22,35 @@ function AdminTable<T>({ columns, data, onRowClick, onHeaderClick }:
     AdminTableProps<T>) {
     return (
         <TableContainer
-            bg="rgba(255,255,255,0.06)"
-            borderRadius="md"
+            bg="rgba(0,0,0,0.3)"
+            borderRadius="lg"
             border="2px solid"
             borderColor="zombieland.primary"
+            boxShadow="inset 0 2px 6px rgba(0,0,0,0.4)"
+            overflowX="auto"
         >
             <Table variant="unstyled">
                 <Thead>
-                    <Tr borderBottom="1px solid #333">
+                    <Tr borderBottom="1px solid" borderColor="rgba(71,97,130,0.6)">
                         {columns.map((col) => (
-                            <Th key={col.header} color="#FAEBDC"
-                            fontSize={20}
+                            <Th
+                                key={col.header}
+                                color="rgba(250,235,220,0.55)"
+                                fontFamily="body"
+                                fontWeight="700"
+                                fontSize="12px"
+                                letterSpacing="1px"
+                                textTransform="uppercase"
+                                py={4}
+                                px={5}
                                 cursor={onHeaderClick ? "pointer" : "default"}
+                                transition="color 0.2s ease"
                                 _hover={onHeaderClick ? {
-                                    bg: "rgba(255,255,255,0.05)",
-                                    borderColor: "zombieland.cta1orange",
+                                    color: "zombieland.white",
                                 } : undefined}
                                 onClick={() => onHeaderClick?.(col.header)}
-                                >
-                                    {col.header}
+                            >
+                                {col.header}
                             </Th>
                         ))}
                     </Tr>
@@ -50,25 +59,25 @@ function AdminTable<T>({ columns, data, onRowClick, onHeaderClick }:
                     {data.map((item, index) => (
                         <Tr
                             key={index}
-                            borderBottom="1px solid #222"
-                            transition="all 0.3s ease"
+                            borderBottom="1px solid"
+                            borderColor="rgba(255,255,255,0.04)"
+                            transition="background 0.2s ease"
                             cursor={onRowClick ? "pointer" : "default"}
+                            bg={index % 2 === 0 ? "transparent" : "rgba(255,255,255,0.02)"}
                             _hover={onRowClick ? {
-                                bg: "rgba(255,255,255,0.05)",
-                                borderColor: "zombieland.cta1orange",
+                                bg: "rgba(71,97,130,0.18)",
                             } : undefined}
                             onClick={() => onRowClick?.(item)}
                         >
                             {columns.map((col) => (
                                 <Td
                                     key={col.header}
-                                    color="#1A1A1A"
-                                    fontWeight="bold"
-                                    bgImage={`url(${bgAdmin})`}
-                                    
-                                    bgSize="cover"
-                                    bgPosition="center"
-                                    border="1px solid #444"
+                                    color="zombieland.white"
+                                    fontFamily="body"
+                                    fontWeight="300"
+                                    fontSize="14px"
+                                    py={4}
+                                    px={5}
                                 >
                                     {col.render(item)}
                                 </Td>

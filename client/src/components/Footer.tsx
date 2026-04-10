@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 
 function Footer() {
     return (
-        <Box bg="#2B2B2B" px={8} py={6}>
+        <Box bg="#1A1A1A" px={8} py={6}>
 
             {/* Desktop version */}
             <Flex
@@ -86,6 +86,9 @@ function Footer() {
                     </Flex>
                 </Box>
 
+                {/* Separator */}
+                <Box w="2cm" h="1px" bg="rgba(250, 235, 220, 0.4)" />
+
                 {/* Navigation links */}
                 <Flex gap={6} justifyContent="center" flexWrap="wrap">
                     <Link to="/"><Text color="zombieland.white" cursor="pointer" fontFamily="body">Accueil</Text></Link>
@@ -93,6 +96,9 @@ function Footer() {
                     <Link to="/plan"><Text color="zombieland.white" cursor="pointer" fontFamily="body">Plan</Text></Link>
                     <Link to="/contact"><Text color="zombieland.white" cursor="pointer" fontFamily="body">Contact</Text></Link>
                 </Flex>
+
+                {/* Separator */}
+                <Box w="2cm" h="1px" bg="rgba(250, 235, 220, 0.4)" />
 
                 {/* Opening hours */}
                 <Box textAlign="center">
@@ -103,6 +109,9 @@ function Footer() {
                     <Text color="zombieland.white" fontFamily="body">Le week-end : 10h - 23h</Text>
                 </Box>
 
+                {/* Separator */}
+                <Box w="2cm" h="1px" bg="rgba(250, 235, 220, 0.4)" />
+
                 {/* Park image */}
                 <Image
                     src={parkImage}
@@ -111,6 +120,9 @@ function Footer() {
                     w="100%"
                     maxW="350px"
                 />
+
+                {/* Separator */}
+                <Box w="2cm" h="1px" bg="rgba(250, 235, 220, 0.4)" />
 
                 {/* Legal mentions */}
                 <Link to="/faq">

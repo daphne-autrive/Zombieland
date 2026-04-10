@@ -3,7 +3,7 @@
 // Import useState to manage from data
 import { useState, useEffect, useCallback } from 'react'
 // Import Chakra UI components for styling
-import { Box, Button, Checkbox, Heading, Text, Input, Flex, FormControl, FormLabel } from '@chakra-ui/react'
+import { Box, Button, Checkbox, Heading, Text, Input, Flex, FormControl, FormLabel, IconButton } from '@chakra-ui/react'
 // Import components for login before booking
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -226,42 +226,84 @@ function Reservation() {
                                     <FormLabel color="zombieland.white" fontWeight="600" mb={3} fontSize="16px">
                                         Nombre de billets souhaités ?
                                     </FormLabel>
-                                    <Input
-                                        type="text"
-                                        inputMode="numeric"
-                                        pattern="[0-9]*"
-                                        value={nbTickets}
-                                        onMouseDown={(e) => e.stopPropagation()}
-                                        onChange={(e) => {
-                                            e.stopPropagation()
-                                            const value = e.target.value
-                                            // Only allow digits
-                                            if (value === '' || /^\d+$/.test(value)) {
-                                                const numValue = parseInt(value) || 0
-                                                // Limit to 9999
-                                                if (numValue <= 9999) {
-                                                    setNbTickets(value)
+                                    <Flex align="center" gap={3}>
+                                        <IconButton
+                                            aria-label="Retirer un billet"
+                                            icon={<Text fontSize="20px" lineHeight="1">−</Text>}
+                                            onClick={() => {
+                                                const current = parseInt(nbTickets) || 1
+                                                if (current > 1) setNbTickets(String(current - 1))
+                                            }}
+                                            isDisabled={(parseInt(nbTickets) || 1) <= 1}
+                                            bg="rgba(0,0,0,0.4)"
+                                            color="zombieland.white"
+                                            border="2px solid"
+                                            borderColor="zombieland.primary"
+                                            borderRadius="md"
+                                            w="44px"
+                                            h="44px"
+                                            minW="44px"
+                                            _hover={{ borderColor: "zombieland.cta1orange", bg: "rgba(0,0,0,0.6)" }}
+                                            _disabled={{ opacity: 0.3, cursor: "not-allowed" }}
+                                        />
+                                        <Input
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            value={nbTickets}
+                                            onMouseDown={(e) => e.stopPropagation()}
+                                            onChange={(e) => {
+                                                e.stopPropagation()
+                                                const value = e.target.value
+                                                if (value === '' || /^\d+$/.test(value)) {
+                                                    const numValue = parseInt(value) || 0
+                                                    if (numValue <= 9999) {
+                                                        setNbTickets(value)
+                                                    }
                                                 }
-                                            }
-                                        }}
-                                        aria-label="Nombre de billets souhaités"
-                                        bg="rgba(0,0,0,0.3)"
-                                        color="zombieland.white"
-                                        borderColor="zombieland.primary"
-                                        borderWidth="2px"
-                                        transition="all 0.3s ease"
-                                        _focus={{
-                                            borderColor: "zombieland.primary",
-                                            boxShadow: "0 0 0 3px rgba(250, 235, 220, 0.1)",
-                                            bg: "rgba(0,0,0,0.4)"
-                                        }}
-                                        _hover={{
-                                            borderColor: "zombieland.primary"
-                                        }}
-                                        fontSize="16px"
-                                        py={3}
-                                        pl={4}
-                                    />
+                                            }}
+                                            aria-label="Nombre de billets souhaités"
+                                            bg="rgba(0,0,0,0.3)"
+                                            color="zombieland.white"
+                                            borderColor="zombieland.primary"
+                                            borderWidth="2px"
+                                            textAlign="center"
+                                            fontFamily="heading"
+                                            fontSize="22px"
+                                            h="44px"
+                                            transition="all 0.3s ease"
+                                            _focus={{
+                                                borderColor: "zombieland.primary",
+                                                boxShadow: "0 0 0 3px rgba(250, 235, 220, 0.1)",
+                                                bg: "rgba(0,0,0,0.4)"
+                                            }}
+                                            _hover={{ borderColor: "zombieland.primary" }}
+                                        />
+                                        <IconButton
+                                            aria-label="Ajouter un billet"
+                                            icon={<Text fontSize="20px" lineHeight="1">+</Text>}
+                                            onClick={() => {
+                                                const current = parseInt(nbTickets) || 0
+                                                if (current < 9999) setNbTickets(String(current + 1))
+                                            }}
+                                            isDisabled={(parseInt(nbTickets) || 0) >= 9999}
+                                            bg="rgba(0,0,0,0.4)"
+                                            color="zombieland.white"
+                                            border="2px solid"
+                                            borderColor="zombieland.primary"
+                                            borderRadius="md"
+                                            w="44px"
+                                            h="44px"
+                                            minW="44px"
+                                            _hover={{ borderColor: "zombieland.cta1orange", bg: "rgba(0,0,0,0.6)" }}
+                                            _disabled={{ opacity: 0.3, cursor: "not-allowed" }}
+                                        />
+                                    </Flex>
+                                    {(parseInt(nbTickets) || 0) > 0 && (
+                                        <Text color="rgba(250,235,220,0.5)" fontFamily="body" fontSize="12px" mt={2}>
+                                            {parseInt(nbTickets)} {parseInt(nbTickets) > 1 ? 'billets sélectionnés' : 'billet sélectionné'}
+                                        </Text>
+                                    )}
                                 </FormControl>
 
                                 <FormControl onClick={(e) => e.stopPropagation()}>
@@ -327,7 +369,7 @@ function Reservation() {
                                         <Text color="zombieland.white" fontFamily="body" fontWeight="300" fontSize="16px">
                                             {selectedDay
                                                 ? selectedDay.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-                                                : isoToLocalDate(today).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+                                                : <Text as="span" color="rgba(250,235,220,0.4)" fontStyle="italic" fontSize="14px">Aucune date sélectionnée</Text>
                                             }
                                         </Text>
                                     </Box>
@@ -369,7 +411,7 @@ function Reservation() {
                                 </Box>
                             </Box>
 
-                            <Text color="zombieland.warningprimary" fontFamily="body" fontWeight="500" fontSize="11px" mt={6} textAlign="center">
+                            <Text color="red.400" fontFamily="body" fontWeight="700" fontSize="14px" mt={10} textAlign="center">
                                 Annulation possible jusqu'à 10 jours avant la date de visite
                             </Text>
                         </Box>
@@ -386,6 +428,9 @@ function Reservation() {
                 gap={6}
             >
                 {/* checkbox before button */}
+                <Text color="rgba(250,235,220,0.6)" fontFamily="body" fontWeight="400" fontSize="13px" textAlign="center">
+                    Veuillez cocher cette case pour confirmer votre réservation
+                </Text>
                 <Checkbox
                     isChecked={confirmed}
                     onChange={(e) => setConfirmed(e.target.checked)}
