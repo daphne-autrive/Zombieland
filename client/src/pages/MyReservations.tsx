@@ -1,7 +1,7 @@
 // My reservations page - list of reservations with cancel button
 
 import { useEffect, useState } from 'react'
-import { Box, Button, Input, Heading, Text, Flex, Spinner } from '@chakra-ui/react'
+import { Box, Button, Input, Heading, Text, Flex, Spinner, Badge, Grid, GridItem, Divider, IconButton, Tooltip } from '@chakra-ui/react'
 import bgImage from '../assets/bg-image.webp'
 import bgBouton from '../assets/bg-bouton.webp'
 import Header from '../components/Header'
@@ -210,64 +210,89 @@ function MyReservations() {
 
                 {/* Search + filters — hidden when filtering by reservationId */}
                 {!reservationId && (
-                    <Flex direction="column" align="center" gap={3} maxW="500px" w="100%" mb={8}>
-                        <Input
-                            placeholder="Rechercher par date..."
-                            value={searchTerm}
-                            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1) }}
-                            color="zombieland.white"
-                            borderColor="zombieland.primary"
-                            bg="rgba(0,0,0,0.3)"
-                            _placeholder={{ color: "gray.400" }}
-                        />
-                        <Flex gap={2} wrap="wrap" justify="center">
-                            {/* Filtre statut */}
-                            {(['ALL', 'CONFIRMED', 'CANCELLED'] as const).map((s) => (
-                                <Button
-                                    key={s}
-                                    size="sm"
-                                    onClick={() => { setStatusFilter(s); setCurrentPage(1) }}
-                                    variant={statusFilter === s ? 'solid' : 'outline'}
-                                    bg={statusFilter === s
-                                        ? s === 'CONFIRMED' ? 'zombieland.successprimary'
-                                            : s === 'CANCELLED' ? 'zombieland.warningprimary'
-                                                : 'zombieland.primary'
-                                        : 'transparent'}
-                                    color="zombieland.white"
-                                    borderColor="zombieland.primary"
-                                    _hover={{ opacity: 0.8 }}
-                                >
-                                    {s === 'ALL' ? 'Toutes' : s === 'CONFIRMED' ? 'En cours' : 'Annulées'}
-                                </Button>
-                            ))}
-                        </Flex>
-                        <Flex gap={2} wrap="wrap" justify="center">
-                            {/* Tri */}
-                            {([
-                                { value: 'created_at', label: 'N° réservation' },
-                                { value: 'date', label: 'Date visite' },
-                                { value: 'total_amount', label: 'Montant' }
-                            ] as const).map((opt) => (
-                                <Button
-                                    key={opt.value}
-                                    size="sm"
+                    <Flex direction="column" align="center" gap={4} maxW="560px" w="100%" mb={8}>
+                        <Flex w="100%" gap={2}>
+                            <Input
+                                placeholder="Rechercher par date..."
+                                value={searchTerm}
+                                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1) }}
+                                color="zombieland.white"
+                                borderColor="zombieland.primary"
+                                borderWidth="2px"
+                                bg="rgba(0,0,0,0.3)"
+                                fontFamily="body"
+                                _placeholder={{ color: "rgba(250,235,220,0.35)" }}
+                                _focus={{ borderColor: "zombieland.cta1orange", boxShadow: "none" }}
+                            />
+                            <Tooltip
+                                label={sortBy === 'date' ? (sortDir === 'desc' ? 'Plus récente → plus vieille' : 'Plus vieille → plus récente') : 'Trier par date'}
+                                placement="top"
+                                bg="zombieland.secondary"
+                                color="zombieland.white"
+                                fontSize="12px"
+                                fontFamily="body"
+                            >
+                                <IconButton
+                                    aria-label="Trier par date"
+                                    icon={
+                                        <Text fontSize="16px" lineHeight="1">
+                                            {sortBy === 'date' ? (sortDir === 'desc' ? '↓' : '↑') : '⇅'}
+                                        </Text>
+                                    }
                                     onClick={() => {
-                                        if (sortBy === opt.value) {
+                                        if (sortBy === 'date') {
                                             setSortDir(d => d === 'asc' ? 'desc' : 'asc')
                                         } else {
-                                            setSortBy(opt.value)
+                                            setSortBy('date')
                                             setSortDir('desc')
                                         }
                                         setCurrentPage(1)
                                     }}
-                                    variant={sortBy === opt.value ? 'solid' : 'outline'}
-                                    colorScheme="orange"
-                                    color={sortBy === opt.value ? 'black' : 'zombieland.white'}
-                                    borderColor="zombieland.primary"
-                                >
-                                    {opt.label} {sortBy === opt.value ? (sortDir === 'asc' ? '↑' : '↓') : ''}
-                                </Button>
-                            ))}
+                                    bg={sortBy === 'date' ? 'rgba(71,97,130,0.35)' : 'rgba(0,0,0,0.3)'}
+                                    color={sortBy === 'date' ? 'zombieland.white' : 'rgba(250,235,220,0.45)'}
+                                    border="2px solid"
+                                    borderColor={sortBy === 'date' ? 'zombieland.primary' : 'zombieland.primary'}
+                                    borderRadius="md"
+                                    transition="all 0.2s ease"
+                                    _hover={{ bg: 'rgba(71,97,130,0.35)', color: 'zombieland.white' }}
+                                />
+                            </Tooltip>
+                        </Flex>
+
+                        {/* Filtre statut */}
+                        <Flex gap={2} wrap="wrap" justify="center">
+                            {(['ALL', 'CONFIRMED', 'CANCELLED'] as const).map((s) => {
+                                const isActive = statusFilter === s
+                                const activeColor = s === 'CONFIRMED' ? '#a8c04a' : s === 'CANCELLED' ? 'zombieland.warningprimary' : 'zombieland.white'
+                                const activeBg = s === 'CONFIRMED' ? 'rgba(168,192,74,0.15)' : s === 'CANCELLED' ? 'rgba(201,168,65,0.15)' : 'rgba(71,97,130,0.25)'
+                                const activeBorder = s === 'CONFIRMED' ? '#a8c04a' : s === 'CANCELLED' ? '#C9A841' : 'zombieland.primary'
+                                return (
+                                    <Button
+                                        key={s}
+                                        size="sm"
+                                        onClick={() => { setStatusFilter(s); setCurrentPage(1) }}
+                                        bg={isActive ? activeBg : 'transparent'}
+                                        color={isActive ? activeColor : 'rgba(250,235,220,0.45)'}
+                                        border="1px solid"
+                                        borderColor={isActive ? activeBorder : 'rgba(250,235,220,0.2)'}
+                                        fontFamily="body"
+                                        fontWeight={isActive ? '700' : '400'}
+                                        fontSize="12px"
+                                        letterSpacing="0.5px"
+                                        textTransform="uppercase"
+                                        borderRadius="full"
+                                        px={4}
+                                        transition="all 0.2s ease"
+                                        _hover={{
+                                            color: activeColor,
+                                            borderColor: activeBorder,
+                                            bg: activeBg
+                                        }}
+                                    >
+                                        {s === 'ALL' ? 'Toutes' : s === 'CONFIRMED' ? 'En cours' : 'Annulées'}
+                                    </Button>
+                                )
+                            })}
                         </Flex>
                     </Flex>
                 )}
@@ -304,95 +329,151 @@ function MyReservations() {
                     </Box>
                 ) : (
                     <>
-                        {currentItems.map((reservation: Reservation) => (
-                            <Box
-                                key={reservation.id_RESERVATION}
-                                mb={4}
-                                p={6}
-                                w="100%"
-                                maxW="500px"
-                                borderRadius="md"
-                                bg="rgba(0,0,0,0.3)"
-                                boxShadow="inset 0 2px 6px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.05)"
-                                border="2px solid"
-                                borderColor="zombieland.primary"
-                                transition="all 0.3s ease"
-                                _hover={{
-                                    transform: "translateY(-4px)",
-                                    boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
-                                    borderColor: "zombieland.cta1orange",
-                                    bg: "rgba(0,0,0,0.5)"
-                                }}
-                                cursor="pointer">
+                        {currentItems.map((reservation: Reservation) => {
+                            const isPast = new Date(reservation.date) < new Date()
+                            const isCancelled = reservation.status === 'CANCELLED'
+                            const isUpcoming = !isPast && !isCancelled
 
-                                <Text
-                                    color="zombieland.white"
-                                    fontFamily="body"
-                                    fontWeight="300"
-                                    mb={1}>
-                                    - Date :
-                                    {new Date(reservation.date)
-                                        .toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                                </Text>
-                                <Text
-                                    color="zombieland.white"
-                                    fontFamily="body"
-                                    fontWeight="300"
-                                    mb={1}>
-                                    - Billets :
-                                    {reservation.nb_tickets}
-                                </Text>
-                                <Text
-                                    color="zombieland.white"
-                                    fontFamily="body"
-                                    fontWeight="300"
-                                    mb={1}>
-                                    - Montant : {reservation.status === 'CANCELLED'
-                                        ? '👣​​ Remboursé'
-                                        : `${Number(reservation.total_amount).toFixed(2)} €`}
-                                </Text>
-                                <Text
-                                    color="zombieland.white"
-                                    fontFamily="body"
-                                    fontWeight="300"
-                                    mb={4}>
-                                    - Statut :
-                                    {reservation.status}
-                                </Text>
-
-                                {new Date(reservation.date) >= new Date() && reservation.status !== 'CANCELLED' && (
-                                    <Flex justifyContent="flex-end">
-                                        <Button
-                                            onClick={() => {
-                                                // if it's an admin, we skip the 10 days check and directly open the confirmation modal with password, 
-                                                // because admins should be able to cancel at any time
-                                                // otherwise, check the 10 days rule before opening the modal
-                                                if (currentUser?.role === 'ADMIN') {
-                                                    setReservationToCancel(reservation.id_RESERVATION);
-                                                } else {
-                                                    handleCancelClick(reservation);
-                                                }
-                                            }}
-                                            bgImage={`url(${bgBouton})`}
-                                            bgSize="cover"
-                                            bgPosition="center"
-                                            color="zombieland.secondary"
-                                            fontFamily="body"
-                                            fontWeight="bold"
-                                            fontSize={{ base: "12px", md: "14px" }}
-                                            py={3}
-                                            px={4}
-                                            borderRadius="full"
-                                            boxShadow="inset 0 2px 8px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.5)"
-                                            _hover={{ opacity: 0.8 }}
-                                            aria-label={`Annuler la réservation du ${new Date(reservation.date).toLocaleDateString('fr-FR')}`}
+                            return (
+                                <Box
+                                    key={reservation.id_RESERVATION}
+                                    mb={4}
+                                    w="100%"
+                                    maxW="560px"
+                                    borderRadius="lg"
+                                    bg="rgba(0,0,0,0.35)"
+                                    boxShadow="inset 0 2px 6px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.05)"
+                                    border="2px solid"
+                                    borderColor={isUpcoming ? "zombieland.primary" : "rgba(250,235,220,0.15)"}
+                                    transition="all 0.3s ease"
+                                    opacity={isPast || isCancelled ? 0.7 : 1}
+                                    _hover={{
+                                        transform: isUpcoming ? "translateY(-4px)" : "none",
+                                        boxShadow: isUpcoming ? "0 8px 24px rgba(0,0,0,0.5)" : undefined,
+                                        borderColor: isUpcoming ? "zombieland.cta1orange" : "rgba(250,235,220,0.25)",
+                                        bg: "rgba(0,0,0,0.5)"
+                                    }}
+                                    overflow="hidden"
+                                >
+                                    {/* Card header */}
+                                    <Flex
+                                        align="center"
+                                        justify="space-between"
+                                        px={6}
+                                        py={3}
+                                        bg="rgba(0,0,0,0.25)"
+                                        borderBottom="1px solid"
+                                        borderColor="rgba(250,235,220,0.08)"
+                                    >
+                                        <Text
+                                            color="zombieland.white"
+                                            fontFamily="heading"
+                                            fontSize="18px"
+                                            letterSpacing="1px"
                                         >
-                                            Annuler
-                                        </Button>
+                                            Réservation #{reservation.id_RESERVATION}
+                                        </Text>
+                                        <Badge
+                                            px={3}
+                                            py={1}
+                                            borderRadius="full"
+                                            fontSize="11px"
+                                            fontFamily="body"
+                                            fontWeight="700"
+                                            letterSpacing="1px"
+                                            textTransform="uppercase"
+                                            bg={
+                                                isCancelled ? "rgba(201,168,65,0.2)"
+                                                    : isPast ? "rgba(71,97,130,0.3)"
+                                                        : "rgba(140,125,38,0.3)"
+                                            }
+                                            color={
+                                                isCancelled ? "zombieland.warningprimary"
+                                                    : isPast ? "zombieland.primary"
+                                                        : "#a8c04a"
+                                            }
+                                            border="1px solid"
+                                            borderColor={
+                                                isCancelled ? "zombieland.warningprimary"
+                                                    : isPast ? "zombieland.primary"
+                                                        : "#a8c04a"
+                                            }
+                                        >
+                                            {isCancelled ? "Annulée" : isPast ? "Passée" : "Confirmée"}
+                                        </Badge>
                                     </Flex>
-                                )}
-                            </Box>
-                        ))}
+
+                                    {/* Card body */}
+                                    <Box px={6} py={5}>
+                                        <Grid templateColumns="1fr 1fr 1fr" gap={4} mb={4}>
+                                            <GridItem>
+                                                <Text color="rgba(250,235,220,0.55)" fontFamily="body" fontSize="11px" fontWeight="500" textTransform="uppercase" letterSpacing="1px" mb={1}>
+                                                    Date de visite
+                                                </Text>
+                                                <Text color="zombieland.white" fontFamily="body" fontWeight="400" fontSize="14px" lineHeight="1.4">
+                                                    {isoToLocalDate(reservation.date).toLocaleDateString('fr-FR', {
+                                                        weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
+                                                    })}
+                                                </Text>
+                                            </GridItem>
+                                            <GridItem>
+                                                <Text color="rgba(250,235,220,0.55)" fontFamily="body" fontSize="11px" fontWeight="500" textTransform="uppercase" letterSpacing="1px" mb={1}>
+                                                    Billets
+                                                </Text>
+                                                <Text color="zombieland.white" fontFamily="body" fontWeight="400" fontSize="14px">
+                                                    {reservation.nb_tickets} {reservation.nb_tickets > 1 ? 'billets' : 'billet'}
+                                                </Text>
+                                            </GridItem>
+                                            <GridItem>
+                                                <Text color="rgba(250,235,220,0.55)" fontFamily="body" fontSize="11px" fontWeight="500" textTransform="uppercase" letterSpacing="1px" mb={1}>
+                                                    Montant
+                                                </Text>
+                                                <Text
+                                                    color={isCancelled ? "zombieland.warningprimary" : "zombieland.white"}
+                                                    fontFamily="body"
+                                                    fontWeight="600"
+                                                    fontSize="15px"
+                                                >
+                                                    {isCancelled ? 'Remboursé' : `${Number(reservation.total_amount).toFixed(2)} €`}
+                                                </Text>
+                                            </GridItem>
+                                        </Grid>
+
+                                        {new Date(reservation.date) >= new Date() && !isCancelled && (
+                                            <>
+                                                <Divider borderColor="rgba(250,235,220,0.1)" mb={4} />
+                                                <Flex justifyContent="flex-end">
+                                                    <Button
+                                                        onClick={() => {
+                                                            if (currentUser?.role === 'ADMIN') {
+                                                                setReservationToCancel(reservation.id_RESERVATION);
+                                                            } else {
+                                                                handleCancelClick(reservation);
+                                                            }
+                                                        }}
+                                                        bgImage={`url(${bgBouton})`}
+                                                        bgSize="cover"
+                                                        bgPosition="center"
+                                                        color="zombieland.secondary"
+                                                        fontFamily="body"
+                                                        fontWeight="bold"
+                                                        fontSize={{ base: "12px", md: "13px" }}
+                                                        py={3}
+                                                        px={5}
+                                                        borderRadius="full"
+                                                        boxShadow="inset 0 2px 8px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.5)"
+                                                        _hover={{ opacity: 0.8 }}
+                                                        aria-label={`Annuler la réservation du ${isoToLocalDate(reservation.date).toLocaleDateString('fr-FR')}`}
+                                                    >
+                                                        Annuler la réservation
+                                                    </Button>
+                                                </Flex>
+                                            </>
+                                        )}
+                                    </Box>
+                                </Box>
+                            )
+                        })}
 
                         {/* Pagination controls */}
                         <Flex mt={6} gap={4} alignItems="center" justifyContent="center">
@@ -450,6 +531,7 @@ function MyReservations() {
                 onClose={() => setBlockedMessage(null)}
                 title="Annulation impossible"
                 message={blockedMessage ?? ""}
+                titleColor="zombieland.warningprimary"
             />
 
             {/* Confirm cancellation modal with password */}
